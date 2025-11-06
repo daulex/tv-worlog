@@ -107,3 +107,65 @@ it('validates equipment edit form', function () {
             'editForm.purchase_price' => 'min',
         ]);
 });
+
+it('can retire equipment with notes', function () {
+    $user = Person::factory()->create();
+    $person = Person::factory()->create();
+    $equipment = Equipment::factory()->create(['current_owner_id' => $person->id]);
+
+    Livewire::actingAs($user)
+        ->test(\App\Livewire\Equipment\Show::class, ['equipment' => $equipment])
+        ->call('toggleRetireForm')
+        ->set('retirementNotes', 'Equipment is obsolete and being replaced')
+        ->call('retireEquipment')
+        ->assertHasNoErrors();
+
+    $equipment->refresh();
+    expect($equipment->isRetired())->toBeTrue();
+    expect($equipment->current_owner_id)->toBeNull();
+    expect($equipment->retirement_notes)->toBe('Equipment is obsolete and being replaced');
+
+    $this->assertDatabaseHas('equipment_history', [
+        'equipment_id' => $equipment->id,
+        'action_type' => 'retired',
+        'performed_by_id' => $user->id,
+    ]);
+});
+
+it('can unretire equipment', function () {
+    $user = Person::factory()->create();
+    $equipment = Equipment::factory()->create([
+        'retired_at' => now(),
+        'retirement_notes' => 'Previously retired',
+    ]);
+
+    Livewire::actingAs($user)
+        ->test(\App\Livewire\Equipment\Show::class, ['equipment' => $equipment])
+        ->call('unretireEquipment')
+        ->assertHasNoErrors();
+
+    $equipment->refresh();
+    expect($equipment->isRetired())->toBeFalse();
+    expect($equipment->retirement_notes)->toBeNull();
+
+    $this->assertDatabaseHas('equipment_history', [
+        'equipment_id' => $equipment->id,
+        'action_type' => 'purchased',
+        'action' => 'Equipment returned to service',
+        'performed_by_id' => $user->id,
+    ]);
+});
+
+it('validates retirement form', function () {
+    $user = Person::factory()->create();
+    $equipment = Equipment::factory()->create();
+
+    Livewire::actingAs($user)
+        ->test(\App\Livewire\Equipment\Show::class, ['equipment' => $equipment])
+        ->call('toggleRetireForm')
+        ->set('retirementNotes', '')
+        ->call('retireEquipment')
+        ->assertHasErrors([
+            'retirementNotes' => 'required',
+        ]);
+});

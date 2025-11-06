@@ -8,12 +8,33 @@
     <!-- Equipment Information -->
     <flux:container>
         <div class="flex items-center justify-between mb-4">
-            <flux:heading level="2">{{ __('Equipment Information') }}</flux:heading>
+            <div class="flex items-center space-x-3">
+                <flux:heading level="2">{{ __('Equipment Information') }}</flux:heading>
+                @if($equipment->isRetired())
+                    <flux:badge variant="danger" class="bg-red-100 text-red-800 border-red-200">
+                        <flux:icon name="archive-box-x-mark" class="w-3 h-3 mr-1" />
+                        {{ __('Retired') }}
+                    </flux:badge>
+                @endif
+            </div>
             @if(!$isEditing)
-                <flux:button wire:click="toggleEditMode" variant="outline" size="sm">
-                    <flux:icon name="pencil" class="w-4 h-4 mr-2" />
-                    {{ __('Edit') }}
-                </flux:button>
+                <div class="flex space-x-2">
+                    @if($equipment->isRetired())
+                        <flux:button wire:click="unretireEquipment" variant="outline" size="sm">
+                            <flux:icon name="arrow-path" class="w-4 h-4 mr-2" />
+                            {{ __('Return to Service') }}
+                        </flux:button>
+                    @else
+                        <flux:button wire:click="toggleRetireForm" variant="outline" size="sm">
+                            <flux:icon name="archive-box-x-mark" class="w-4 h-4 mr-2" />
+                            {{ __('Retire') }}
+                        </flux:button>
+                    @endif
+                    <flux:button wire:click="toggleEditMode" variant="outline" size="sm">
+                        <flux:icon name="pencil" class="w-4 h-4 mr-2" />
+                        {{ __('Edit') }}
+                    </flux:button>
+                </div>
             @endif
         </div>
         
@@ -144,6 +165,63 @@
             </form>
         @endif
     </flux:container>
+
+    <!-- Retirement Section -->
+    @if($equipment->isRetired())
+        <flux:container>
+            <flux:heading level="2">{{ __('Retirement Information') }}</flux:heading>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="space-y-4">
+                    <flux:field label="{{ __('Retirement Date') }}">
+                        <flux:text>{{ $equipment->retired_at->format('M d, Y') }}</flux:text>
+                    </flux:field>
+                </div>
+                
+                <div class="space-y-4">
+                    @if($equipment->retirement_notes)
+                        <flux:field label="{{ __('Retirement Notes') }}">
+                            <flux:text>{{ $equipment->retirement_notes }}</flux:text>
+                        </flux:field>
+                    @endif
+                </div>
+            </div>
+        </flux:container>
+    @elseif($showRetireForm)
+        <flux:container>
+            <flux:heading level="2">{{ __('Retire Equipment') }}</flux:heading>
+            
+            <flux:callout variant="warning">
+                {{ __('Retiring equipment will remove it from active service and unassign it from any current owner. This action can be reversed later.') }}
+            </flux:callout>
+            
+            <form wire:submit="retireEquipment">
+                <flux:field label="{{ __('Retirement Notes') }}">
+                    <flux:textarea 
+                        wire:model="retirementNotes" 
+                        placeholder="{{ __('Why is this equipment being retired?') }}"
+                        rows="3"
+                        required
+                    />
+                    @error('retirementNotes')
+                        <flux:text color="red">{{ $message }}</flux:text>
+                    @enderror
+                </flux:field>
+                
+                <div class="flex space-x-4 mt-4">
+                    <flux:button type="submit" variant="danger">
+                        <flux:icon name="archive-box-x-mark" class="w-4 h-4 mr-2" />
+                        {{ __('Retire Equipment') }}
+                    </flux:button>
+                    
+                    <flux:button wire:click="toggleRetireForm" variant="outline" type="button">
+                        <flux:icon name="x-mark" class="w-4 h-4 mr-2" />
+                        {{ __('Cancel') }}
+                    </flux:button>
+                </div>
+            </form>
+        </flux:container>
+    @endif
 
     <!-- Equipment History Timeline -->
     <flux:container>

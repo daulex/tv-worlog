@@ -17,6 +17,10 @@ class Show extends Component
 
     public $isEditing = false;
 
+    public $showRetireForm = false;
+
+    public $retirementNotes = '';
+
     public $editForm = [
         'brand' => '',
         'model' => '',
@@ -162,10 +166,48 @@ class Show extends Component
         $this->initializeEditForm();
     }
 
+    public function toggleRetireForm()
+    {
+        $this->showRetireForm = ! $this->showRetireForm;
+        $this->retirementNotes = '';
+    }
+
+    public function retireEquipment()
+    {
+        $this->validate([
+            'retirementNotes' => 'required|string|max:1000',
+        ]);
+
+        $this->equipment->retire($this->retirementNotes);
+
+        // Refresh equipment data
+        $this->equipment->load([
+            'currentOwner',
+            'equipmentHistory.owner',
+            'equipmentHistory.performedBy',
+        ]);
+
+        $this->showRetireForm = false;
+        $this->retirementNotes = '';
+    }
+
+    public function unretireEquipment()
+    {
+        $this->equipment->unretire();
+
+        // Refresh equipment data
+        $this->equipment->load([
+            'currentOwner',
+            'equipmentHistory.owner',
+            'equipmentHistory.performedBy',
+        ]);
+    }
+
     protected function rules(): array
     {
         return [
             'newNote' => 'required|string|max:1000',
+            'retirementNotes' => 'required|string|max:1000',
             'editForm.brand' => 'required|string|max:255',
             'editForm.model' => 'required|string|max:255',
             'editForm.serial' => 'required|string|max:255',
