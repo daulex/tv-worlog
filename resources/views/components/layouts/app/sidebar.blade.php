@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" class="dark">
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }" class="dark">
     <head>
         @include('partials.head')
     </head>
@@ -7,7 +7,7 @@
         <flux:sidebar sticky stashable class="border-e border-zinc-200 bg-zinc-50 dark:border-zinc-700 dark:bg-zinc-900">
             <flux:sidebar.toggle class="lg:hidden" icon="x-mark" />
 
-            <a href="{{ route('dashboard') }}" class="me-5 flex items-center space-x-2 rtl:space-x-reverse" wire:navigate>
+            <a href="{{ route('dashboard') }" class="me-5 flex items-center space-x-2 rtl:space-x-reverse" wire:navigate>
                 <x-app-logo />
             </a>
 
@@ -15,17 +15,28 @@
                 <flux:navlist.group :heading="__('Platform')" class="grid">
                     <flux:navlist.item icon="home" :href="route('dashboard')" :current="request()->routeIs('dashboard')" wire:navigate>{{ __('Dashboard') }}</flux:navlist.item>
                 </flux:navlist.group>
+
+                <flux:navlist.group :heading="__('Management')" class="grid">
+                    <flux:navlist.item icon="users" href="{{ route('people.index') }}" wire:navigate>{{ __('People') }}</flux:navlist.item>
+                    <flux:navlist.item icon="briefcase" href="{{ route('clients.index') }}" wire:navigate>{{ __('Clients') }}</flux:navlist.item>
+                    <flux:navlist.item icon="folder-open" href="{{ route('vacancies.index') }}" wire:navigate>{{ __('Vacancies') }}</flux:navlist.item>
+                    <flux:navlist.item icon="cog" href="{{ route('equipment.index') }}" wire:navigate>{{ __('Equipment') }}</flux:navlist.item>
+                    <flux:navlist.item icon="calendar" href="{{ route('events.index') }}" wire:navigate>{{ __('Events') }}</flux:navlist.item>
+                    <flux:navlist.item icon="document-text" href="{{ route('notes.index') }}" wire:navigate>{{ __('Notes') }}</flux:navlist.item>
+                    <flux:navlist.item icon="document" href="{{ route('c-vs.index') }}" wire:navigate>{{ __('CVs') }}</flux:navlist.item>
+                    <flux:navlist.item icon="key" href="{{ route('passwords.index') }}" wire:navigate>{{ __('Password Manager') }}</flux:navlist.item>
+                </flux:navlist.group>
             </flux:navlist>
 
             <flux:spacer />
 
             <flux:navlist variant="outline">
                 <flux:navlist.item icon="folder-git-2" href="https://github.com/laravel/livewire-starter-kit" target="_blank">
-                {{ __('Repository') }}
+                    {{ __('Repository') }}
                 </flux:navlist.item>
 
                 <flux:navlist.item icon="book-open-text" href="https://laravel.com/docs/starter-kits#livewire" target="_blank">
-                {{ __('Documentation') }}
+                    {{ __('Documentation') }}
                 </flux:navlist.item>
             </flux:navlist>
 
@@ -50,8 +61,8 @@
                                 </span>
 
                                 <div class="grid flex-1 text-start text-sm leading-tight">
-                                    <span class="truncate font-semibold">{{ auth()->user()->name }}</span>
-                                    <span class="truncate text-xs">{{ auth()->user()->email }}</span>
+                                    <span class="truncate font-semibold">{{ auth()->user()->name }</span>
+                                    <span class="truncate text-xs">{{ auth()->user()->email }</span>
                                 </div>
                             </div>
                         </div>
@@ -60,12 +71,12 @@
                     <flux:menu.separator />
 
                     <flux:menu.radio.group>
-                        <flux:menu.item :href="route('profile.edit')" icon="cog" wire:navigate>{{ __('Settings') }}</flux:menu.item>
+                        <flux:menu.item :href="route('profile.edit')" icon="cog" wire:navigate>{{ __('Settings') }</flux:menu.item>
                     </flux:menu.radio.group>
 
                     <flux:menu.separator />
 
-                    <form method="POST" action="{{ route('logout') }}" class="w-full">
+                    <form method="POST" action="{{ route('logout') }" class="w-full">
                         @csrf
                         <flux:menu.item as="button" type="submit" icon="arrow-right-start-on-rectangle" class="w-full">
                             {{ __('Log Out') }}
@@ -100,8 +111,8 @@
                                 </span>
 
                                 <div class="grid flex-1 text-start text-sm leading-tight">
-                                    <span class="truncate font-semibold">{{ auth()->user()->name }}</span>
-                                    <span class="truncate text-xs">{{ auth()->user()->email }}</span>
+                                    <span class="truncate font-semibold">{{ auth()->user()->name }</span>
+                                    <span class="truncate text-xs">{{ auth()->user()->email }</span>
                                 </div>
                             </div>
                         </div>
@@ -110,12 +121,12 @@
                     <flux:menu.separator />
 
                     <flux:menu.radio.group>
-                        <flux:menu.item :href="route('profile.edit')" icon="cog" wire:navigate>{{ __('Settings') }}</flux:menu.item>
+                        <flux:menu.item :href="route('profile.edit')" icon="cog" wire:navigate>{{ __('Settings') }</flux:menu.item>
                     </flux:menu.radio.group>
 
                     <flux:menu.separator />
 
-                    <form method="POST" action="{{ route('logout') }}" class="w-full">
+                    <form method="POST" action="{{ route('logout') }" class="w-full">
                         @csrf
                         <flux:menu.item as="button" type="submit" icon="arrow-right-start-on-rectangle" class="w-full">
                             {{ __('Log Out') }}

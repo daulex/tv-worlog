@@ -1,6 +1,6 @@
 <?php
 
-use App\Models\User;
+use App\Models\Person;
 use Laravel\Fortify\Features;
 
 test('login screen can be rendered', function () {
@@ -10,7 +10,7 @@ test('login screen can be rendered', function () {
 });
 
 test('users can authenticate using the login screen', function () {
-    $user = User::factory()->withoutTwoFactor()->create();
+    $user = Person::factory()->create();
 
     $response = $this->post(route('login.store'), [
         'email' => $user->email,
@@ -25,7 +25,7 @@ test('users can authenticate using the login screen', function () {
 });
 
 test('users can not authenticate with invalid password', function () {
-    $user = User::factory()->create();
+    $user = Person::factory()->create();
 
     $response = $this->post(route('login.store'), [
         'email' => $user->email,
@@ -46,7 +46,7 @@ test('users with two factor enabled are redirected to two factor challenge', fun
         'confirmPassword' => true,
     ]);
 
-    $user = User::factory()->create();
+    $user = Person::factory()->create();
 
     $response = $this->post(route('login.store'), [
         'email' => $user->email,
@@ -58,7 +58,7 @@ test('users with two factor enabled are redirected to two factor challenge', fun
 });
 
 test('users can logout', function () {
-    $user = User::factory()->create();
+    $user = Person::factory()->create();
 
     $response = $this->actingAs($user)->post(route('logout'));
 

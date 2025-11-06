@@ -8,7 +8,10 @@ test('registration screen can be rendered', function () {
 
 test('new users can register', function () {
     $response = $this->post(route('register.store'), [
-        'name' => 'John Doe',
+        'first_name' => 'John',
+        'last_name' => 'Doe',
+        'pers_code' => '19900101-1234',
+        'date_of_birth' => '1990-01-01',
         'email' => 'test@example.com',
         'password' => 'password',
         'password_confirmation' => 'password',

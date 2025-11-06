@@ -2,7 +2,7 @@
 
 namespace App\Livewire\Settings;
 
-use App\Models\User;
+use App\Models\Person;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Validation\Rule;
@@ -10,7 +10,9 @@ use Livewire\Component;
 
 class Profile extends Component
 {
-    public string $name = '';
+    public string $first_name = '';
+
+    public string $last_name = '';
 
     public string $email = '';
 
@@ -19,8 +21,10 @@ class Profile extends Component
      */
     public function mount(): void
     {
-        $this->name = Auth::user()->name;
-        $this->email = Auth::user()->email;
+        $user = Auth::user();
+        $this->first_name = $user->first_name;
+        $this->last_name = $user->last_name;
+        $this->email = $user->email;
     }
 
     /**
@@ -31,7 +35,8 @@ class Profile extends Component
         $user = Auth::user();
 
         $validated = $this->validate([
-            'name' => ['required', 'string', 'max:255'],
+            'first_name' => ['required', 'string', 'max:255'],
+            'last_name' => ['required', 'string', 'max:255'],
 
             'email' => [
                 'required',
@@ -39,7 +44,7 @@ class Profile extends Component
                 'lowercase',
                 'email',
                 'max:255',
-                Rule::unique(User::class)->ignore($user->id),
+                Rule::unique(Person::class)->ignore($user->id),
             ],
         ]);
 
