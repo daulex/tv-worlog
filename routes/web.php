@@ -38,11 +38,6 @@ Route::middleware(['auth'])->group(function () {
     Route::get('people/create', \App\Livewire\People\Create::class)->name('people.create');
     Route::get('people/{person}/edit', \App\Livewire\People\Edit::class)->name('people.edit');
 
-    // Password routes
-    Route::get('passwords', \App\Livewire\Passwords\Index::class)->name('passwords.index');
-    Route::get('passwords/create', \App\Livewire\Passwords\Create::class)->name('passwords.create');
-    Route::get('passwords/{password}/edit', \App\Livewire\Passwords\Edit::class)->name('passwords.edit');
-
     // Client routes
     Route::get('clients', \App\Livewire\Clients\Index::class)->name('clients.index');
     Route::get('clients/create', \App\Livewire\Clients\Create::class)->name('clients.create');

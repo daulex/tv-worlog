@@ -24,7 +24,6 @@
                     <flux:navlist.item icon="calendar" href="{{ route('events.index') }}" wire:navigate>{{ __('Events') }}</flux:navlist.item>
                     <flux:navlist.item icon="document-text" href="{{ route('notes.index') }}" wire:navigate>{{ __('Notes') }}</flux:navlist.item>
                     <flux:navlist.item icon="document" href="{{ route('c-vs.index') }}" wire:navigate>{{ __('CVs') }}</flux:navlist.item>
-                    <flux:navlist.item icon="key" href="{{ route('passwords.index') }}" wire:navigate>{{ __('Password Manager') }}</flux:navlist.item>
                 </flux:navlist.group>
             </flux:navlist>
 
