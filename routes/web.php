@@ -51,6 +51,7 @@ Route::middleware(['auth'])->group(function () {
     // Equipment routes
     Route::get('equipment', \App\Livewire\Equipment\Index::class)->name('equipment.index');
     Route::get('equipment/create', \App\Livewire\Equipment\Create::class)->name('equipment.create');
+    Route::get('equipment/{equipment}', \App\Livewire\Equipment\Show::class)->name('equipment.show');
     Route::get('equipment/{equipment}/edit', \App\Livewire\Equipment\Edit::class)->name('equipment.edit');
 
     // Event routes
