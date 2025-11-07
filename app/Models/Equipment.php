@@ -41,15 +41,15 @@ class Equipment extends Model
 
     public function notes(): MorphMany
     {
-        return $this->morphMany(Note::class, 'notable');
+        return $this->morphMany(Note::class, 'noteable', 'note_type', 'entity_id');
     }
 
     public function isRetired(): bool
     {
-        return !is_null($this->retired_at);
+        return ! is_null($this->retired_at);
     }
 
-    public function retire(string $notes = null): void
+    public function retire(?string $notes = null): void
     {
         $this->update([
             'retired_at' => now(),

@@ -21,6 +21,21 @@ class Show extends Component
 
     public $retirementNotes = '';
 
+    public $editingHistory = null;
+
+    public $historyEditForm = [
+        'id' => null,
+        'notes' => '',
+        'action' => '',
+    ];
+
+    public $editingNote = null;
+
+    public $noteEditForm = [
+        'id' => null,
+        'note_text' => '',
+    ];
+
     public $editForm = [
         'brand' => '',
         'model' => '',
@@ -36,6 +51,7 @@ class Show extends Component
             'currentOwner',
             'equipmentHistory.owner',
             'equipmentHistory.performedBy',
+            'notes',
         ]);
 
         $this->initializeEditForm();
@@ -59,24 +75,15 @@ class Show extends Component
             'newNote' => 'required|string|max:1000',
         ]);
 
-        EquipmentHistory::create([
-            'equipment_id' => $this->equipment->id,
-            'owner_id' => $this->equipment->current_owner_id,
-            'change_date' => now(),
-            'action' => 'Note added',
-            'action_type' => 'note',
-            'notes' => $this->newNote,
-            'performed_by_id' => auth()->id(),
+        $this->equipment->notes()->create([
+            'note_text' => $this->newNote,
         ]);
 
         $this->newNote = '';
         $this->showNoteForm = false;
 
-        // Refresh equipment history
-        $this->equipment->load([
-            'equipmentHistory.owner',
-            'equipmentHistory.performedBy',
-        ]);
+        // Refresh equipment and notes
+        $this->equipment->load('notes');
     }
 
     public function toggleNoteForm()
@@ -203,11 +210,172 @@ class Show extends Component
         ]);
     }
 
+    public function editHistory(EquipmentHistory $history)
+    {
+        // Only allow editing notes and action for certain types
+        if (! in_array($history->action_type, ['note', 'repaired'])) {
+            return;
+        }
+
+        $this->editingHistory = $history->id;
+        $this->historyEditForm = [
+            'id' => $history->id,
+            'notes' => $history->notes,
+            'action' => $history->action,
+        ];
+    }
+
+    public function cancelHistoryEdit()
+    {
+        $this->editingHistory = null;
+        $this->historyEditForm = [
+            'id' => null,
+            'notes' => '',
+            'action' => '',
+        ];
+    }
+
+    public function saveHistoryEdit()
+    {
+        $this->validate([
+            'historyEditForm.notes' => 'required|string|max:1000',
+            'historyEditForm.action' => 'required|string|max:255',
+        ]);
+
+        $history = EquipmentHistory::find($this->historyEditForm['id']);
+
+        if (! $history || ! in_array($history->action_type, ['note', 'repaired'])) {
+            return;
+        }
+
+        $history->update([
+            'notes' => $this->historyEditForm['notes'],
+            'action' => $this->historyEditForm['action'],
+        ]);
+
+        // Add a tracking entry for the edit
+        EquipmentHistory::create([
+            'equipment_id' => $this->equipment->id,
+            'owner_id' => $history->owner_id,
+            'change_date' => now(),
+            'action' => 'History entry edited',
+            'action_type' => 'note',
+            'notes' => "History entry from {$history->change_date->format('M d, Y')} was modified",
+            'performed_by_id' => auth()->id(),
+        ]);
+
+        $this->cancelHistoryEdit();
+
+        // Refresh equipment data
+        $this->equipment->load([
+            'currentOwner',
+            'equipmentHistory.owner',
+            'equipmentHistory.performedBy',
+        ]);
+    }
+
+    public function deleteHistory(EquipmentHistory $history)
+    {
+        // Don't allow deleting certain critical history types
+        if (in_array($history->action_type, ['purchased', 'assigned', 'retired'])) {
+            return;
+        }
+
+        $history->delete();
+
+        // Add a tracking entry for the deletion
+        EquipmentHistory::create([
+            'equipment_id' => $this->equipment->id,
+            'owner_id' => $this->equipment->current_owner_id,
+            'change_date' => now(),
+            'action' => 'History entry deleted',
+            'action_type' => 'note',
+            'notes' => "History entry from {$history->change_date->format('M d, Y')} was deleted: {$history->action}",
+            'performed_by_id' => auth()->id(),
+        ]);
+
+        // Refresh equipment data
+        $this->equipment->load([
+            'currentOwner',
+            'equipmentHistory.owner',
+            'equipmentHistory.performedBy',
+        ]);
+    }
+
+    public function canEditHistory($history): bool
+    {
+        return in_array($history->action_type, ['repaired']);
+    }
+
+    public function canDeleteHistory($history): bool
+    {
+        return ! in_array($history->action_type, ['purchased', 'assigned', 'retired']);
+    }
+
+    public function editNote(Note $note)
+    {
+        $this->editingNote = $note->id;
+        $this->noteEditForm = [
+            'id' => $note->id,
+            'note_text' => $note->note_text,
+        ];
+    }
+
+    public function cancelNoteEdit()
+    {
+        $this->editingNote = null;
+        $this->noteEditForm = [
+            'id' => null,
+            'note_text' => '',
+        ];
+    }
+
+    public function saveNoteEdit()
+    {
+        $this->validate([
+            'noteEditForm.note_text' => 'required|string|max:1000',
+        ]);
+
+        $note = Note::find($this->noteEditForm['id']);
+
+        if (! $note || $note->noteable_type !== 'App\\Models\\Equipment' || $note->entity_id !== $this->equipment->id) {
+            return;
+        }
+
+        $note->update([
+            'note_text' => $this->noteEditForm['note_text'],
+        ]);
+
+        $this->editingNote = null;
+        $this->noteEditForm = [
+            'id' => null,
+            'note_text' => '',
+        ];
+
+        // Refresh notes
+        $this->equipment->load('notes');
+    }
+
+    public function deleteNote(Note $note)
+    {
+        if ($note->noteable_type !== 'App\\Models\\Equipment' || $note->entity_id !== $this->equipment->id) {
+            return;
+        }
+
+        $note->delete();
+
+        // Refresh notes
+        $this->equipment->load('notes');
+    }
+
     protected function rules(): array
     {
         return [
             'newNote' => 'required|string|max:1000',
             'retirementNotes' => 'required|string|max:1000',
+            'historyEditForm.notes' => 'required|string|max:1000',
+            'historyEditForm.action' => 'required|string|max:255',
+            'noteEditForm.note_text' => 'required|string|max:1000',
             'editForm.brand' => 'required|string|max:255',
             'editForm.model' => 'required|string|max:255',
             'editForm.serial' => 'required|string|max:255',

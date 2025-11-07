@@ -36,18 +36,13 @@ class EquipmentObserver
             $newOwnerId = $equipment->current_owner_id;
 
             if ($oldOwnerId !== $newOwnerId) {
-                $action = $oldOwnerId ? 'Transferred ownership' : 'Initial assignment';
-                $notes = $oldOwnerId
-                    ? 'Transferred from previous owner to new owner'
-                    : 'Assigned to new employee';
-
                 EquipmentHistory::create([
                     'equipment_id' => $equipment->id,
                     'owner_id' => $newOwnerId,
                     'change_date' => now(),
-                    'action' => $action,
+                    'action' => $oldOwnerId ? 'Ownership transferred' : 'Initial assignment',
                     'action_type' => 'assigned',
-                    'notes' => $notes,
+                    'notes' => null, // No notes needed for ownership transfers
                     'performed_by_id' => Auth::id(),
                 ]);
             }

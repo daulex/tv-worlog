@@ -41,11 +41,10 @@ it('can add a note to equipment', function () {
         ->call('addNote')
         ->assertHasNoErrors();
 
-    $this->assertDatabaseHas('equipment_history', [
-        'equipment_id' => $equipment->id,
-        'action_type' => 'note',
-        'notes' => 'Test note for equipment',
-        'performed_by_id' => $user->id,
+    $this->assertDatabaseHas('notes', [
+        'note_type' => 'equipment',
+        'entity_id' => $equipment->id,
+        'note_text' => 'Test note for equipment',
     ]);
 });
 
@@ -167,5 +166,131 @@ it('validates retirement form', function () {
         ->call('retireEquipment')
         ->assertHasErrors([
             'retirementNotes' => 'required',
+        ]);
+});
+
+it('can edit note history entries', function () {
+    $user = Person::factory()->create();
+    $equipment = Equipment::factory()->create();
+
+    $history = $equipment->equipmentHistory()->create([
+        'owner_id' => null,
+        'change_date' => now(),
+        'action' => 'Original note',
+        'action_type' => 'note',
+        'notes' => 'Original note content',
+        'performed_by_id' => $user->id,
+    ]);
+
+    Livewire::actingAs($user)
+        ->test(\App\Livewire\Equipment\Show::class, ['equipment' => $equipment])
+        ->call('editHistory', $history->id)
+        ->set('historyEditForm.action', 'Updated note')
+        ->set('historyEditForm.notes', 'Updated note content')
+        ->call('saveHistoryEdit')
+        ->assertHasNoErrors();
+
+    $history->refresh();
+    expect($history->action)->toBe('Updated note');
+    expect($history->notes)->toBe('Updated note content');
+});
+
+it('cannot edit protected history types', function () {
+    $user = Person::factory()->create();
+    $equipment = Equipment::factory()->create();
+
+    $history = $equipment->equipmentHistory()->create([
+        'owner_id' => null,
+        'change_date' => now(),
+        'action' => 'Equipment purchased',
+        'action_type' => 'purchased',
+        'notes' => 'Purchase record',
+        'performed_by_id' => $user->id,
+    ]);
+
+    $component = Livewire::actingAs($user)
+        ->test(\App\Livewire\Equipment\Show::class, ['equipment' => $equipment])
+        ->call('editHistory', $history->id);
+
+    // Should not be in editing mode for protected types
+    $this->assertNull($component->get('editingHistory'));
+});
+
+it('can delete note history entries', function () {
+    $user = Person::factory()->create();
+    $equipment = Equipment::factory()->create();
+
+    $history = $equipment->equipmentHistory()->create([
+        'owner_id' => null,
+        'change_date' => now(),
+        'action' => 'Note to delete',
+        'action_type' => 'note',
+        'notes' => 'This note will be deleted',
+        'performed_by_id' => $user->id,
+    ]);
+
+    Livewire::actingAs($user)
+        ->test(\App\Livewire\Equipment\Show::class, ['equipment' => $equipment])
+        ->call('deleteHistory', $history->id)
+        ->assertHasNoErrors();
+
+    $this->assertDatabaseMissing('equipment_history', [
+        'id' => $history->id,
+    ]);
+
+    // Should have a deletion tracking entry
+    $this->assertDatabaseHas('equipment_history', [
+        'equipment_id' => $equipment->id,
+        'action_type' => 'note',
+        'action' => 'History entry deleted',
+        'performed_by_id' => $user->id,
+    ]);
+});
+
+it('cannot delete protected history types', function () {
+    $user = Person::factory()->create();
+    $equipment = Equipment::factory()->create();
+
+    $history = $equipment->equipmentHistory()->create([
+        'owner_id' => null,
+        'change_date' => now(),
+        'action' => 'Equipment purchased',
+        'action_type' => 'purchased',
+        'notes' => 'Purchase record',
+        'performed_by_id' => $user->id,
+    ]);
+
+    $originalCount = $equipment->equipmentHistory()->count();
+
+    Livewire::actingAs($user)
+        ->test(\App\Livewire\Equipment\Show::class, ['equipment' => $equipment])
+        ->call('deleteHistory', $history->id);
+
+    // Should still have the same count (not deleted)
+    expect($equipment->fresh()->equipmentHistory()->count())->toBe($originalCount);
+});
+
+it('validates history edit form', function () {
+    $user = Person::factory()->create();
+    $equipment = Equipment::factory()->create();
+
+    $history = $equipment->equipmentHistory()->create([
+        'owner_id' => null,
+        'change_date' => now(),
+        'action' => 'Original note',
+        'action_type' => 'note',
+        'notes' => 'Original note content',
+        'performed_by_id' => $user->id,
+    ]);
+
+    Livewire::actingAs($user)
+        ->test(\App\Livewire\Equipment\Show::class, ['equipment' => $equipment])
+        ->call('editHistory', $history->id)
+        ->set('historyEditForm.action', '')
+        ->set('historyEditForm.notes', '')
+        ->call('saveHistoryEdit')
+        ->assertHasErrors([
+            'historyEditForm.action' => 'required',
+            'historyEditForm.notes' => 'required',
         ]);
 });
