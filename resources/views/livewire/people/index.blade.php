@@ -10,11 +10,60 @@
         </flux:callout>
     @endif
 
-    <flux:input
-        wire:model.live.debounce.300ms="search"
-        placeholder="Search people..."
-        class="mb-4"
-    />
+    <!-- Filters Section -->
+    <div class="mb-4 p-4 bg-gray-50 dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700">
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+            <flux:input
+                wire:model.live.debounce.300ms="search"
+                placeholder="Search people..."
+            />
+            
+            <flux:select
+                wire:model.live="statusFilter"
+                label="Status"
+            >
+                <option value="">All Statuses</option>
+                <option value="Candidate">Candidate</option>
+                <option value="Employee">Employee</option>
+                <option value="Retired">Retired</option>
+            </flux:select>
+            
+            <flux:select
+                wire:model.live="clientFilter"
+                label="Client"
+            >
+                <option value="">All Clients</option>
+                @foreach ($clients as $client)
+                    <option value="{{ $client->id }}">{{ $client->name }}</option>
+                @endforeach
+            </flux:select>
+            
+            <flux:select
+                wire:model.live="vacancyFilter"
+                label="Vacancy"
+            >
+                <option value="">All Vacancies</option>
+                @foreach ($vacancies as $vacancy)
+                    <option value="{{ $vacancy->id }}">{{ $vacancy->title }} - {{ $vacancy->client->name }}</option>
+                @endforeach
+            </flux:select>
+        </div>
+        
+        @if ($search || $statusFilter || $clientFilter || $vacancyFilter)
+            <div class="mt-3 flex items-center justify-between">
+                <span class="text-sm text-gray-600 dark:text-gray-400">
+                    Filters applied
+                </span>
+                <flux:button 
+                    wire:click="clearFilters" 
+                    variant="outline" 
+                    size="sm"
+                >
+                    Clear Filters
+                </flux:button>
+            </div>
+        @endif
+    </div>
 
     <div class="w-full bg-white rounded-lg shadow overflow-hidden mb-5 border border-gray-200">
         <table class="w-full divide-y divide-gray-200 border border-gray-200">
@@ -24,6 +73,8 @@
                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Email</th>
                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Position</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Client</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Vacancy</th>
                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
                 </tr>
             </thead>
@@ -45,6 +96,8 @@
                             </span>
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ $person->position ?? '-' }}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ $person->client?->name ?? '-' }}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ $person->vacancy?->title ?? '-' }}</td>
                         <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
                             <flux:button variant="ghost" size="sm" href="{{ route('people.show', $person) }}">View</flux:button>
                             <flux:button variant="ghost" size="sm" href="{{ route('people.edit', $person) }}">Edit</flux:button>
@@ -53,7 +106,7 @@
                     </tr>
                 @empty
                     <tr>
-                        <td colspan="5" class="px-6 py-4 text-center text-sm text-gray-500">No people found.</td>
+                        <td colspan="7" class="px-6 py-4 text-center text-sm text-gray-500">No people found.</td>
                     </tr>
                 @endforelse
             </tbody>
