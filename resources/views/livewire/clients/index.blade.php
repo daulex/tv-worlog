@@ -16,8 +16,8 @@
         class="mb-4"
     />
 
-    <div class="bg-white rounded-lg shadow overflow-hidden mb-5">
-        <table class="min-w-full divide-y divide-gray-200">
+    <div class="w-full bg-white rounded-lg shadow overflow-hidden mb-5 border border-gray-200">
+        <table class="w-full divide-y divide-gray-200 border border-gray-200">
             <thead class="bg-gray-50">
                 <tr>
                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
@@ -31,11 +31,7 @@
                     <tr>
                         <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{{ $client->name }}</td>
                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                            @if($client->contact_email)
-                                <a href="mailto:{{ $client->contact_email }}" class="text-blue-600 hover:text-blue-900">{{ $client->contact_email }}</a>
-                            @else
-                                -
-                            @endif
+                            {{ $client->contact_email ?? '-' }}
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ $client->contact_phone ?? '-' }}</td>
                         <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">

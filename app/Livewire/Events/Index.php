@@ -25,7 +25,7 @@ class Index extends Component
             ->orWhere('location', 'like', '%'.$this->search.'%')
             ->orWhere('type', 'like', '%'.$this->search.'%')
             ->orderBy('start_date', 'desc')
-            ->paginate(10);
+            ->paginate(50);
 
         return view('livewire.events.index', [
             'events' => $events,

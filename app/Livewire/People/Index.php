@@ -30,7 +30,7 @@ class Index extends Component
             })
             ->with(['client', 'vacancy'])
             ->latest()
-            ->paginate(10);
+            ->paginate(50);
 
         return view('livewire.people.index', [
             'people' => $people,

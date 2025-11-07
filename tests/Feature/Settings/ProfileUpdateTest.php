@@ -1,22 +1,23 @@
 <?php
 
 use App\Livewire\Settings\Profile;
-use App\Models\User;
+use App\Models\Person;
 use Livewire\Livewire;
 
 test('profile page is displayed', function () {
-    $this->actingAs($user = User::factory()->create());
+    $this->actingAs($user = Person::factory()->create());
 
     $this->get('/settings/profile')->assertOk();
 });
 
 test('profile information can be updated', function () {
-    $user = User::factory()->create();
+    $user = Person::factory()->create();
 
     $this->actingAs($user);
 
     $response = Livewire::test(Profile::class)
-        ->set('name', 'Test User')
+        ->set('first_name', 'Test')
+        ->set('last_name', 'User')
         ->set('email', 'test@example.com')
         ->call('updateProfileInformation');
 
@@ -24,18 +25,22 @@ test('profile information can be updated', function () {
 
     $user->refresh();
 
-    expect($user->name)->toEqual('Test User');
+    expect($user->first_name)->toEqual('Test');
+    expect($user->last_name)->toEqual('User');
     expect($user->email)->toEqual('test@example.com');
     expect($user->email_verified_at)->toBeNull();
 });
 
 test('email verification status is unchanged when email address is unchanged', function () {
-    $user = User::factory()->create();
+    $user = Person::factory()->create([
+        'email_verified_at' => now(),
+    ]);
 
     $this->actingAs($user);
 
     $response = Livewire::test(Profile::class)
-        ->set('name', 'Test User')
+        ->set('first_name', 'Test')
+        ->set('last_name', 'User')
         ->set('email', $user->email)
         ->call('updateProfileInformation');
 
@@ -45,7 +50,7 @@ test('email verification status is unchanged when email address is unchanged', f
 });
 
 test('user can delete their account', function () {
-    $user = User::factory()->create();
+    $user = Person::factory()->create();
 
     $this->actingAs($user);
 
@@ -62,7 +67,7 @@ test('user can delete their account', function () {
 });
 
 test('correct password must be provided to delete account', function () {
-    $user = User::factory()->create();
+    $user = Person::factory()->create();
 
     $this->actingAs($user);
 

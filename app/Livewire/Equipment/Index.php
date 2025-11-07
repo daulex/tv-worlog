@@ -29,7 +29,7 @@ class Index extends Component
                     ->orWhere('last_name', 'like', '%'.$this->search.'%');
             })
             ->orderBy('created_at', 'desc')
-            ->paginate(10);
+            ->paginate(50);
 
         return view('livewire.equipment.index', [
             'equipment' => $equipment,

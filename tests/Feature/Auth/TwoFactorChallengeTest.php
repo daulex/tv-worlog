@@ -1,6 +1,6 @@
 <?php
 
-use App\Models\User;
+use App\Models\Person;
 use Laravel\Fortify\Features;
 
 test('two factor challenge redirects to login when not authenticated', function () {
@@ -23,7 +23,14 @@ test('two factor challenge can be rendered', function () {
         'confirmPassword' => true,
     ]);
 
-    $user = User::factory()->create();
+    $user = Person::factory()->create();
+
+    // Enable two-factor for this user
+    $user->forceFill([
+        'two_factor_secret' => encrypt('test-secret'),
+        'two_factor_recovery_codes' => encrypt(json_encode(['code1', 'code2'])),
+        'two_factor_confirmed_at' => now(),
+    ])->save();
 
     $this->post(route('login.store'), [
         'email' => $user->email,

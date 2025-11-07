@@ -16,8 +16,8 @@
         class="mb-4"
     />
 
-    <div class="bg-white rounded-lg shadow overflow-hidden mb-5">
-        <table class="min-w-full divide-y divide-gray-200">
+    <div class="w-full bg-white rounded-lg shadow overflow-hidden mb-5 border border-gray-200">
+        <table class="w-full divide-y divide-gray-200 border border-gray-200">
             <thead class="bg-gray-50">
                 <tr>
                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Note</th>

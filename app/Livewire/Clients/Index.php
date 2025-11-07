@@ -24,7 +24,7 @@ class Index extends Component
             ->orWhere('contact_email', 'like', '%'.$this->search.'%')
             ->orWhere('contact_phone', 'like', '%'.$this->search.'%')
             ->orderBy('name')
-            ->paginate(10);
+            ->paginate(50);
 
         return view('livewire.clients.index', [
             'clients' => $clients,

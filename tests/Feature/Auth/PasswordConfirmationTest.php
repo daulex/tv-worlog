@@ -1,9 +1,9 @@
 <?php
 
-use App\Models\User;
+use App\Models\Person;
 
 test('confirm password screen can be rendered', function () {
-    $user = User::factory()->create();
+    $user = Person::factory()->create();
 
     $response = $this->actingAs($user)->get(route('password.confirm'));
 

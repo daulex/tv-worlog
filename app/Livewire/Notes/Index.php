@@ -24,7 +24,7 @@ class Index extends Component
             ->where('note_text', 'like', '%'.$this->search.'%')
             ->orWhere('note_type', 'like', '%'.$this->search.'%')
             ->orderBy('created_at', 'desc')
-            ->paginate(10);
+            ->paginate(50);
 
         return view('livewire.notes.index', [
             'notes' => $notes,

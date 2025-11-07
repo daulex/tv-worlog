@@ -26,7 +26,7 @@ class Index extends Component
                 $query->where('name', 'like', '%'.$this->search.'%');
             })
             ->orderBy('uploaded_at', 'desc')
-            ->paginate(10);
+            ->paginate(50);
 
         return view('livewire.c-vs.index', [
             'cvs' => $cvs,
