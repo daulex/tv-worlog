@@ -247,9 +247,9 @@
         @endphp
         
         @if($timeline->count() > 0)
-            <div class="relative">
+            <div class="relative pl-8">
                 <!-- Timeline Line -->
-                <div class="absolute left-4 top-0 bottom-0 w-0.5 bg-gray-200 dark:bg-gray-700"></div>
+                <div class="absolute left-4 top-0 bottom-0 w-0.5 bg-gray-400 dark:bg-gray-500"></div>
                 
                 <!-- Timeline Items -->
                 <div class="space-y-4">
@@ -258,14 +258,14 @@
                             @php
                                 $note = $item['data'];
                             @endphp
-                            <div class="relative flex items-start space-x-3">
+                            <div class="relative flex items-start">
                                 <!-- Timeline Icon -->
-                                <div class="flex-shrink-0 w-8 h-8 rounded-full bg-blue-100 dark:bg-blue-900 flex items-center justify-center">
+                                <div class="absolute -left-8 flex-shrink-0 w-8 h-8 rounded-full bg-blue-100 dark:bg-blue-900 flex items-center justify-center ring-4 ring-white dark:ring-gray-800 border-2 border-blue-200 dark:border-blue-800">
                                     <flux:icon name="document-text" class="w-4 h-4 text-blue-600 dark:text-blue-400" />
                                 </div>
                                 
                                 <!-- Timeline Content -->
-                                <div class="flex-1 min-w-0">
+                                <div class="flex-1 min-w-0 ml-8">
                                     <div class="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-3">
                                         <div class="flex items-center justify-between mb-1">
                                             <div class="flex items-center space-x-2">
@@ -326,14 +326,14 @@
                             @php
                                 $history = $item['data'];
                             @endphp
-                            <div class="relative flex items-start space-x-3">
+                            <div class="relative flex items-start">
                                 <!-- Timeline Icon -->
-                                <div class="flex-shrink-0 w-8 h-8 rounded-full bg-{{ $history->action_type_color }}-100 dark:bg-{{ $history->action_type_color }}-900 flex items-center justify-center">
+                                <div class="absolute -left-8 flex-shrink-0 w-8 h-8 rounded-full bg-{{ $history->action_type_color }}-100 dark:bg-{{ $history->action_type_color }}-900 flex items-center justify-center ring-4 ring-white dark:ring-gray-800 border-2 border-{{ $history->action_type_color }}-200 dark:border-{{ $history->action_type_color }}-800">
                                     <flux:icon :name="$history->action_type_icon" class="w-4 h-4 text-{{ $history->action_type_color }}-600 dark:text-{{ $history->action_type_color }}-400" />
                                 </div>
                                 
                                 <!-- Timeline Content -->
-                                <div class="flex-1 min-w-0">
+                                <div class="flex-1 min-w-0 ml-8">
                                     <div class="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-3">
                                         <div class="flex items-center justify-between mb-1">
                                             <div class="flex items-center space-x-2">
