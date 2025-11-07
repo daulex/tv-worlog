@@ -209,7 +209,9 @@
                             'name' => 'editForm.vacancy_id',
                             'type' => 'select',
                             'value' => $editForm['vacancy_id'],
-                            'options' => $this->vacancies->pluck('title', 'id')->toArray(),
+                            'options' => $this->vacancies->mapWithKeys(function ($vacancy) {
+                                return [$vacancy->id => "{$vacancy->title} - {$vacancy->client->name}"];
+                            })->toArray(),
                             'placeholder' => 'Select Vacancy',
                         ])
                         
@@ -218,7 +220,9 @@
                             'name' => 'editForm.cv_id',
                             'type' => 'select',
                             'value' => $editForm['cv_id'],
-                            'options' => $this->cvs->pluck('title', 'id')->toArray(),
+                            'options' => $this->cvs->mapWithKeys(function ($cv) {
+                                return [$cv->id => "CV - {$cv->person->first_name} {$cv->person->last_name}"];
+                            })->toArray(),
                             'placeholder' => 'Select CV',
                         ])
                     </div>

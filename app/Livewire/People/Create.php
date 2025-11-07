@@ -83,7 +83,7 @@ class Create extends Component
     {
         return view('livewire.people.create', [
             'clients' => Client::all(),
-            'vacancies' => Vacancy::all(),
+            'vacancies' => Vacancy::with('client')->get(),
         ]);
     }
 }

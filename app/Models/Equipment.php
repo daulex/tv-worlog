@@ -18,7 +18,7 @@ class Equipment extends Model
         'serial',
         'purchase_date',
         'purchase_price',
-        'current_owner_id',
+        'current_holder_id',
         'retired_at',
         'retirement_notes',
     ];
@@ -29,9 +29,9 @@ class Equipment extends Model
         'retired_at' => 'datetime',
     ];
 
-    public function currentOwner(): BelongsTo
+    public function currentHolder(): BelongsTo
     {
-        return $this->belongsTo(Person::class, 'current_owner_id');
+        return $this->belongsTo(Person::class, 'current_holder_id');
     }
 
     public function equipmentHistory(): HasMany
@@ -59,12 +59,12 @@ class Equipment extends Model
         $this->update([
             'retired_at' => now(),
             'retirement_notes' => $notes,
-            'current_owner_id' => null,
+            'current_holder_id' => null,
         ]);
 
         // Create retirement history record
         $this->equipmentHistory()->create([
-            'owner_id' => null,
+            'holder_id' => null,
             'change_date' => now(),
             'action' => 'Equipment retired',
             'action_type' => 'retired',
@@ -82,7 +82,7 @@ class Equipment extends Model
 
         // Create unretirement history record
         $this->equipmentHistory()->create([
-            'owner_id' => $this->current_owner_id,
+            'holder_id' => $this->current_holder_id,
             'change_date' => now(),
             'action' => 'Equipment returned to service',
             'action_type' => 'purchased',

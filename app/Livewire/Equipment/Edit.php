@@ -20,7 +20,7 @@ class Edit extends Component
 
     public $purchase_price;
 
-    public $current_owner_id;
+    public $current_holder_id;
 
     protected function rules(): array
     {
@@ -30,7 +30,7 @@ class Edit extends Component
             'serial' => 'required|string|unique:equipment,serial,'.$this->equipment->id,
             'purchase_date' => 'required|date',
             'purchase_price' => 'required|numeric|min:0',
-            'current_owner_id' => 'nullable|exists:people,id',
+            'current_holder_id' => 'nullable|exists:people,id',
         ];
     }
 
@@ -42,7 +42,7 @@ class Edit extends Component
         $this->serial = $equipment->serial;
         $this->purchase_date = $equipment->purchase_date->format('Y-m-d');
         $this->purchase_price = $equipment->purchase_price;
-        $this->current_owner_id = $equipment->current_owner_id;
+        $this->current_holder_id = $equipment->current_holder_id;
     }
 
     public function save()
@@ -55,7 +55,7 @@ class Edit extends Component
             'serial' => $this->serial,
             'purchase_date' => $this->purchase_date,
             'purchase_price' => $this->purchase_price,
-            'current_owner_id' => $this->current_owner_id,
+            'current_holder_id' => $this->current_holder_id,
         ]);
 
         session()->flash('message', 'Equipment updated successfully.');

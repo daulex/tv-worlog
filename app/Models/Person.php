@@ -73,12 +73,12 @@ class Person extends Authenticatable
 
     public function equipment(): HasMany
     {
-        return $this->hasMany(Equipment::class, 'current_owner_id');
+        return $this->hasMany(Equipment::class, 'current_holder_id');
     }
 
     public function equipmentHistory(): HasMany
     {
-        return $this->hasMany(EquipmentHistory::class, 'owner_id');
+        return $this->hasMany(EquipmentHistory::class, 'holder_id');
     }
 
     public function events(): BelongsToMany

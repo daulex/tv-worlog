@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use Database\Factories\Providers\CustomFakerProvider;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -16,20 +17,36 @@ class PersonFactory extends Factory
      */
     public function definition(): array
     {
+        $faker = $this->withFaker();
+        $faker->addProvider(new CustomFakerProvider($faker));
+
         return [
-            'status' => fake()->randomElement(['Candidate', 'Employee', 'Retired']),
-            'first_name' => fake()->firstName(),
-            'last_name' => fake()->lastName(),
-            'pers_code' => fake()->unique()->regexify('[0-9]{6}-[0-9]{5}'),
-            'phone' => fake()->phoneNumber(),
-            'phone2' => fake()->optional(0.3)->phoneNumber(),
-            'email' => fake()->unique()->safeEmail(),
-            'email2' => fake()->optional(0.3)->safeEmail(),
-            'date_of_birth' => fake()->date(),
-            'address' => fake()->address(),
-            'starting_date' => fake()->optional()->date(),
-            'last_working_date' => fake()->optional()->date(),
-            'position' => fake()->jobTitle(),
+            'status' => $faker->randomElement(['Candidate', 'Employee', 'Retired']),
+            'first_name' => $faker->randomElement([
+                'Jānis', 'Andris', 'Mārtiņš', 'Guntis', 'Aigars', 'Juris',
+                'Viktors', 'Edgars', 'Raimonds', 'Oskars', 'Kristaps',
+                'Mikhail', 'Alexei', 'Dmitry', 'Sergey', 'Vladimir', 'Igor',
+                'Anna', 'Līga', 'Inga', 'Maija', 'Zanda', 'Laura',
+            ]),
+            'last_name' => $faker->randomElement([
+                'Bērziņš', 'Kalniņš', 'Ozoliņš', 'Jansons', 'Liepiņš', 'Krūmiņš',
+                'Petrov', 'Ivanov', 'Sidorov', 'Kuznetsov', 'Popov', 'Volkov',
+                'Ozola', 'Kalniņa', 'Bērziņa', 'Liepiņa', 'Krūmiņa',
+            ]),
+            'pers_code' => $faker->unique()->regexify('[0-9]{6}-[0-9]{5}'),
+            'phone' => '+371 '.$faker->phoneNumber(),
+            'phone2' => $faker->optional(0.3)->phoneNumber() ? '+371 '.$faker->phoneNumber() : null,
+            'email' => $faker->unique()->safeEmail(),
+            'email2' => $faker->optional(0.3)->safeEmail(),
+            'date_of_birth' => $faker->dateTimeBetween('-50 years', '-22 years'),
+            'address' => $faker->latvianAddress(),
+            'starting_date' => $faker->optional()->dateTimeBetween('-2 years', 'now'),
+            'last_working_date' => $faker->optional()->dateTimeBetween('-1 year', 'now'),
+            'position' => $faker->randomElement([
+                '.NET Developer', 'Node.js Developer', 'Data Engineer',
+                'Laravel Developer', 'React Developer', 'Python Developer',
+                'DevOps Engineer', 'Frontend Developer', 'Backend Developer',
+            ]),
             'password' => bcrypt('password'),
         ];
     }

@@ -20,11 +20,11 @@ class Index extends Component
 
     public function render()
     {
-        $equipment = Equipment::with('currentOwner')
+        $equipment = Equipment::with('currentHolder')
             ->where('brand', 'like', '%'.$this->search.'%')
             ->orWhere('model', 'like', '%'.$this->search.'%')
             ->orWhere('serial', 'like', '%'.$this->search.'%')
-            ->orWhereHas('currentOwner', function ($query) {
+            ->orWhereHas('currentHolder', function ($query) {
                 $query->where('first_name', 'like', '%'.$this->search.'%')
                     ->orWhere('last_name', 'like', '%'.$this->search.'%');
             })

@@ -67,9 +67,9 @@
                     ])
                     
                     @include('livewire.partials.field-view', [
-                        'label' => __('Current Owner'),
-                        'value' => $equipment->currentOwner ? $equipment->currentOwner->full_name : __('Unassigned'),
-                        'isUnassigned' => !$equipment->currentOwner,
+                        'label' => __('Holder'),
+                        'value' => $equipment->currentHolder ? $equipment->currentHolder->full_name : __('Unassigned'),
+                        'isUnassigned' => !$equipment->currentHolder,
                     ])
                 </div>
             </div>
@@ -123,9 +123,9 @@
                         ])
                         
                         @include('livewire.partials.field-select', [
-                            'label' => __('Current Owner'),
-                            'name' => 'editForm.current_owner_id',
-                            'value' => $editForm['current_owner_id'],
+                            'label' => __('Holder'),
+                            'name' => 'editForm.current_holder_id',
+                            'value' => $editForm['current_holder_id'],
                             'options' => $this->people,
                             'placeholder' => __('Select Owner'),
                         ])
@@ -171,7 +171,7 @@
             <flux:heading level="2" class="mb-2">{{ __('Retire Equipment') }}</flux:heading>
             
             <flux:callout variant="warning">
-                {{ __('Retiring equipment will remove it from active service and unassign it from any current owner. This action can be reversed later.') }}
+                {{ __('Retiring equipment will remove it from active service and unassign it from any current holder. This action can be reversed later.') }}
             </flux:callout>
             
             <form wire:submit="retireEquipment">

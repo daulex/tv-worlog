@@ -25,14 +25,14 @@
             </flux:field>
 
             <flux:field>
-                <flux:label>Current Owner</flux:label>
-                <flux:select wire:model="current_owner_id">
-                    <option value="">Select an owner</option>
+                <flux:label>Current Holder</flux:label>
+                <flux:select wire:model="current_holder_id">
+                    <option value="">Select a holder</option>
                     @foreach ($people as $person)
                         <option value="{{ $person->id }}">{{ $person->first_name }} {{ $person->last_name }}</option>
                     @endforeach
                 </flux:select>
-                <flux:error name="current_owner_id" />
+                <flux:error name="current_holder_id" />
             </flux:field>
 
             <flux:field>

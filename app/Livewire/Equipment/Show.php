@@ -43,14 +43,14 @@ class Show extends Component
         'serial' => '',
         'purchase_date' => '',
         'purchase_price' => '',
-        'current_owner_id' => '',
+        'current_holder_id' => '',
     ];
 
     public function mount(Equipment $equipment)
     {
         $this->equipment = $equipment->load([
-            'currentOwner',
-            'equipmentHistory.owner',
+            'currentHolder',
+            'equipmentHistory.holder',
             'equipmentHistory.performedBy',
             'notes',
         ]);
@@ -106,7 +106,7 @@ class Show extends Component
             'serial' => $this->equipment->serial,
             'purchase_date' => $this->equipment->purchase_date->format('Y-m-d'),
             'purchase_price' => $this->equipment->purchase_price,
-            'current_owner_id' => $this->equipment->current_owner_id,
+            'current_holder_id' => $this->equipment->current_holder_id,
         ];
     }
 
@@ -150,11 +150,11 @@ class Show extends Component
             'editForm.serial' => 'required|string|max:255',
             'editForm.purchase_date' => 'required|date',
             'editForm.purchase_price' => 'required|numeric|min:0',
-            'editForm.current_owner_id' => 'nullable|exists:people,id',
+            'editForm.current_holder_id' => 'nullable|exists:people,id',
         ]);
 
-        $oldOwnerId = $this->equipment->current_owner_id;
-        $newOwnerId = $this->editForm['current_owner_id'];
+        $oldHolderId = $this->equipment->current_holder_id;
+        $newHolderId = $this->editForm['current_holder_id'];
 
         $this->equipment->update([
             'brand' => $this->editForm['brand'],
@@ -162,7 +162,7 @@ class Show extends Component
             'serial' => $this->editForm['serial'],
             'purchase_date' => $this->editForm['purchase_date'],
             'purchase_price' => $this->editForm['purchase_price'],
-            'current_owner_id' => $newOwnerId,
+            'current_holder_id' => $newHolderId,
         ]);
 
         // Note: Equipment history is now handled by the EquipmentObserver
@@ -170,8 +170,8 @@ class Show extends Component
 
         // Refresh equipment data
         $this->equipment->load([
-            'currentOwner',
-            'equipmentHistory.owner',
+            'currentHolder',
+            'equipmentHistory.holder',
             'equipmentHistory.performedBy',
         ]);
 
@@ -200,8 +200,8 @@ class Show extends Component
 
         // Refresh equipment data
         $this->equipment->load([
-            'currentOwner',
-            'equipmentHistory.owner',
+            'currentHolder',
+            'equipmentHistory.holder',
             'equipmentHistory.performedBy',
         ]);
 
@@ -215,8 +215,8 @@ class Show extends Component
 
         // Refresh equipment data
         $this->equipment->load([
-            'currentOwner',
-            'equipmentHistory.owner',
+            'currentHolder',
+            'equipmentHistory.holder',
             'equipmentHistory.performedBy',
         ]);
     }
@@ -273,7 +273,7 @@ class Show extends Component
         // Add a tracking entry for the edit
         EquipmentHistory::create([
             'equipment_id' => $this->equipment->id,
-            'owner_id' => $history->owner_id,
+            'holder_id' => $history->holder_id,
             'change_date' => now(),
             'action' => 'History entry edited',
             'action_type' => 'note',
@@ -285,8 +285,8 @@ class Show extends Component
 
         // Refresh equipment data
         $this->equipment->load([
-            'currentOwner',
-            'equipmentHistory.owner',
+            'currentHolder',
+            'equipmentHistory.holder',
             'equipmentHistory.performedBy',
         ]);
     }
@@ -309,7 +309,7 @@ class Show extends Component
         // Add a tracking entry for the deletion
         EquipmentHistory::create([
             'equipment_id' => $this->equipment->id,
-            'owner_id' => $this->equipment->current_owner_id,
+            'holder_id' => $this->equipment->current_holder_id,
             'change_date' => now(),
             'action' => 'History entry deleted',
             'action_type' => 'note',
@@ -319,8 +319,8 @@ class Show extends Component
 
         // Refresh equipment data
         $this->equipment->load([
-            'currentOwner',
-            'equipmentHistory.owner',
+            'currentHolder',
+            'equipmentHistory.holder',
             'equipmentHistory.performedBy',
         ]);
     }
@@ -412,7 +412,7 @@ class Show extends Component
             'editForm.serial' => 'required|string|max:255',
             'editForm.purchase_date' => 'required|date',
             'editForm.purchase_price' => 'required|numeric|min:0',
-            'editForm.current_owner_id' => 'nullable|exists:people,id',
+            'editForm.current_holder_id' => 'nullable|exists:people,id',
         ];
     }
 

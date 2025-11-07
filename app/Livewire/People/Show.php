@@ -313,12 +313,12 @@ class Show extends Component
 
     public function getVacanciesProperty()
     {
-        return \App\Models\Vacancy::orderBy('title')->get();
+        return \App\Models\Vacancy::with('client')->orderBy('title')->get();
     }
 
     public function getCvsProperty()
     {
-        return \App\Models\CV::orderBy('title')->get();
+        return \App\Models\CV::with('person')->orderBy('created_at', 'desc')->get();
     }
 
     public function render()

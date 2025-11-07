@@ -180,7 +180,7 @@
                         <option value="">Select Vacancy</option>
                         @foreach ($vacancies as $vacancy)
                             <option value="{{ $vacancy->id }}" {{ $vacancy->id == $person->vacancy_id ? 'selected' : '' }}>
-                                {{ $vacancy->title }}
+                                {{ $vacancy->title }} - {{ $vacancy->client->name }}
                             </option>
                         @endforeach
                     </flux:select>

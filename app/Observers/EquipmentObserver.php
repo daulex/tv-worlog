@@ -17,7 +17,7 @@ class EquipmentObserver
         // Create initial purchase history
         EquipmentHistory::create([
             'equipment_id' => $equipment->id,
-            'owner_id' => $equipment->current_owner_id,
+            'holder_id' => $equipment->current_holder_id,
             'change_date' => $equipment->purchase_date ?? now(),
             'action' => 'Initial purchase',
             'action_type' => 'purchased',
@@ -31,33 +31,33 @@ class EquipmentObserver
      */
     public function updated(Equipment $equipment): void
     {
-        // Check if owner has changed
-        if ($equipment->isDirty('current_owner_id')) {
-            $oldOwnerId = $equipment->getOriginal('current_owner_id');
-            $newOwnerId = $equipment->current_owner_id;
+        // Check if holder has changed
+        if ($equipment->isDirty('current_holder_id')) {
+            $oldHolderId = $equipment->getOriginal('current_holder_id');
+            $newHolderId = $equipment->current_holder_id;
 
-            if ($oldOwnerId !== $newOwnerId) {
-                $equipmentAction = $newOwnerId
-                    ? ($oldOwnerId ? 'Ownership transferred' : 'Initial assignment')
+            if ($oldHolderId !== $newHolderId) {
+                $equipmentAction = $newHolderId
+                    ? ($oldHolderId ? 'Assignment transferred' : 'Initial assignment')
                     : 'Equipment unassigned';
 
-                $equipmentActionType = $newOwnerId ? 'assigned' : 'retired';
+                $equipmentActionType = $newHolderId ? 'assigned' : 'retired';
 
                 // Create equipment history
                 EquipmentHistory::create([
                     'equipment_id' => $equipment->id,
-                    'owner_id' => $newOwnerId,
+                    'holder_id' => $newHolderId,
                     'change_date' => now(),
                     'action' => $equipmentAction,
                     'action_type' => $equipmentActionType,
-                    'notes' => null, // No notes needed for ownership transfers
+                    'notes' => null, // No notes needed for assignment transfers
                     'performed_by_id' => Auth::id(),
                 ]);
 
-                // Create person history for the new owner
-                if ($newOwnerId) {
+                // Create person history for the new holder
+                if ($newHolderId) {
                     PersonHistory::create([
-                        'person_id' => $newOwnerId,
+                        'person_id' => $newHolderId,
                         'change_date' => now(),
                         'action' => "Equipment assigned: {$equipment->brand} {$equipment->model}",
                         'action_type' => 'equipment_assigned',
@@ -66,10 +66,10 @@ class EquipmentObserver
                     ]);
                 }
 
-                // Create person history for the previous owner if equipment was unassigned
-                if ($oldOwnerId && ! $newOwnerId) {
+                // Create person history for the previous holder if equipment was unassigned
+                if ($oldHolderId && ! $newHolderId) {
                     PersonHistory::create([
-                        'person_id' => $oldOwnerId,
+                        'person_id' => $oldHolderId,
                         'change_date' => now(),
                         'action' => "Equipment returned: {$equipment->brand} {$equipment->model}",
                         'action_type' => 'equipment_returned',

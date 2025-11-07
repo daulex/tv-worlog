@@ -8,7 +8,7 @@ it('displays equipment details correctly', function () {
     $user = Person::factory()->create();
     $person = Person::factory()->create();
     $equipment = Equipment::factory()->create([
-        'current_owner_id' => $person->id,
+        'current_holder_id' => $person->id,
     ]);
 
     $response = $this->actingAs($user)->get("/equipment/{$equipment->id}");
@@ -61,31 +61,31 @@ it('can edit equipment details inline', function () {
         ->set('editForm.serial', 'Updated Serial')
         ->set('editForm.purchase_date', '2024-01-01')
         ->set('editForm.purchase_price', '999.99')
-        ->set('editForm.current_owner_id', $person->id)
+        ->set('editForm.current_holder_id', $person->id)
         ->call('saveEquipment')
         ->assertHasNoErrors();
 
     $equipment->refresh();
     expect($equipment->brand)->toBe('Updated Brand');
     expect($equipment->model)->toBe('Updated Model');
-    expect($equipment->current_owner_id)->toBe($person->id);
+    expect($equipment->current_holder_id)->toBe($person->id);
 });
 
-it('creates history record when equipment owner changes', function () {
+it('creates history record when equipment holder changes', function () {
     $user = Person::factory()->create();
     $person = Person::factory()->create();
-    $equipment = Equipment::factory()->create(['current_owner_id' => null]);
+    $equipment = Equipment::factory()->create(['current_holder_id' => null]);
 
     Livewire::actingAs($user)
         ->test(\App\Livewire\Equipment\Show::class, ['equipment' => $equipment])
         ->call('toggleEditMode')
-        ->set('editForm.current_owner_id', $person->id)
+        ->set('editForm.current_holder_id', $person->id)
         ->call('saveEquipment')
         ->assertHasNoErrors();
 
     $this->assertDatabaseHas('equipment_history', [
         'equipment_id' => $equipment->id,
-        'owner_id' => $person->id,
+        'holder_id' => $person->id,
         'action_type' => 'assigned',
         'performed_by_id' => $user->id,
     ]);
@@ -110,7 +110,7 @@ it('validates equipment edit form', function () {
 it('can retire equipment with notes', function () {
     $user = Person::factory()->create();
     $person = Person::factory()->create();
-    $equipment = Equipment::factory()->create(['current_owner_id' => $person->id]);
+    $equipment = Equipment::factory()->create(['current_holder_id' => $person->id]);
 
     Livewire::actingAs($user)
         ->test(\App\Livewire\Equipment\Show::class, ['equipment' => $equipment])
@@ -121,7 +121,7 @@ it('can retire equipment with notes', function () {
 
     $equipment->refresh();
     expect($equipment->isRetired())->toBeTrue();
-    expect($equipment->current_owner_id)->toBeNull();
+    expect($equipment->current_holder_id)->toBeNull();
     expect($equipment->retirement_notes)->toBe('Equipment is obsolete and being replaced');
 
     $this->assertDatabaseHas('equipment_history', [
@@ -200,7 +200,7 @@ it('cannot edit protected history types', function () {
     $equipment = Equipment::factory()->create();
 
     $history = $equipment->equipmentHistory()->create([
-        'owner_id' => null,
+        'holder_id' => null,
         'change_date' => now(),
         'action' => 'Equipment purchased',
         'action_type' => 'purchased',
@@ -221,11 +221,11 @@ it('can delete note history entries', function () {
     $equipment = Equipment::factory()->create();
 
     $history = $equipment->equipmentHistory()->create([
-        'owner_id' => null,
+        'holder_id' => null,
         'change_date' => now(),
-        'action' => 'Note to delete',
+        'action' => 'Original note',
         'action_type' => 'note',
-        'notes' => 'This note will be deleted',
+        'notes' => 'Original note content',
         'performed_by_id' => $user->id,
     ]);
 
@@ -252,7 +252,7 @@ it('cannot delete protected history types', function () {
     $equipment = Equipment::factory()->create();
 
     $history = $equipment->equipmentHistory()->create([
-        'owner_id' => null,
+        'holder_id' => null,
         'change_date' => now(),
         'action' => 'Equipment purchased',
         'action_type' => 'purchased',
@@ -334,28 +334,28 @@ it('can delete equipment notes', function () {
     ]);
 });
 
-it('does not create duplicate history entries for ownership changes', function () {
+it('does not create duplicate history entries for holder changes', function () {
     $user = Person::factory()->create();
     $person = Person::factory()->create();
-    $equipment = Equipment::factory()->create(['current_owner_id' => null]);
+    $equipment = Equipment::factory()->create(['current_holder_id' => null]);
 
     $initialHistoryCount = $equipment->equipmentHistory()->count();
 
     Livewire::actingAs($user)
         ->test(\App\Livewire\Equipment\Show::class, ['equipment' => $equipment])
         ->call('toggleEditMode')
-        ->set('editForm.current_owner_id', $person->id)
+        ->set('editForm.current_holder_id', $person->id)
         ->call('saveEquipment')
         ->assertHasNoErrors();
 
-    // Should only create ONE history entry for ownership change (handled by observer)
+    // Should only create ONE history entry for holder change (handled by observer)
     $newHistoryCount = $equipment->fresh()->equipmentHistory()->count();
     expect($newHistoryCount)->toBe($initialHistoryCount + 1);
 
-    // Verify the history entry was created correctly
+    // Verify history entry was created correctly
     $this->assertDatabaseHas('equipment_history', [
         'equipment_id' => $equipment->id,
-        'owner_id' => $person->id,
+        'holder_id' => $person->id,
         'action_type' => 'assigned',
         'performed_by_id' => $user->id,
     ]);

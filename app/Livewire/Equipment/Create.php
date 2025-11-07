@@ -18,7 +18,7 @@ class Create extends Component
 
     public $purchase_price;
 
-    public $current_owner_id;
+    public $current_holder_id;
 
     protected function rules(): array
     {
@@ -28,7 +28,7 @@ class Create extends Component
             'serial' => 'required|string|unique:equipment,serial',
             'purchase_date' => 'required|date',
             'purchase_price' => 'required|numeric|min:0',
-            'current_owner_id' => 'nullable|exists:people,id',
+            'current_holder_id' => 'nullable|exists:people,id',
         ];
     }
 
@@ -42,7 +42,7 @@ class Create extends Component
             'serial' => $this->serial,
             'purchase_date' => $this->purchase_date,
             'purchase_price' => $this->purchase_price,
-            'current_owner_id' => $this->current_owner_id,
+            'current_holder_id' => $this->current_holder_id,
         ]);
 
         session()->flash('message', 'Equipment created successfully.');

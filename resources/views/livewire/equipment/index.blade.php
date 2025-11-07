@@ -23,7 +23,7 @@
                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Brand</th>
                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Model</th>
                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Serial</th>
-                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Current Owner</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Holder</th>
                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Purchase Price</th>
                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
                 </tr>
@@ -35,8 +35,8 @@
                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ $item->model }}</td>
                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ $item->serial }}</td>
                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                            @if($item->currentOwner)
-                                {{ $item->currentOwner->first_name }} {{ $item->currentOwner->last_name }}
+                            @if($item->currentHolder)
+                                {{ $item->currentHolder->first_name }} {{ $item->currentHolder->last_name }}
                             @else
                                 -
                             @endif

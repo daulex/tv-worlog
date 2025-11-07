@@ -37,7 +37,7 @@ class EquipmentFactory extends Factory
             'serial' => fake()->unique()->regexify('[A-Z0-9]{8,12}'),
             'purchase_date' => fake()->dateTimeBetween('-2 years', 'now'),
             'purchase_price' => fake()->randomFloat(2, $device['price_range'][0], $device['price_range'][1]),
-            'current_owner_id' => Person::factory(),
+            'current_holder_id' => Person::factory(),
         ];
     }
 }

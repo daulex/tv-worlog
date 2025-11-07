@@ -14,7 +14,7 @@ class EquipmentHistory extends Model
 
     protected $fillable = [
         'equipment_id',
-        'owner_id',
+        'holder_id',
         'change_date',
         'action',
         'notes',
@@ -31,9 +31,9 @@ class EquipmentHistory extends Model
         return $this->belongsTo(Equipment::class);
     }
 
-    public function owner(): BelongsTo
+    public function holder(): BelongsTo
     {
-        return $this->belongsTo(Person::class, 'owner_id');
+        return $this->belongsTo(Person::class, 'holder_id');
     }
 
     public function performedBy(): BelongsTo

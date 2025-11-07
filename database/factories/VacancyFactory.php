@@ -19,11 +19,16 @@ class VacancyFactory extends Factory
     {
         return [
             'client_id' => Client::factory(),
-            'title' => fake()->jobTitle(),
-            'description' => fake()->paragraph(),
-            'date_opened' => fake()->date(),
-            'date_closed' => fake()->optional(0.3)->date(),
-            'budget' => fake()->optional(0.7)->randomFloat(2, 30000, 120000),
+            'title' => fake()->randomElement([
+                '.NET Full Stack Developer', 'Node.js Developer', 'Data Engineer',
+                'Laravel Developer', 'React Developer', 'Python Developer',
+                'DevOps Engineer', 'Frontend Developer', 'Backend Developer',
+                'Full Stack JavaScript Developer', 'Senior .NET Developer',
+            ]),
+            'description' => fake()->paragraph(3),
+            'date_opened' => fake()->dateTimeBetween('-6 months', 'now'),
+            'date_closed' => fake()->optional(0.3)->dateTimeBetween('-3 months', 'now'),
+            'budget' => fake()->optional(0.8)->randomFloat(0, 3000, 6000),
             'status' => fake()->randomElement(['Open', 'Closed', 'Paused']),
         ];
     }
