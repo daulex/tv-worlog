@@ -54,11 +54,33 @@
 
                 <div>
                     <flux:input
+                        wire:model="email2"
+                        label="Secondary Email"
+                        type="email"
+                    />
+                    @error('email2')
+                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                    @enderror
+                </div>
+
+                <div>
+                    <flux:input
                         wire:model="phone"
                         label="Phone"
                         type="tel"
                     />
                     @error('phone')
+                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                    @enderror
+                </div>
+
+                <div>
+                    <flux:input
+                        wire:model="phone2"
+                        label="Secondary Phone"
+                        type="tel"
+                    />
+                    @error('phone2')
                         <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                     @enderror
                 </div>
@@ -92,6 +114,17 @@
                         type="date"
                     />
                     @error('starting_date')
+                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                    @enderror
+                </div>
+
+                <div>
+                    <flux:input
+                        wire:model="last_working_date"
+                        label="Last Working Date"
+                        type="date"
+                    />
+                    @error('last_working_date')
                         <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                     @enderror
                 </div>

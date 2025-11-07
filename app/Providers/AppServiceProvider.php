@@ -3,7 +3,11 @@
 namespace App\Providers;
 
 use App\Models\Equipment;
+use App\Models\EventParticipant;
+use App\Models\Person;
 use App\Observers\EquipmentObserver;
+use App\Observers\EventParticipantObserver;
+use App\Observers\PersonObserver;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\ServiceProvider;
 
@@ -23,6 +27,8 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
         Equipment::observe(EquipmentObserver::class);
+        Person::observe(PersonObserver::class);
+        EventParticipant::observe(EventParticipantObserver::class);
 
         // Set up morph map for polymorphic relationships
         Relation::morphMap([

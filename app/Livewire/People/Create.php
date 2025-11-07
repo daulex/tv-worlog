@@ -25,6 +25,8 @@ class Create extends Component
 
     public $starting_date;
 
+    public $last_working_date;
+
     public $position;
 
     public $status;
@@ -44,6 +46,7 @@ class Create extends Component
             'date_of_birth' => 'required|date',
             'address' => 'nullable|string',
             'starting_date' => 'nullable|date',
+            'last_working_date' => 'nullable|date',
             'position' => 'nullable|string|max:255',
             'status' => 'required|in:Candidate,Employee,Retired',
             'client_id' => 'nullable|exists:clients,id',
@@ -64,6 +67,7 @@ class Create extends Component
             'date_of_birth' => $this->date_of_birth,
             'address' => $this->address,
             'starting_date' => $this->starting_date,
+            'last_working_date' => $this->last_working_date,
             'position' => $this->position,
             'status' => $this->status,
             'client_id' => $this->client_id,

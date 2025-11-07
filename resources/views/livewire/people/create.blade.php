@@ -98,6 +98,17 @@
 
                 <div>
                     <flux:input
+                        wire:model="last_working_date"
+                        label="Last Working Date"
+                        type="date"
+                    />
+                    @error('last_working_date')
+                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                    @enderror
+                </div>
+
+                <div>
+                    <flux:input
                         wire:model="position"
                         label="Position"
                         type="text"

@@ -44,6 +44,11 @@ class Equipment extends Model
         return $this->morphMany(Note::class, 'noteable', 'note_type', 'entity_id');
     }
 
+    public function getNameAttribute(): string
+    {
+        return "{$this->brand} {$this->model}";
+    }
+
     public function isRetired(): bool
     {
         return ! is_null($this->retired_at);

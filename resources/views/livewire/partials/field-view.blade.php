@@ -1,4 +1,4 @@
-@props(['label', 'value', 'isEditing', 'field'])
+@props(['label', 'value', 'isEditing', 'field', 'isUnassigned'])
 
 @if (!$isEditing)
     <div class="flex items-center justify-between py-3 border-b border-gray-100 dark:border-gray-800">
@@ -6,6 +6,8 @@
         <div class="text-right">
             @if($value)
                 <flux:text>{{ $value }}</flux:text>
+            @elseif(isset($isUnassigned) && $isUnassigned)
+                <flux:text class="text-gray-400 italic">{{ __('Unassigned') }}</flux:text>
             @else
                 <flux:text class="text-gray-400">—</flux:text>
             @endif

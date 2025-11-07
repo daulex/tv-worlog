@@ -41,7 +41,7 @@
                                 -
                             @endif
                         </td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${{ number_format($item->purchase_price, 2) }}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">€{{ number_format($item->purchase_price, 2) }}</td>
                         <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
                             <flux:button variant="ghost" size="sm" href="{{ route('equipment.show', $item) }}">View</flux:button>
                             <flux:button variant="ghost" size="sm" href="{{ route('equipment.edit', $item) }}">Edit</flux:button>

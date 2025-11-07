@@ -46,6 +46,7 @@
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ $person->position ?? '-' }}</td>
                         <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                            <flux:button variant="ghost" size="sm" href="{{ route('people.show', $person) }}">View</flux:button>
                             <flux:button variant="ghost" size="sm" href="{{ route('people.edit', $person) }}">Edit</flux:button>
                             <flux:button variant="ghost" size="sm" wire:click="delete({{ $person->id }})" wire:confirm="Are you sure?">Delete</flux:button>
                         </td>

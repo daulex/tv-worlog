@@ -38,12 +38,35 @@
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                             @if ($note->noteable)
-                                {{ $note->noteable->name ?? $note->noteable->title ?? $note->noteable->id }}
+                                @switch($note->note_type)
+                                    @case('person')
+                                        <flux:button variant="ghost" size="sm" href="{{ route('people.show', $note->noteable) }}">
+                                            {{ $note->noteable->name }}
+                                        </flux:button>
+                                        @break
+                                    @case('client')
+                                        <flux:button variant="ghost" size="sm" href="{{ route('clients.edit', $note->noteable) }}">
+                                            {{ $note->noteable->name }}
+                                        </flux:button>
+                                        @break
+                                    @case('vacancy')
+                                        <flux:button variant="ghost" size="sm" href="{{ route('vacancies.edit', $note->noteable) }}">
+                                            {{ $note->noteable->title }}
+                                        </flux:button>
+                                        @break
+                                    @case('equipment')
+                                        <flux:button variant="ghost" size="sm" href="{{ route('equipment.show', $note->noteable) }}">
+                                            {{ $note->noteable->name }}
+                                        </flux:button>
+                                        @break
+                                    @default
+                                        {{ $note->noteable->name ?? $note->noteable->title ?? $note->noteable->id }}
+                                @endswitch
                             @else
                                 Deleted {{ ucfirst($note->note_type) }}
                             @endif
                         </td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ $note->created_at->format('M j, Y g:i A') }}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ $note->created_at->setTimezone(config('app.timezone'))->format('M j, Y g:i A') }}</td>
                         <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
                             <flux:button variant="ghost" size="sm" href="{{ route('notes.edit', $note) }}">Edit</flux:button>
                             <flux:button variant="ghost" size="sm" wire:click="delete({{ $note->id }})" wire:confirm="Are you sure?">Delete</flux:button>

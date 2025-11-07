@@ -63,7 +63,7 @@
                     
                     @include('livewire.partials.field-view', [
                         'label' => __('Purchase Price'),
-                        'value' => '$' . number_format($equipment->purchase_price, 2),
+                        'value' => '€' . number_format($equipment->purchase_price, 2),
                     ])
                     
                     @include('livewire.partials.field-view', [
@@ -273,7 +273,7 @@
                                                     {{ __('Note') }}
                                                 </flux:badge>
                                                 <span class="text-xs text-gray-500 dark:text-gray-400">
-                                                    {{ $note->created_at->format('M d, Y H:i') }}
+                                                    {{ $note->created_at->setTimezone(config('app.timezone'))->format('M d, Y H:i') }}
                                                 </span>
                                             </div>
                                             
@@ -341,7 +341,7 @@
                                                     {{ __(ucfirst($history->action_type)) }}
                                                 </flux:badge>
                                                 <span class="text-xs text-gray-500 dark:text-gray-400">
-                                                    {{ $history->change_date->format('M d, Y H:i') }}
+                                                    {{ $history->change_date->setTimezone(config('app.timezone'))->format('M d, Y H:i') }}
                                                 </span>
                                                 @if($history->performedBy)
                                                     <span class="text-xs text-gray-500 dark:text-gray-400">
@@ -402,25 +402,25 @@
                                         @else
                                             @switch($history->action_type)
                                                 @case('purchased')
-                                                    <flux:text>{{ $history->change_date->format('M d, Y H:i') }} - Equipment purchased</flux:text>
+                                                    <flux:text>{{ $history->change_date->setTimezone(config('app.timezone'))->format('M d, Y H:i') }} - Equipment purchased</flux:text>
                                                     @if($history->notes)
                                                         <flux:text class="text-gray-600 dark:text-gray-400 text-sm mt-1">{{ $history->notes }}</flux:text>
                                                     @endif
                                                     @break
                                                     
                                                 @case('assigned')
-                                                    <flux:text>{{ $history->change_date->format('M d, Y H:i') }} - Transferred to {{ $history->owner?->full_name ?? 'Unassigned' }}</flux:text>
+                                                    <flux:text>{{ $history->change_date->setTimezone(config('app.timezone'))->format('M d, Y H:i') }} - Transferred to {{ $history->owner?->full_name ?? 'Unassigned' }}</flux:text>
                                                     @break
                                                     
                                                 @case('retired')
-                                                    <flux:text>{{ $history->change_date->format('M d, Y H:i') }} - Equipment retired</flux:text>
+                                                    <flux:text>{{ $history->change_date->setTimezone(config('app.timezone'))->format('M d, Y H:i') }} - Equipment retired</flux:text>
                                                     @if($history->notes)
                                                         <flux:text class="text-gray-600 dark:text-gray-400 text-sm mt-1">{{ $history->notes }}</flux:text>
                                                     @endif
                                                     @break
                                                     
                                                 @default
-                                                    <flux:text>{{ $history->action }} - {{ $history->change_date->format('M d, Y H:i') }}</flux:text>
+                                                    <flux:text>{{ $history->action }} - {{ $history->change_date->setTimezone(config('app.timezone'))->format('M d, Y H:i') }}</flux:text>
                                                     @if($history->notes)
                                                         <flux:text class="text-gray-600 dark:text-gray-400 text-sm mt-1">{{ $history->notes }}</flux:text>
                                                     @endif

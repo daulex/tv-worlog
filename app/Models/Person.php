@@ -7,7 +7,6 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
-use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Fortify\TwoFactorAuthenticatable;
@@ -22,10 +21,13 @@ class Person extends Authenticatable
         'last_name',
         'pers_code',
         'phone',
+        'phone2',
         'email',
+        'email2',
         'date_of_birth',
         'address',
         'starting_date',
+        'last_working_date',
         'position',
         'client_id',
         'vacancy_id',
@@ -43,6 +45,7 @@ class Person extends Authenticatable
     protected $casts = [
         'date_of_birth' => 'date',
         'starting_date' => 'date',
+        'last_working_date' => 'date',
         'email_verified_at' => 'datetime',
         'two_factor_confirmed_at' => 'datetime',
         'password' => 'hashed',
@@ -83,9 +86,14 @@ class Person extends Authenticatable
         return $this->belongsToMany(Event::class, 'event_participants');
     }
 
-    public function notes(): MorphMany
+    public function notes(): HasMany
     {
-        return $this->morphMany(Note::class, 'notable');
+        return $this->hasMany(Note::class, 'entity_id')->where('note_type', 'person');
+    }
+
+    public function personHistory(): HasMany
+    {
+        return $this->hasMany(PersonHistory::class)->orderBy('change_date', 'desc')->orderBy('id', 'desc');
     }
 
     public function getFullNameAttribute(): string

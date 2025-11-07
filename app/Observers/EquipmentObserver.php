@@ -4,6 +4,7 @@ namespace App\Observers;
 
 use App\Models\Equipment;
 use App\Models\EquipmentHistory;
+use App\Models\PersonHistory;
 use Illuminate\Support\Facades\Auth;
 
 class EquipmentObserver
@@ -36,17 +37,46 @@ class EquipmentObserver
             $newOwnerId = $equipment->current_owner_id;
 
             if ($oldOwnerId !== $newOwnerId) {
+                $equipmentAction = $newOwnerId
+                    ? ($oldOwnerId ? 'Ownership transferred' : 'Initial assignment')
+                    : 'Equipment unassigned';
+
+                $equipmentActionType = $newOwnerId ? 'assigned' : 'retired';
+
+                // Create equipment history
                 EquipmentHistory::create([
                     'equipment_id' => $equipment->id,
                     'owner_id' => $newOwnerId,
                     'change_date' => now(),
-                    'action' => $newOwnerId
-                        ? ($oldOwnerId ? 'Ownership transferred' : 'Initial assignment')
-                        : 'Equipment unassigned',
-                    'action_type' => 'assigned',
+                    'action' => $equipmentAction,
+                    'action_type' => $equipmentActionType,
                     'notes' => null, // No notes needed for ownership transfers
                     'performed_by_id' => Auth::id(),
                 ]);
+
+                // Create person history for the new owner
+                if ($newOwnerId) {
+                    PersonHistory::create([
+                        'person_id' => $newOwnerId,
+                        'change_date' => now(),
+                        'action' => "Equipment assigned: {$equipment->brand} {$equipment->model}",
+                        'action_type' => 'equipment_assigned',
+                        'notes' => "Equipment '{$equipment->brand} {$equipment->model}' (S/N: {$equipment->serial}) was assigned to person",
+                        'performed_by_id' => Auth::id(),
+                    ]);
+                }
+
+                // Create person history for the previous owner if equipment was unassigned
+                if ($oldOwnerId && ! $newOwnerId) {
+                    PersonHistory::create([
+                        'person_id' => $oldOwnerId,
+                        'change_date' => now(),
+                        'action' => "Equipment returned: {$equipment->brand} {$equipment->model}",
+                        'action_type' => 'equipment_returned',
+                        'notes' => "Equipment '{$equipment->brand} {$equipment->model}' (S/N: {$equipment->serial}) was returned by person",
+                        'performed_by_id' => Auth::id(),
+                    ]);
+                }
             }
         }
     }
