@@ -27,7 +27,7 @@ it('shows equipment history timeline', function () {
     $response = $this->actingAs($user)->get("/equipment/{$equipment->id}");
 
     $response->assertStatus(200)
-        ->assertSee('Equipment History');
+        ->assertSee('Timeline & History');
 });
 
 it('can add a note to equipment', function () {

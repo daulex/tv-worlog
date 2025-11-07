@@ -57,6 +57,32 @@ class Show extends Component
         $this->initializeEditForm();
     }
 
+    public function getTimeline()
+    {
+        $timeline = collect();
+
+        // Add equipment history items (excluding notes since they're handled separately)
+        foreach ($this->equipment->equipmentHistory->where('action_type', '!=', 'note') as $history) {
+            $timeline->push([
+                'type' => 'history',
+                'date' => $history->change_date,
+                'data' => $history,
+            ]);
+        }
+
+        // Add notes
+        foreach ($this->equipment->notes as $note) {
+            $timeline->push([
+                'type' => 'note',
+                'date' => $note->created_at,
+                'data' => $note,
+            ]);
+        }
+
+        // Sort by date (newest first)
+        return $timeline->sortByDesc('date')->values();
+    }
+
     private function initializeEditForm()
     {
         $this->editForm = [
