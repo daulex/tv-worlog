@@ -19,6 +19,8 @@ class Edit extends Component
 
     public $entity_id;
 
+    public $created_at;
+
     public $people;
 
     public $clients;
@@ -33,6 +35,7 @@ class Edit extends Component
             'note_text' => 'required|string|max:65535',
             'note_type' => 'required|in:person,client,vacancy,equipment',
             'entity_id' => 'required|integer|exists:people,id|exists:clients,id|exists:vacancies,id|exists:equipment,id',
+            'created_at' => 'required|date_format:Y-m-d\TH:i',
         ];
     }
 
@@ -42,6 +45,7 @@ class Edit extends Component
         $this->note_text = $note->note_text;
         $this->note_type = $note->note_type;
         $this->entity_id = $note->entity_id;
+        $this->created_at = $note->created_at->format('Y-m-d\TH:i');
 
         $this->people = Person::orderBy('name')->get();
         $this->clients = Client::orderBy('name')->get();
@@ -57,6 +61,7 @@ class Edit extends Component
             'note_text' => $this->note_text,
             'note_type' => $this->note_type,
             'entity_id' => $this->entity_id,
+            'created_at' => $this->created_at,
         ]);
 
         session()->flash('message', 'Note updated successfully.');

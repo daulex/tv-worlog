@@ -4,6 +4,7 @@ namespace App\Livewire\Equipment;
 
 use App\Models\Equipment;
 use App\Models\EquipmentHistory;
+use App\Models\Note;
 use App\Models\Person;
 use Livewire\Component;
 
@@ -59,28 +60,42 @@ class Show extends Component
 
     public function getTimeline()
     {
+        // Force fresh load from database to avoid caching issues
+        $freshEquipment = Equipment::with([
+            'equipmentHistory' => function ($query) {
+                $query->where('action_type', '!=', 'note')->orderBy('change_date', 'desc')->orderBy('id', 'desc');
+            },
+            'notes' => function ($query) {
+                $query->orderBy('created_at', 'desc')->orderBy('id', 'desc');
+            },
+        ])->find($this->equipment->id);
+
         $timeline = collect();
 
         // Add equipment history items (excluding notes since they're handled separately)
-        foreach ($this->equipment->equipmentHistory->where('action_type', '!=', 'note') as $history) {
+        foreach ($freshEquipment->equipmentHistory as $history) {
             $timeline->push([
                 'type' => 'history',
                 'date' => $history->change_date,
+                'id' => $history->id,
                 'data' => $history,
             ]);
         }
 
         // Add notes
-        foreach ($this->equipment->notes as $note) {
+        foreach ($freshEquipment->notes as $note) {
             $timeline->push([
                 'type' => 'note',
                 'date' => $note->created_at,
+                'id' => $note->id,
                 'data' => $note,
             ]);
         }
 
-        // Sort by date (newest first)
-        return $timeline->sortByDesc('date')->values();
+        // Sort by date first, then by ID (newest first)
+        return $timeline->sortByDesc(function ($item) {
+            return $item['date']->timestamp.str_pad((string) $item['id'], 10, '0', STR_PAD_LEFT);
+        })->values();
     }
 
     private function initializeEditForm()
@@ -150,38 +165,8 @@ class Show extends Component
             'current_owner_id' => $newOwnerId,
         ]);
 
-        // Create history record if owner changed
-        if ($oldOwnerId != $newOwnerId && $newOwnerId) {
-            EquipmentHistory::create([
-                'equipment_id' => $this->equipment->id,
-                'owner_id' => $newOwnerId,
-                'change_date' => now(),
-                'action' => 'Equipment updated and assigned',
-                'action_type' => 'assigned',
-                'notes' => 'Equipment details were updated and assigned to new owner',
-                'performed_by_id' => auth()->id(),
-            ]);
-        } elseif ($oldOwnerId != $newOwnerId) {
-            EquipmentHistory::create([
-                'equipment_id' => $this->equipment->id,
-                'owner_id' => null,
-                'change_date' => now(),
-                'action' => 'Equipment updated and unassigned',
-                'action_type' => 'assigned',
-                'notes' => 'Equipment details were updated and unassigned from previous owner',
-                'performed_by_id' => auth()->id(),
-            ]);
-        } else {
-            EquipmentHistory::create([
-                'equipment_id' => $this->equipment->id,
-                'owner_id' => $this->equipment->current_owner_id,
-                'change_date' => now(),
-                'action' => 'Equipment details updated',
-                'action_type' => 'note',
-                'notes' => 'Equipment information was modified',
-                'performed_by_id' => auth()->id(),
-            ]);
-        }
+        // Note: Equipment history is now handled by the EquipmentObserver
+        // This prevents duplicate entries for ownership changes
 
         // Refresh equipment data
         $this->equipment->load([
@@ -236,8 +221,14 @@ class Show extends Component
         ]);
     }
 
-    public function editHistory(EquipmentHistory $history)
+    public function editHistory($historyId)
     {
+        $history = EquipmentHistory::find($historyId);
+
+        if (! $history || $history->equipment_id !== $this->equipment->id) {
+            return;
+        }
+
         // Only allow editing notes and action for certain types
         if (! in_array($history->action_type, ['note', 'repaired'])) {
             return;
@@ -300,8 +291,14 @@ class Show extends Component
         ]);
     }
 
-    public function deleteHistory(EquipmentHistory $history)
+    public function deleteHistory($historyId)
     {
+        $history = EquipmentHistory::find($historyId);
+
+        if (! $history || $history->equipment_id !== $this->equipment->id) {
+            return;
+        }
+
         // Don't allow deleting certain critical history types
         if (in_array($history->action_type, ['purchased', 'assigned', 'retired'])) {
             return;
@@ -338,8 +335,14 @@ class Show extends Component
         return ! in_array($history->action_type, ['purchased', 'assigned', 'retired']);
     }
 
-    public function editNote(Note $note)
+    public function editNote($noteId)
     {
+        $note = Note::find($noteId);
+
+        if (! $note || $note->note_type !== 'equipment' || $note->entity_id !== $this->equipment->id) {
+            return;
+        }
+
         $this->editingNote = $note->id;
         $this->noteEditForm = [
             'id' => $note->id,
@@ -364,7 +367,7 @@ class Show extends Component
 
         $note = Note::find($this->noteEditForm['id']);
 
-        if (! $note || $note->noteable_type !== 'App\\Models\\Equipment' || $note->entity_id !== $this->equipment->id) {
+        if (! $note || $note->note_type !== 'equipment' || $note->entity_id !== $this->equipment->id) {
             return;
         }
 
@@ -382,9 +385,11 @@ class Show extends Component
         $this->equipment->load('notes');
     }
 
-    public function deleteNote(Note $note)
+    public function deleteNote($noteId)
     {
-        if ($note->noteable_type !== 'App\\Models\\Equipment' || $note->entity_id !== $this->equipment->id) {
+        $note = Note::find($noteId);
+
+        if (! $note || $note->note_type !== 'equipment' || $note->entity_id !== $this->equipment->id) {
             return;
         }
 

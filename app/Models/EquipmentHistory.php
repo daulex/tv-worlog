@@ -23,7 +23,7 @@ class EquipmentHistory extends Model
     ];
 
     protected $casts = [
-        'change_date' => 'date',
+        'change_date' => 'datetime',
     ];
 
     public function equipment(): BelongsTo

@@ -14,6 +14,7 @@ class Note extends Model
         'note_type',
         'entity_id',
         'note_text',
+        'created_at',
     ];
 
     protected $casts = [

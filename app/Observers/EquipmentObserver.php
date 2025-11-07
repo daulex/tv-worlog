@@ -40,7 +40,9 @@ class EquipmentObserver
                     'equipment_id' => $equipment->id,
                     'owner_id' => $newOwnerId,
                     'change_date' => now(),
-                    'action' => $oldOwnerId ? 'Ownership transferred' : 'Initial assignment',
+                    'action' => $newOwnerId
+                        ? ($oldOwnerId ? 'Ownership transferred' : 'Initial assignment')
+                        : 'Equipment unassigned',
                     'action_type' => 'assigned',
                     'notes' => null, // No notes needed for ownership transfers
                     'performed_by_id' => Auth::id(),

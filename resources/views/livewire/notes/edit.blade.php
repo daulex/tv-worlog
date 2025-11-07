@@ -43,6 +43,12 @@
                 <flux:error name="entity_id" />
             </flux:field>
 
+            <flux:field>
+                <flux:label>Created At</flux:label>
+                <flux:input wire:model="created_at" type="datetime-local" required />
+                <flux:error name="created_at" />
+            </flux:field>
+
             <flux:field class="md:col-span-2">
                 <flux:label>Note Content</flux:label>
                 <flux:textarea wire:model="note_text" rows="6" required placeholder="Enter your note here..."></flux:textarea>

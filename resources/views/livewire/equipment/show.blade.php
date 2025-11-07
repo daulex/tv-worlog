@@ -20,18 +20,15 @@
             @if(!$isEditing)
                 <div class="flex space-x-2">
                     @if($equipment->isRetired())
-                        <flux:button wire:click="unretireEquipment" variant="outline" size="sm">
-                            <flux:icon name="arrow-path" class="w-4 h-4 mr-2" />
+                        <flux:button wire:click="unretireEquipment" variant="outline" size="sm" icon="arrow-path">
                             {{ __('Return to Service') }}
                         </flux:button>
                     @else
-                        <flux:button wire:click="toggleRetireForm" variant="outline" size="sm">
-                            <flux:icon name="archive-box-x-mark" class="w-4 h-4 mr-2" />
+                        <flux:button wire:click="toggleRetireForm" variant="outline" size="sm" icon="archive-box-x-mark">
                             {{ __('Retire') }}
                         </flux:button>
                     @endif
-                    <flux:button wire:click="toggleEditMode" variant="outline" size="sm">
-                        <flux:icon name="pencil" class="w-4 h-4 mr-2" />
+                    <flux:button wire:click="toggleEditMode" variant="outline" size="sm" icon="pencil">
                         {{ __('Edit') }}
                     </flux:button>
                 </div>
@@ -136,13 +133,11 @@
                 </div>
                 
                 <div class="flex space-x-4 mt-6">
-                    <flux:button type="submit" variant="primary">
-                        <flux:icon name="check" class="w-4 h-4 mr-2" />
+                    <flux:button type="submit" variant="primary" icon="check">
                         {{ __('Save Changes') }}
                     </flux:button>
                     
-                    <flux:button wire:click="cancelEdit" variant="outline" type="button">
-                        <flux:icon name="x-mark" class="w-4 h-4 mr-2" />
+                    <flux:button wire:click="cancelEdit" variant="outline" type="button" icon="x-mark">
                         {{ __('Cancel') }}
                     </flux:button>
                 </div>
@@ -150,13 +145,67 @@
         @endif
     </flux:container>
 
-    <!-- Unified Timeline -->
+    <!-- Retirement Section -->
+    @if($equipment->isRetired())
+        <flux:container>
+            <flux:heading level="2">{{ __('Retirement Information') }}</flux:heading>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="space-y-4">
+                    <flux:field label="{{ __('Retirement Date') }}">
+                        <flux:text>{{ $equipment->retired_at->format('M d, Y') }}</flux:text>
+                    </flux:field>
+                </div>
+                
+                <div class="space-y-4">
+                    @if($equipment->retirement_notes)
+                        <flux:field label="{{ __('Retirement Notes') }}">
+                            <flux:text>{{ $equipment->retirement_notes }}</flux:text>
+                        </flux:field>
+                    @endif
+                </div>
+            </div>
+        </flux:container>
+    @elseif($showRetireForm)
+        <flux:container>
+            <flux:heading level="2" class="mb-2">{{ __('Retire Equipment') }}</flux:heading>
+            
+            <flux:callout variant="warning">
+                {{ __('Retiring equipment will remove it from active service and unassign it from any current owner. This action can be reversed later.') }}
+            </flux:callout>
+            
+            <form wire:submit="retireEquipment">
+                <flux:field label="{{ __('Retirement Notes') }}">
+                    <flux:textarea 
+                        wire:model="retirementNotes" 
+                        placeholder="{{ __('Why is this equipment being retired?') }}"
+                        rows="3"
+                        class="mt-3"
+                        required
+                    />
+                    @error('retirementNotes')
+                        <flux:text color="red">{{ $message }}</flux:text>
+                    @enderror
+                </flux:field>
+                
+                <div class="flex space-x-4 mt-4">
+                    <flux:button type="submit" variant="danger" icon="archive-box-x-mark">
+                        {{ __('Retire Equipment') }}
+                    </flux:button>
+                    
+                    <flux:button wire:click="toggleRetireForm" variant="outline" type="button" icon="x-mark">
+                        {{ __('Cancel') }}
+                    </flux:button>
+                </div>
+            </form>
+        </flux:container>
+    @endif
+
+
+    <!-- Add Note Section -->
     <flux:container>
-        <flux:heading level="2">{{ __('Timeline & History') }}</flux:heading>
-        
-        <!-- Add Note Form -->
         @if($showNoteForm)
-            <flux:container class="bg-blue-50 dark:bg-blue-900/20 border-blue-200 dark:border-blue-800 mb-4">
+            <flux:container class="bg-blue-50 dark:bg-blue-900/20 border-blue-200 dark:border-blue-800 mb-4 py-5 rounded-lg">
                 <flux:field label="{{ __('Add Note') }}">
                     <flux:textarea 
                         wire:model="newNote" 
@@ -169,24 +218,28 @@
                     @enderror
                 </flux:field>
                 
-                <div class="flex space-x-4">
-                    <flux:button wire:click="addNote" type="button">
-                        <flux:icon name="check" class="w-4 h-4 mr-2" />
+                <div class="flex space-x-4 pt-3">
+                    <flux:button wire:click="addNote" type="button" icon="plus">
                         {{ __('Add Note') }}
                     </flux:button>
                     
-                    <flux:button wire:click="toggleNoteForm" variant="outline" type="button">
-                        <flux:icon name="x-mark" class="w-4 h-4 mr-2" />
+                    <flux:button wire:click="toggleNoteForm" variant="outline" type="button" icon="x-mark">
                         {{ __('Cancel') }}
                     </flux:button>
                 </div>
             </flux:container>
         @else
-            <flux:button wire:click="toggleNoteForm" variant="outline" class="mb-4">
-                <flux:icon name="plus" class="w-4 h-4 mr-2" />
+            <flux:button wire:click="toggleNoteForm" variant="outline" class="mb-4" icon="plus">
                 {{ __('Add Note') }}
             </flux:button>
         @endif
+    </flux:container>
+
+    <!-- Unified Timeline -->
+    <flux:container>
+        <flux:heading level="2" class="mb-2">{{ __('Timeline & History') }}</flux:heading>
+        
+        
         
         <!-- Unified Timeline -->
         @php
@@ -196,7 +249,7 @@
         @if($timeline->count() > 0)
             <div class="relative">
                 <!-- Timeline Line -->
-                <div class="absolute left-6 top-0 bottom-0 w-0.5 bg-gray-200 dark:bg-gray-700"></div>
+                <div class="absolute left-4 top-0 bottom-0 w-0.5 bg-gray-200 dark:bg-gray-700"></div>
                 
                 <!-- Timeline Items -->
                 <div class="space-y-4">
@@ -231,11 +284,9 @@
                                                 </flux:button>
                                             @else
                                                 <div class="flex items-center space-x-1">
-                                                    <flux:button wire:click="editNote({{ $note->id }})" variant="outline" size="sm">
-                                                        <flux:icon name="pencil" class="w-3 h-3" />
+                                                    <flux:button wire:click="editNote({{ $note->id }})" variant="outline" size="sm" icon="pencil">
                                                     </flux:button>
-                                                    <flux:button wire:click="deleteNote({{ $note->id }})" variant="outline" size="sm" class="text-red-600 hover:text-red-700">
-                                                        <flux:icon name="trash" class="w-3 h-3" />
+                                                    <flux:button wire:click="deleteNote({{ $note->id }})" variant="outline" size="sm" class="text-red-600 hover:text-red-700" icon="trash">
                                                     </flux:button>
                                                 </div>
                                             @endif
@@ -256,15 +307,13 @@
                                                 </flux:field>
                                                 
                                                 <div class="flex space-x-4 mt-3">
-                                                    <flux:button wire:click="saveNoteEdit" type="button" size="sm">
-                                                        <flux:icon name="check" class="w-3 h-3 mr-1" />
-                                                        {{ __('Save') }}
-                                                    </flux:button>
-                                                    
-                                                    <flux:button wire:click="cancelNoteEdit" variant="outline" type="button" size="sm">
-                                                        <flux:icon name="x-mark" class="w-3 h-3 mr-1" />
-                                                        {{ __('Cancel') }}
-                                                    </flux:button>
+                                                        <flux:button wire:click="saveNoteEdit" type="button" size="sm" icon="check">
+                                                            {{ __('Save') }}
+                                                        </flux:button>
+                                                        
+                                                        <flux:button wire:click="cancelNoteEdit" variant="outline" type="button" size="sm" icon="x-mark">
+                                                            {{ __('Cancel') }}
+                                                        </flux:button>
                                                 </div>
                                             </div>
                                         @else
@@ -292,7 +341,7 @@
                                                     {{ __(ucfirst($history->action_type)) }}
                                                 </flux:badge>
                                                 <span class="text-xs text-gray-500 dark:text-gray-400">
-                                                    {{ $history->change_date->format('M d, Y') }}
+                                                    {{ $history->change_date->format('M d, Y H:i') }}
                                                 </span>
                                                 @if($history->performedBy)
                                                     <span class="text-xs text-gray-500 dark:text-gray-400">
@@ -303,19 +352,16 @@
                                             
                                             <!-- History Management Buttons -->
                                             @if($editingHistory == $history->id)
-                                                <flux:button wire:click="cancelHistoryEdit" variant="outline" size="sm">
-                                                    <flux:icon name="x-mark" class="w-3 h-3" />
+                                                <flux:button wire:click="cancelHistoryEdit" variant="outline" size="sm" icon="x-mark">
                                                 </flux:button>
                                             @else
                                                 <div class="flex items-center space-x-1">
                                                     @if($this->canEditHistory($history))
-                                                        <flux:button wire:click="editHistory({{ $history->id }})" variant="outline" size="sm">
-                                                            <flux:icon name="pencil" class="w-3 h-3" />
+                                                        <flux:button wire:click="editHistory({{ $history->id }})" variant="outline" size="sm" icon="pencil">
                                                         </flux:button>
                                                     @endif
                                                     @if($this->canDeleteHistory($history))
-                                                        <flux:button wire:click="deleteHistory({{ $history->id }})" variant="outline" size="sm" class="text-red-600 hover:text-red-700">
-                                                            <flux:icon name="trash" class="w-3 h-3" />
+                                                        <flux:button wire:click="deleteHistory({{ $history->id }})" variant="outline" size="sm" class="text-red-600 hover:text-red-700" icon="trash">
                                                         </flux:button>
                                                     @endif
                                                 </div>
@@ -344,13 +390,11 @@
                                                 </flux:field>
                                                 
                                                 <div class="flex space-x-4">
-                                                    <flux:button wire:click="saveHistoryEdit" type="button" size="sm">
-                                                        <flux:icon name="check" class="w-3 h-3 mr-1" />
+                                                    <flux:button wire:click="saveHistoryEdit" type="button" size="sm" icon="check">
                                                         {{ __('Save') }}
                                                     </flux:button>
                                                     
-                                                    <flux:button wire:click="cancelHistoryEdit" variant="outline" type="button" size="sm">
-                                                        <flux:icon name="x-mark" class="w-3 h-3 mr-1" />
+                                                    <flux:button wire:click="cancelHistoryEdit" variant="outline" type="button" size="sm" icon="x-mark">
                                                         {{ __('Cancel') }}
                                                     </flux:button>
                                                 </div>
@@ -358,25 +402,25 @@
                                         @else
                                             @switch($history->action_type)
                                                 @case('purchased')
-                                                    <flux:text>{{ $history->change_date->format('M d, Y') }} - Equipment purchased</flux:text>
+                                                    <flux:text>{{ $history->change_date->format('M d, Y H:i') }} - Equipment purchased</flux:text>
                                                     @if($history->notes)
                                                         <flux:text class="text-gray-600 dark:text-gray-400 text-sm mt-1">{{ $history->notes }}</flux:text>
                                                     @endif
                                                     @break
                                                     
                                                 @case('assigned')
-                                                    <flux:text>{{ $history->change_date->format('M d, Y') }} - Transferred to {{ $history->owner?->full_name ?? 'Unassigned' }}</flux:text>
+                                                    <flux:text>{{ $history->change_date->format('M d, Y H:i') }} - Transferred to {{ $history->owner?->full_name ?? 'Unassigned' }}</flux:text>
                                                     @break
                                                     
                                                 @case('retired')
-                                                    <flux:text>{{ $history->change_date->format('M d, Y') }} - Equipment retired</flux:text>
+                                                    <flux:text>{{ $history->change_date->format('M d, Y H:i') }} - Equipment retired</flux:text>
                                                     @if($history->notes)
                                                         <flux:text class="text-gray-600 dark:text-gray-400 text-sm mt-1">{{ $history->notes }}</flux:text>
                                                     @endif
                                                     @break
                                                     
                                                 @default
-                                                    <flux:text>{{ $history->action }} - {{ $history->change_date->format('M d, Y') }}</flux:text>
+                                                    <flux:text>{{ $history->action }} - {{ $history->change_date->format('M d, Y H:i') }}</flux:text>
                                                     @if($history->notes)
                                                         <flux:text class="text-gray-600 dark:text-gray-400 text-sm mt-1">{{ $history->notes }}</flux:text>
                                                     @endif
@@ -397,108 +441,17 @@
         @endif
     </flux:container>
 
-    <!-- Retirement Section -->
-    @if($equipment->isRetired())
-        <flux:container>
-            <flux:heading level="2">{{ __('Retirement Information') }}</flux:heading>
-            
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div class="space-y-4">
-                    <flux:field label="{{ __('Retirement Date') }}">
-                        <flux:text>{{ $equipment->retired_at->format('M d, Y') }}</flux:text>
-                    </flux:field>
-                </div>
-                
-                <div class="space-y-4">
-                    @if($equipment->retirement_notes)
-                        <flux:field label="{{ __('Retirement Notes') }}">
-                            <flux:text>{{ $equipment->retirement_notes }}</flux:text>
-                        </flux:field>
-                    @endif
-                </div>
-            </div>
-        </flux:container>
-    @elseif($showRetireForm)
-        <flux:container>
-            <flux:heading level="2">{{ __('Retire Equipment') }}</flux:heading>
-            
-            <flux:callout variant="warning">
-                {{ __('Retiring equipment will remove it from active service and unassign it from any current owner. This action can be reversed later.') }}
-            </flux:callout>
-            
-            <form wire:submit="retireEquipment">
-                <flux:field label="{{ __('Retirement Notes') }}">
-                    <flux:textarea 
-                        wire:model="retirementNotes" 
-                        placeholder="{{ __('Why is this equipment being retired?') }}"
-                        rows="3"
-                        required
-                    />
-                    @error('retirementNotes')
-                        <flux:text color="red">{{ $message }}</flux:text>
-                    @enderror
-                </flux:field>
-                
-                <div class="flex space-x-4 mt-4">
-                    <flux:button type="submit" variant="danger">
-                        <flux:icon name="archive-box-x-mark" class="w-4 h-4 mr-2" />
-                        {{ __('Retire Equipment') }}
-                    </flux:button>
-                    
-                    <flux:button wire:click="toggleRetireForm" variant="outline" type="button">
-                        <flux:icon name="x-mark" class="w-4 h-4 mr-2" />
-                        {{ __('Cancel') }}
-                    </flux:button>
-                </div>
-            </form>
-        </flux:container>
-    @endif
+    
 
 
 
-    <!-- Add Note Section -->
-    <flux:container>
-        <flux:heading level="2">{{ __('Add Note') }}</flux:heading>
-        
-        @if(!$showNoteForm)
-            <flux:button wire:click="toggleNoteForm" variant="outline">
-                <flux:icon name="plus" class="w-4 h-4 mr-2" />
-                {{ __('Add Note') }}
-            </flux:button>
-        @else
-            <form wire:submit="addNote">
-                <flux:field label="{{ __('Note') }}">
-                    <flux:textarea 
-                        wire:model="newNote" 
-                        placeholder="{{ __('Enter your note here...') }}"
-                        rows="3"
-                    />
-                    @error('newNote')
-                        <flux:text color="red">{{ $message }}</flux:text>
-                    @enderror
-                </flux:field>
-                
-                <div class="flex space-x-4 mt-4">
-                    <flux:button type="submit" variant="primary">
-                        <flux:icon name="check" class="w-4 h-4 mr-2" />
-                        {{ __('Save Note') }}
-                    </flux:button>
-                    
-                    <flux:button wire:click="toggleNoteForm" variant="outline" type="button">
-                        <flux:icon name="x-mark" class="w-4 h-4 mr-2" />
-                        {{ __('Cancel') }}
-                    </flux:button>
-                </div>
-            </form>
-        @endif
-    </flux:container>
+
 
     <!-- Action Buttons -->
     <flux:container>
         <div class="flex space-x-4">
             @if(!$isEditing)
-                <flux:button href="{{ route('equipment.index') }}" variant="outline">
-                    <flux:icon name="arrow-left" class="w-4 h-4 mr-2" />
+                <flux:button href="{{ route('equipment.index') }}" variant="outline" icon="arrow-left">
                     {{ __('Back to Equipment') }}
                 </flux:button>
             @endif
