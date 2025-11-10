@@ -6,10 +6,13 @@ use App\Models\Equipment;
 use App\Models\EquipmentHistory;
 use App\Models\Note;
 use App\Models\Person;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Livewire\Component;
 
 class Show extends Component
 {
+    use AuthorizesRequests;
+
     public Equipment $equipment;
 
     public $newNote = '';
@@ -48,6 +51,8 @@ class Show extends Component
 
     public function mount(Equipment $equipment)
     {
+        $this->authorize('view', $equipment);
+
         $this->equipment = $equipment->load([
             'currentHolder',
             'equipmentHistory.holder',

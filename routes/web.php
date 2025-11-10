@@ -40,11 +40,13 @@ Route::middleware(['auth'])->group(function () {
     // Client routes
     Route::get('clients', \App\Livewire\Clients\Index::class)->name('clients.index');
     Route::get('clients/create', \App\Livewire\Clients\Create::class)->name('clients.create');
+    Route::get('clients/{client}', \App\Livewire\Clients\Show::class)->name('clients.show');
     Route::get('clients/{client}/edit', \App\Livewire\Clients\Edit::class)->name('clients.edit');
 
     // Vacancy routes
     Route::get('vacancies', \App\Livewire\Vacancies\Index::class)->name('vacancies.index');
     Route::get('vacancies/create', \App\Livewire\Vacancies\Create::class)->name('vacancies.create');
+    Route::get('vacancies/{vacancy}', \App\Livewire\Vacancies\Show::class)->name('vacancies.show');
     Route::get('vacancies/{vacancy}/edit', \App\Livewire\Vacancies\Edit::class)->name('vacancies.edit');
 
     // Equipment routes
@@ -56,15 +58,18 @@ Route::middleware(['auth'])->group(function () {
     // Event routes
     Route::get('events', \App\Livewire\Events\Index::class)->name('events.index');
     Route::get('events/create', \App\Livewire\Events\Create::class)->name('events.create');
+    Route::get('events/{event}', \App\Livewire\Events\Show::class)->name('events.show');
     Route::get('events/{event}/edit', \App\Livewire\Events\Edit::class)->name('events.edit');
 
     // Note routes
     Route::get('notes', \App\Livewire\Notes\Index::class)->name('notes.index');
     Route::get('notes/create', \App\Livewire\Notes\Create::class)->name('notes.create');
+    Route::get('notes/{note}', \App\Livewire\Notes\Show::class)->name('notes.show');
     Route::get('notes/{note}/edit', \App\Livewire\Notes\Edit::class)->name('notes.edit');
 
     // CV routes
     Route::get('c-vs', \App\Livewire\CVs\Index::class)->name('c-vs.index');
     Route::get('c-vs/create', \App\Livewire\CVs\Create::class)->name('c-vs.create');
+    Route::get('c-vs/{cv}', \App\Livewire\CVs\Show::class)->name('c-vs.show');
     Route::get('c-vs/{cv}/edit', \App\Livewire\CVs\Edit::class)->name('c-vs.edit');
 });

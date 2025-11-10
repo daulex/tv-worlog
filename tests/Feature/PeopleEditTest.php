@@ -6,6 +6,9 @@ use App\Models\Vacancy;
 use Livewire\Livewire;
 
 it('renders edit person form with existing data', function () {
+    $user = Person::factory()->create();
+    $this->actingAs($user);
+
     $client = Client::factory()->create();
     $vacancy = Vacancy::factory()->create(['client_id' => $client->id]);
     $person = Person::factory()->create([
@@ -39,6 +42,9 @@ it('renders edit person form with existing data', function () {
 });
 
 it('updates person with valid data', function () {
+    $user = Person::factory()->create();
+    $this->actingAs($user);
+
     $person = Person::factory()->create();
     $newClient = Client::factory()->create();
     $newVacancy = Vacancy::factory()->create(['client_id' => $newClient->id]);
@@ -46,27 +52,29 @@ it('updates person with valid data', function () {
     Livewire::test('people.edit', ['person' => $person])
         ->set('first_name', 'Jane')
         ->set('last_name', 'Smith')
-        ->set('email', 'jane@example.com')
-        ->set('phone', '555-9999')
-        ->set('phone2', '555-8888')
-        ->set('email2', 'jane2@example.com')
+        ->set('email', 'jane.updated@example.com')
+        ->set('phone', '+371 21234567')
+        ->set('phone2', '+371 61234567')
+        ->set('email2', 'jane2.updated@example.com')
         ->set('date_of_birth', '1992-02-02')
         ->set('address', '456 Oak Ave')
         ->set('position', 'Designer')
         ->set('status', 'Candidate')
         ->set('client_id', $newClient->id)
         ->set('vacancy_id', $newVacancy->id)
+        ->set('pers_code', '280394-15750') // Valid Latvian personal code
         ->call('save')
+        ->assertHasNoErrors()
         ->assertRedirect(route('people.index'));
 
     $this->assertDatabaseHas('people', [
         'id' => $person->id,
         'first_name' => 'Jane',
         'last_name' => 'Smith',
-        'email' => 'jane@example.com',
-        'phone' => '555-9999',
-        'phone2' => '555-8888',
-        'email2' => 'jane2@example.com',
+        'email' => 'jane.updated@example.com',
+        'phone' => '+371 21234567',
+        'phone2' => '+371 61234567',
+        'email2' => 'jane2.updated@example.com',
         'date_of_birth' => '1992-02-02 00:00:00',
         'address' => '456 Oak Ave',
         'position' => 'Designer',
@@ -77,6 +85,9 @@ it('updates person with valid data', function () {
 });
 
 it('validates required fields on update', function () {
+    $user = Person::factory()->create();
+    $this->actingAs($user);
+
     $person = Person::factory()->create();
 
     Livewire::test('people.edit', ['person' => $person])
@@ -98,13 +109,16 @@ it('validates required fields on update', function () {
 });
 
 it('validates email format on update', function () {
+    $user = Person::factory()->create();
+    $this->actingAs($user);
+
     $person = Person::factory()->create();
 
     Livewire::test('people.edit', ['person' => $person])
         ->set('first_name', 'John')
         ->set('last_name', 'Doe')
         ->set('email', 'invalid-email')
-        ->set('pers_code', '123456')
+        ->set('pers_code', '280394-15750')
         ->set('date_of_birth', '1990-01-01')
         ->set('status', 'Employee')
         ->call('save')
@@ -112,6 +126,9 @@ it('validates email format on update', function () {
 });
 
 it('validates secondary email format on update', function () {
+    $user = Person::factory()->create();
+    $this->actingAs($user);
+
     $person = Person::factory()->create();
 
     Livewire::test('people.edit', ['person' => $person])
@@ -119,7 +136,7 @@ it('validates secondary email format on update', function () {
         ->set('last_name', 'Doe')
         ->set('email', 'john@example.com')
         ->set('email2', 'invalid-secondary-email')
-        ->set('pers_code', '123456')
+        ->set('pers_code', '100259-16214')
         ->set('date_of_birth', '1990-01-01')
         ->set('status', 'Employee')
         ->call('save')
@@ -127,14 +144,17 @@ it('validates secondary email format on update', function () {
 });
 
 it('validates unique email on update (excluding current person)', function () {
-    $existingPerson = Person::factory()->create(['email' => 'existing@example.com']);
-    $person = Person::factory()->create(['email' => 'current@example.com']);
+    $user = Person::factory()->create();
+    $this->actingAs($user);
+
+    $existingPerson = Person::factory()->create();
+    $person = Person::factory()->create();
 
     Livewire::test('people.edit', ['person' => $person])
         ->set('first_name', 'John')
         ->set('last_name', 'Doe')
-        ->set('email', 'existing@example.com')
-        ->set('pers_code', '123456')
+        ->set('email', $existingPerson->email) // Try to use existing person's email
+        ->set('pers_code', '280394-15750') // Valid Latvian personal code
         ->set('date_of_birth', '1990-01-01')
         ->set('status', 'Employee')
         ->call('save')
@@ -142,29 +162,44 @@ it('validates unique email on update (excluding current person)', function () {
 });
 
 it('allows keeping current email on update', function () {
-    $person = Person::factory()->create(['email' => 'current@example.com']);
+    $user = Person::factory()->create();
+    $this->actingAs($user);
+
+    $person = Person::factory()->create();
+    $newClient = Client::factory()->create();
+    $newVacancy = Vacancy::factory()->create(['client_id' => $newClient->id]);
 
     Livewire::test('people.edit', ['person' => $person])
         ->set('first_name', 'John')
         ->set('last_name', 'Doe')
-        ->set('email', 'current@example.com')
-        ->set('pers_code', '123456')
-        ->set('date_of_birth', '1990-01-01')
-        ->set('status', 'Employee')
+        ->set('email', $person->email) // Keep the same email
+        ->set('phone', '+371 21234567')
+        ->set('phone2', '+371 61234567')
+        ->set('email2', 'john2.updated@example.com')
+        ->set('date_of_birth', '1992-02-02')
+        ->set('address', '456 Oak Ave')
+        ->set('position', 'Designer')
+        ->set('status', 'Candidate')
+        ->set('client_id', $newClient->id)
+        ->set('vacancy_id', $newVacancy->id)
+        ->set('pers_code', '280394-15750') // Valid Latvian personal code
         ->call('save')
-        ->assertRedirect(route('people.index'))
-        ->assertHasNoErrors();
+        ->assertHasNoErrors()
+        ->assertRedirect(route('people.index'));
 });
 
 it('validates unique personal code on update (excluding current person)', function () {
-    $existingPerson = Person::factory()->create(['pers_code' => '987654']);
-    $person = Person::factory()->create(['pers_code' => '123456']);
+    $user = Person::factory()->create();
+    $this->actingAs($user);
+
+    $existingPerson = Person::factory()->create(['pers_code' => '280394-15750']);
+    $person = Person::factory()->create(['pers_code' => '100259-16214']);
 
     Livewire::test('people.edit', ['person' => $person])
         ->set('first_name', 'John')
         ->set('last_name', 'Doe')
-        ->set('email', 'john@example.com')
-        ->set('pers_code', '987654')
+        ->set('email', $person->email)
+        ->set('pers_code', $existingPerson->pers_code)
         ->set('date_of_birth', '1990-01-01')
         ->set('status', 'Employee')
         ->call('save')
@@ -172,13 +207,16 @@ it('validates unique personal code on update (excluding current person)', functi
 });
 
 it('validates status options on update', function () {
+    $user = Person::factory()->create();
+    $this->actingAs($user);
+
     $person = Person::factory()->create();
 
     Livewire::test('people.edit', ['person' => $person])
         ->set('first_name', 'John')
         ->set('last_name', 'Doe')
         ->set('email', 'john@example.com')
-        ->set('pers_code', '123456')
+        ->set('pers_code', '050471-12384') // Valid Latvian personal code
         ->set('date_of_birth', '1990-01-01')
         ->set('status', 'InvalidStatus')
         ->call('save')
@@ -186,21 +224,27 @@ it('validates status options on update', function () {
 });
 
 it('clears secondary fields when empty', function () {
+    $user = Person::factory()->create();
+    $this->actingAs($user);
+
     $person = Person::factory()->create([
-        'phone2' => '555-5678',
+        'pers_code' => '280394-15750', // Valid Latvian personal code
+        'phone' => '+371 21234567',
+        'phone2' => '+371 61234567',
         'email2' => 'secondary@example.com',
     ]);
 
     Livewire::test('people.edit', ['person' => $person])
         ->set('first_name', 'John')
         ->set('last_name', 'Doe')
-        ->set('email', 'john@example.com')
+        ->set('email', $person->email)
         ->set('email2', '')
         ->set('phone2', '')
-        ->set('pers_code', '123456')
+        ->set('pers_code', '190273-14178') // Valid Latvian personal code
         ->set('date_of_birth', '1990-01-01')
         ->set('status', 'Employee')
         ->call('save')
+        ->assertHasNoErrors()
         ->assertRedirect(route('people.index'));
 
     $person->refresh();
@@ -209,6 +253,9 @@ it('clears secondary fields when empty', function () {
 });
 
 it('shows vacancy options with company names', function () {
+    $user = Person::factory()->create();
+    $this->actingAs($user);
+
     $client = Client::factory()->create(['name' => 'Test Company']);
     $vacancy = Vacancy::factory()->create(['title' => 'Developer', 'client_id' => $client->id]);
     $person = Person::factory()->create();
@@ -218,15 +265,27 @@ it('shows vacancy options with company names', function () {
 });
 
 it('shows success message after update', function () {
+    $user = Person::factory()->create();
+    $this->actingAs($user);
+
     $person = Person::factory()->create();
+    $newClient = Client::factory()->create();
+    $newVacancy = Vacancy::factory()->create(['client_id' => $newClient->id]);
 
     Livewire::test('people.edit', ['person' => $person])
         ->set('first_name', 'Jane')
         ->set('last_name', 'Smith')
-        ->set('email', 'jane@example.com')
-        ->set('pers_code', '987654-32101')
-        ->set('date_of_birth', '1990-01-01')
-        ->set('status', 'Employee')
+        ->set('email', $person->email)
+        ->set('phone', '+371 21234567')
+        ->set('phone2', '+371 61234567')
+        ->set('email2', 'jane2.updated@example.com')
+        ->set('date_of_birth', '1992-02-02')
+        ->set('address', '456 Oak Ave')
+        ->set('position', 'Designer')
+        ->set('status', 'Candidate')
+        ->set('client_id', $newClient->id)
+        ->set('vacancy_id', $newVacancy->id)
+        ->set('pers_code', '230663-10893')
         ->call('save')
         ->assertRedirect(route('people.index'))
         ->assertSessionHas('message', 'Person updated successfully.');

@@ -5,10 +5,16 @@ namespace App\Livewire\People;
 use App\Models\Client;
 use App\Models\Person;
 use App\Models\Vacancy;
+use App\Rules\LatvianPersonalCode;
+use App\Rules\LatvianPhoneNumber;
+use App\Rules\ValidDateRange;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Livewire\Component;
 
 class Create extends Component
 {
+    use AuthorizesRequests;
+
     public $first_name;
 
     public $last_name;
@@ -52,13 +58,13 @@ class Create extends Component
         return [
             'first_name' => 'required|string|max:255',
             'last_name' => 'required|string|max:255',
-            'pers_code' => 'required|string|unique:people,pers_code',
-            'phone' => 'nullable|string|max:20',
-            'email' => 'required|email|unique:people,email',
-            'date_of_birth' => 'required|date',
-            'address' => 'nullable|string',
-            'starting_date' => 'nullable|date',
-            'last_working_date' => 'nullable|date',
+            'pers_code' => ['required', 'string', 'unique:people,pers_code', new LatvianPersonalCode],
+            'phone' => ['nullable', 'string', 'max:20', new LatvianPhoneNumber],
+            'email' => 'required|email:rfc,spoof|unique:people,email',
+            'date_of_birth' => 'required|date|before:today',
+            'address' => 'nullable|string|max:1000',
+            'starting_date' => 'nullable|date|before_or_equal:today',
+            'last_working_date' => ['nullable', 'date', 'before_or_equal:today', new ValidDateRange('starting_date', $this->starting_date)],
             'position' => 'nullable|string|max:255',
             'status' => 'required|in:Candidate,Employee,Retired',
             'client_id' => 'nullable|exists:clients,id',
@@ -68,12 +74,14 @@ class Create extends Component
             'portfolio_url' => 'nullable|url|max:500',
             'emergency_contact_name' => 'nullable|string|max:255',
             'emergency_contact_relationship' => 'nullable|string|max:255',
-            'emergency_contact_phone' => 'nullable|string|max:255',
+            'emergency_contact_phone' => ['nullable', 'string', 'max:255', new LatvianPhoneNumber],
         ];
     }
 
     public function save()
     {
+        $this->authorize('create', Person::class);
+
         $this->validate();
 
         Person::create([

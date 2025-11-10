@@ -128,6 +128,9 @@ it('shows fallback for missing client and vacancy', function () {
 });
 
 it('deletes person with confirmation', function () {
+    $user = Person::factory()->create();
+    $this->actingAs($user);
+
     $person = Person::factory()->create();
 
     Livewire::test('people.index')

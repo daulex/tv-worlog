@@ -5,6 +5,9 @@ use App\Models\Person;
 use Livewire\Livewire;
 
 test('cv create component validation works', function () {
+    $user = Person::factory()->create();
+    $this->actingAs($user);
+
     Livewire::test(\App\Livewire\CVs\Create::class)
         ->set('person_id', '')
         ->set('file_path_or_url', '')
@@ -13,6 +16,9 @@ test('cv create component validation works', function () {
 });
 
 test('cv create component renders form', function () {
+    $user = Person::factory()->create();
+    $this->actingAs($user);
+
     Livewire::test(\App\Livewire\CVs\Create::class)
         ->assertSee('Create CV')
         ->assertSee('Person')
@@ -20,6 +26,9 @@ test('cv create component renders form', function () {
 });
 
 test('cv index component renders correctly', function () {
+    $user = Person::factory()->create();
+    $this->actingAs($user);
+
     Livewire::test(\App\Livewire\CVs\Index::class)
         ->assertSee('CVs')
         ->assertSee('Add CV')
@@ -27,6 +36,9 @@ test('cv index component renders correctly', function () {
 });
 
 test('cv edit component renders form', function () {
+    $user = Person::factory()->create();
+    $this->actingAs($user);
+
     $person = Person::create([
         'status' => 'Candidate',
         'first_name' => 'John',

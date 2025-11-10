@@ -3,10 +3,13 @@
 namespace App\Livewire\Clients;
 
 use App\Models\Client;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Livewire\Component;
 
 class Create extends Component
 {
+    use AuthorizesRequests;
+
     public $name;
 
     public $address;
@@ -27,6 +30,8 @@ class Create extends Component
 
     public function save()
     {
+        $this->authorize('create', Client::class);
+
         $this->validate();
 
         Client::create([

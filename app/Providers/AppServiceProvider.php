@@ -9,7 +9,11 @@ use App\Observers\EquipmentObserver;
 use App\Observers\EventParticipantObserver;
 use App\Observers\PersonObserver;
 use Illuminate\Database\Eloquent\Relations\Relation;
+use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
+use Illuminate\Support\MessageBag;
+use Illuminate\Support\ViewErrorBag;
+use Illuminate\View\View as ViewView;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -38,5 +42,12 @@ class AppServiceProvider extends ServiceProvider
             'vacancy' => 'App\\Models\\Vacancy',
             'client' => 'App\\Models\\Client',
         ]);
+
+        // Ensure $errors variable is always available for Flux UI components
+        View::composer('*', function (ViewView $view) {
+            if (!isset($view->getData()['errors'])) {
+                $view->with('errors', new ViewErrorBag());
+            }
+        });
     }
 }

@@ -18,6 +18,9 @@ it('renders create person form', function () {
 });
 
 it('creates person with valid data', function () {
+    $user = Person::factory()->create();
+    $this->actingAs($user);
+
     $client = Client::factory()->create();
     $vacancy = Vacancy::factory()->create(['client_id' => $client->id]);
 
@@ -25,8 +28,8 @@ it('creates person with valid data', function () {
         ->set('first_name', 'John')
         ->set('last_name', 'Doe')
         ->set('email', 'john@example.com')
-        ->set('pers_code', '123456')
-        ->set('phone', '555-1234')
+        ->set('pers_code', '280394-15750')
+        ->set('phone', '+371 21234567')
         ->set('date_of_birth', '1990-01-01')
         ->set('status', 'Employee')
         ->set('client_id', $client->id)
@@ -38,8 +41,8 @@ it('creates person with valid data', function () {
         'first_name' => 'John',
         'last_name' => 'Doe',
         'email' => 'john@example.com',
-        'pers_code' => '123456',
-        'phone' => '555-1234',
+        'pers_code' => '280394-15750',
+        'phone' => '+371 21234567',
         'date_of_birth' => '1990-01-01 00:00:00',
         'status' => 'Employee',
         'client_id' => $client->id,
@@ -48,6 +51,9 @@ it('creates person with valid data', function () {
 });
 
 it('validates required fields', function () {
+    $user = Person::factory()->create();
+    $this->actingAs($user);
+
     Livewire::test('people.create')
         ->call('save')
         ->assertHasErrors([
@@ -61,11 +67,14 @@ it('validates required fields', function () {
 });
 
 it('validates email format', function () {
+    $user = Person::factory()->create();
+    $this->actingAs($user);
+
     Livewire::test('people.create')
         ->set('first_name', 'John')
         ->set('last_name', 'Doe')
         ->set('email', 'invalid-email')
-        ->set('pers_code', '123456')
+        ->set('pers_code', '280394-15750')
         ->set('date_of_birth', '1990-01-01')
         ->set('status', 'Employee')
         ->call('save')
@@ -73,13 +82,16 @@ it('validates email format', function () {
 });
 
 it('validates unique email', function () {
+    $user = Person::factory()->create();
+    $this->actingAs($user);
+
     Person::factory()->create(['email' => 'john@example.com']);
 
     Livewire::test('people.create')
         ->set('first_name', 'John')
         ->set('last_name', 'Doe')
         ->set('email', 'john@example.com')
-        ->set('pers_code', '123456')
+        ->set('pers_code', '280394-15750')
         ->set('date_of_birth', '1990-01-01')
         ->set('status', 'Employee')
         ->call('save')
@@ -87,13 +99,16 @@ it('validates unique email', function () {
 });
 
 it('validates unique personal code', function () {
-    Person::factory()->create(['pers_code' => '123456']);
+    $user = Person::factory()->create();
+    $this->actingAs($user);
+
+    Person::factory()->create(['pers_code' => '280394-15750']);
 
     Livewire::test('people.create')
         ->set('first_name', 'John')
         ->set('last_name', 'Doe')
         ->set('email', 'john@example.com')
-        ->set('pers_code', '123456')
+        ->set('pers_code', '280394-15750')
         ->set('date_of_birth', '1990-01-01')
         ->set('status', 'Employee')
         ->call('save')
@@ -101,11 +116,14 @@ it('validates unique personal code', function () {
 });
 
 it('validates status options', function () {
+    $user = Person::factory()->create();
+    $this->actingAs($user);
+
     Livewire::test('people.create')
         ->set('first_name', 'John')
         ->set('last_name', 'Doe')
         ->set('email', 'john@example.com')
-        ->set('pers_code', '123456')
+        ->set('pers_code', '280394-15750')
         ->set('date_of_birth', '1990-01-01')
         ->set('status', 'InvalidStatus')
         ->call('save')
@@ -113,11 +131,14 @@ it('validates status options', function () {
 });
 
 it('validates date format', function () {
+    $user = Person::factory()->create();
+    $this->actingAs($user);
+
     Livewire::test('people.create')
         ->set('first_name', 'John')
         ->set('last_name', 'Doe')
         ->set('email', 'john@example.com')
-        ->set('pers_code', '123456')
+        ->set('pers_code', '280394-15750')
         ->set('date_of_birth', 'invalid-date')
         ->set('status', 'Employee')
         ->call('save')
@@ -125,11 +146,14 @@ it('validates date format', function () {
 });
 
 it('creates person without optional fields', function () {
+    $user = Person::factory()->create();
+    $this->actingAs($user);
+
     Livewire::test('people.create')
         ->set('first_name', 'John')
         ->set('last_name', 'Doe')
         ->set('email', 'john@example.com')
-        ->set('pers_code', '123456')
+        ->set('pers_code', '280394-15750')
         ->set('date_of_birth', '1990-01-01')
         ->set('status', 'Employee')
         ->call('save')
@@ -139,11 +163,14 @@ it('creates person without optional fields', function () {
         'first_name' => 'John',
         'last_name' => 'Doe',
         'email' => 'john@example.com',
-        'pers_code' => '123456',
+        'pers_code' => '280394-15750',
         'date_of_birth' => '1990-01-01 00:00:00',
         'status' => 'Employee',
         'phone' => null,
         'address' => null,
+        'starting_date' => null,
+        'last_working_date' => null,
+        'position' => null,
         'client_id' => null,
         'vacancy_id' => null,
     ]);
@@ -158,11 +185,14 @@ it('shows vacancy options with company names', function () {
 });
 
 it('shows success message after creation', function () {
+    $user = Person::factory()->create();
+    $this->actingAs($user);
+
     Livewire::test('people.create')
         ->set('first_name', 'John')
         ->set('last_name', 'Doe')
         ->set('email', 'john@example.com')
-        ->set('pers_code', '123456')
+        ->set('pers_code', '280394-15750')
         ->set('date_of_birth', '1990-01-01')
         ->set('status', 'Employee')
         ->call('save')
@@ -171,11 +201,14 @@ it('shows success message after creation', function () {
 });
 
 it('can create person with new fields', function () {
+    $user = Person::factory()->create();
+    $this->actingAs($user);
+
     Livewire::test('people.create')
         ->set('first_name', 'John')
         ->set('last_name', 'Doe')
-        ->set('email', 'john@example.com')
-        ->set('pers_code', '123456')
+        ->set('email', 'john.newfields@example.com')
+        ->set('pers_code', '100259-16214')
         ->set('date_of_birth', '1990-01-01')
         ->set('status', 'Employee')
         ->set('linkedin_profile', 'https://linkedin.com/in/johndoe')
@@ -185,13 +218,14 @@ it('can create person with new fields', function () {
         ->set('emergency_contact_relationship', 'Spouse')
         ->set('emergency_contact_phone', '+371 23456789')
         ->call('save')
-        ->assertRedirect(route('people.index'))
-        ->assertHasNoErrors();
+        ->assertHasNoErrors()
+        ->assertRedirect(route('people.index'));
 
     $this->assertDatabaseHas('people', [
         'first_name' => 'John',
         'last_name' => 'Doe',
-        'email' => 'john@example.com',
+        'email' => 'john.newfields@example.com',
+        'pers_code' => '100259-16214',
         'linkedin_profile' => 'https://linkedin.com/in/johndoe',
         'github_profile' => 'https://github.com/johndoe',
         'portfolio_url' => 'https://johndoe.dev',
@@ -202,11 +236,14 @@ it('can create person with new fields', function () {
 });
 
 it('validates new fields on creation', function () {
+    $user = Person::factory()->create();
+    $this->actingAs($user);
+
     Livewire::test('people.create')
         ->set('first_name', 'John')
         ->set('last_name', 'Doe')
-        ->set('email', 'john@example.com')
-        ->set('pers_code', '123456')
+        ->set('email', 'john.validation@example.com')
+        ->set('pers_code', '010190-11258')
         ->set('date_of_birth', '1990-01-01')
         ->set('status', 'Employee')
         ->set('linkedin_profile', 'not-a-valid-url')

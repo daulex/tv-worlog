@@ -7,10 +7,13 @@ use App\Models\Equipment;
 use App\Models\Note;
 use App\Models\Person;
 use App\Models\Vacancy;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Livewire\Component;
 
 class Create extends Component
 {
+    use AuthorizesRequests;
+
     public $note_text;
 
     public $note_type;
@@ -44,6 +47,8 @@ class Create extends Component
 
     public function save()
     {
+        $this->authorize('create', Note::class);
+
         $this->validate();
 
         Note::create([

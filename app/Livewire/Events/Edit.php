@@ -3,10 +3,13 @@
 namespace App\Livewire\Events;
 
 use App\Models\Event;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Livewire\Component;
 
 class Edit extends Component
 {
+    use AuthorizesRequests;
+
     public Event $event;
 
     public $title;
@@ -35,6 +38,8 @@ class Edit extends Component
 
     public function mount(Event $event)
     {
+        $this->authorize('update', $event);
+
         $this->event = $event;
         $this->title = $event->title;
         $this->description = $event->description;
@@ -46,6 +51,8 @@ class Edit extends Component
 
     public function save()
     {
+        $this->authorize('update', $this->event);
+
         $this->validate();
 
         $this->event->update([

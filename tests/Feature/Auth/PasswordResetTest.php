@@ -2,6 +2,7 @@
 
 use App\Models\Person;
 use Illuminate\Auth\Notifications\ResetPassword;
+use Illuminate\Foundation\Testing\WithoutMiddleware;
 use Illuminate\Support\Facades\Notification;
 
 test('reset password link screen can be rendered', function () {
@@ -11,11 +12,14 @@ test('reset password link screen can be rendered', function () {
 });
 
 test('reset password link can be requested', function () {
-    Notification::fake();
-
     $user = Person::factory()->create();
-
-    $this->post(route('password.request'), ['email' => $user->email]);
+    
+    // Set up notification fake before making request
+    Notification::fake();
+    
+    $this->withoutMiddleware(\Illuminate\Foundation\Http\Middleware\VerifyCsrfToken::class)
+            ->from(route('password.request'))
+            ->post(route('password.request'), ['email' => $user->email]);
 
     Notification::assertSentTo($user, ResetPassword::class);
 });
@@ -25,7 +29,8 @@ test('reset password screen can be rendered', function () {
 
     $user = Person::factory()->create();
 
-    $this->post(route('password.request'), ['email' => $user->email]);
+    $this->from(route('password.request'))
+            ->post(route('password.request'), ['email' => $user->email]);
 
     Notification::assertSentTo($user, ResetPassword::class, function ($notification) {
         $response = $this->get(route('password.reset', $notification->token));
@@ -40,10 +45,12 @@ test('password can be reset with valid token', function () {
 
     $user = Person::factory()->create();
 
-    $this->post(route('password.request'), ['email' => $user->email]);
+    $this->from(route('password.request'))
+            ->post(route('password.request'), ['email' => $user->email]);
 
     Notification::assertSentTo($user, ResetPassword::class, function ($notification) use ($user) {
-        $response = $this->post(route('password.update'), [
+        $response = $this->from(route('password.reset'))
+                    ->post(route('password.update'), [
             'token' => $notification->token,
             'email' => $user->email,
             'password' => 'password',

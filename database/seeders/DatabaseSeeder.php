@@ -31,7 +31,7 @@ class DatabaseSeeder extends Seeder
                 'last_name' => 'User',
                 'password' => Hash::make('password'),
                 'status' => 'Employee',
-                'pers_code' => 'TEST001',
+                'pers_code' => '161175-19997', // Valid Latvian personal code
                 'date_of_birth' => '1990-01-01',
                 'email_verified_at' => now(),
             ]

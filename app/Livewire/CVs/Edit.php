@@ -4,10 +4,13 @@ namespace App\Livewire\CVs;
 
 use App\Models\CV;
 use App\Models\Person;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Livewire\Component;
 
 class Edit extends Component
 {
+    use AuthorizesRequests;
+
     public CV $cv;
 
     public $person_id;
@@ -29,6 +32,8 @@ class Edit extends Component
 
     public function mount(CV $cv)
     {
+        $this->authorize('update', $cv);
+
         $this->cv = $cv;
         $this->person_id = $cv->person_id;
         $this->file_path_or_url = $cv->file_path_or_url;
@@ -39,6 +44,8 @@ class Edit extends Component
 
     public function save()
     {
+        $this->authorize('update', $this->cv);
+
         $this->validate();
 
         $this->cv->update([

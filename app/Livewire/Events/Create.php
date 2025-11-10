@@ -3,10 +3,13 @@
 namespace App\Livewire\Events;
 
 use App\Models\Event;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Livewire\Component;
 
 class Create extends Component
 {
+    use AuthorizesRequests;
+
     public $title;
 
     public $description;
@@ -33,6 +36,8 @@ class Create extends Component
 
     public function save()
     {
+        $this->authorize('create', Event::class);
+
         $this->validate();
 
         Event::create([

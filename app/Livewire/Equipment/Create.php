@@ -4,10 +4,13 @@ namespace App\Livewire\Equipment;
 
 use App\Models\Equipment;
 use App\Models\Person;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Livewire\Component;
 
 class Create extends Component
 {
+    use AuthorizesRequests;
+
     public $brand;
 
     public $model;
@@ -34,6 +37,8 @@ class Create extends Component
 
     public function save()
     {
+        $this->authorize('create', Equipment::class);
+
         $this->validate();
 
         Equipment::create([

@@ -4,10 +4,15 @@ namespace App\Livewire\People;
 
 use App\Models\Note;
 use App\Models\Person;
+use App\Rules\LatvianPhoneNumber;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
+use Illuminate\Support\Facades\Cache;
 use Livewire\Component;
 
 class Show extends Component
 {
+    use AuthorizesRequests;
+
     public Person $person;
 
     public $newNote = '';
@@ -49,6 +54,8 @@ class Show extends Component
 
     public function mount(Person $person)
     {
+        $this->authorize('view', $person);
+
         $this->person = $person->load([
             'client',
             'vacancy',
@@ -64,55 +71,61 @@ class Show extends Component
 
     public function getTimeline()
     {
-        // Force fresh load from database to avoid caching issues
-        $freshPerson = Person::with([
-            'personHistory' => function ($query) {
-                $query->orderBy('change_date', 'desc')->orderBy('id', 'desc');
-            },
-            'notes' => function ($query) {
-                $query->orderBy('created_at', 'desc')->orderBy('id', 'desc');
-            },
-            'events' => function ($query) {
-                $query->orderBy('start_date', 'desc')->orderBy('id', 'desc');
-            },
-        ])->find($this->person->id);
+        // Use cached timeline data with proper eager loading
+        $cacheKey = "person_timeline_{$this->person->id}";
 
-        $timeline = collect();
+        return Cache::remember($cacheKey, 300, function () {
+            $freshPerson = Person::with([
+                'personHistory' => function ($query) {
+                    $query->orderBy('change_date', 'desc')->orderBy('id', 'desc')
+                        ->select('id', 'person_id', 'change_date', 'action', 'action_type', 'notes', 'performed_by_id');
+                },
+                'notes' => function ($query) {
+                    $query->orderBy('created_at', 'desc')->orderBy('id', 'desc')
+                        ->select('id', 'note_type', 'entity_id', 'note_text', 'created_at');
+                },
+                'events' => function ($query) {
+                    $query->orderBy('start_date', 'desc')->orderBy('id', 'desc');
+                },
+            ])->find($this->person->id);
 
-        // Add person history items
-        foreach ($freshPerson->personHistory as $history) {
-            $timeline->push([
-                'type' => 'history',
-                'date' => $history->change_date,
-                'id' => $history->id,
-                'data' => $history,
-            ]);
-        }
+            $timeline = collect();
 
-        // Add notes
-        foreach ($freshPerson->notes as $note) {
-            $timeline->push([
-                'type' => 'note',
-                'date' => $note->created_at,
-                'id' => $note->id,
-                'data' => $note,
-            ]);
-        }
+            // Add person history items
+            $freshPerson->personHistory->each(function ($history) use ($timeline) {
+                $timeline->push([
+                    'type' => 'history',
+                    'date' => $history->change_date,
+                    'id' => $history->id,
+                    'data' => $history,
+                ]);
+            });
 
-        // Add events (joined events)
-        foreach ($freshPerson->events as $event) {
-            $timeline->push([
-                'type' => 'event',
-                'date' => $event->start_date,
-                'id' => $event->id,
-                'data' => $event,
-            ]);
-        }
+            // Add notes
+            $freshPerson->notes->each(function ($note) use ($timeline) {
+                $timeline->push([
+                    'type' => 'note',
+                    'date' => $note->created_at,
+                    'id' => $note->id,
+                    'data' => $note,
+                ]);
+            });
 
-        // Sort by date first, then by ID (newest first)
-        return $timeline->sortByDesc(function ($item) {
-            return $item['date']->timestamp.str_pad((string) $item['id'], 10, '0', STR_PAD_LEFT);
-        })->values();
+            // Add events
+            $freshPerson->events->each(function ($event) use ($timeline) {
+                $timeline->push([
+                    'type' => 'event',
+                    'date' => $event->start_date,
+                    'id' => $event->id,
+                    'data' => $event,
+                ]);
+            });
+
+            // Sort by date first, then by ID (newest first)
+            return $timeline->sortByDesc(function ($item) {
+                return $item['date']->timestamp.str_pad((string) $item['id'], 10, '0', STR_PAD_LEFT);
+            })->values();
+        });
     }
 
     private function initializeEditForm()
@@ -144,6 +157,8 @@ class Show extends Component
 
     public function addNote()
     {
+        $this->authorize('manageNotes', $this->person);
+
         $this->validate([
             'newNote' => 'required|string|max:1000',
         ]);
@@ -157,8 +172,8 @@ class Show extends Component
         $this->newNote = '';
         $this->showNoteForm = false;
 
-        // Refresh person and notes
-        $this->person->load('notes');
+        // Clear timeline cache
+        $this->clearTimelineCache();
     }
 
     public function toggleNoteForm()
@@ -178,16 +193,18 @@ class Show extends Component
 
     public function savePerson()
     {
+        $this->authorize('update', $this->person);
+
         $this->validate([
             'editForm.first_name' => 'required|string|max:255',
             'editForm.last_name' => 'required|string|max:255',
-            'editForm.email' => 'nullable|email|max:255',
-            'editForm.email2' => 'nullable|email|max:255',
-            'editForm.phone' => 'nullable|string|max:255',
-            'editForm.phone2' => 'nullable|string|max:255',
-            'editForm.date_of_birth' => 'nullable|date',
-            'editForm.starting_date' => 'nullable|date',
-            'editForm.last_working_date' => 'nullable|date',
+            'editForm.email' => 'nullable|email:rfc,spoof|max:255',
+            'editForm.email2' => 'nullable|email:rfc,spoof|max:255',
+            'editForm.phone' => ['nullable', 'string', 'max:255', new LatvianPhoneNumber],
+            'editForm.phone2' => ['nullable', 'string', 'max:255', new LatvianPhoneNumber],
+            'editForm.date_of_birth' => 'nullable|date|before:today',
+            'editForm.starting_date' => 'nullable|date|before_or_equal:today',
+            'editForm.last_working_date' => 'nullable|date|before_or_equal:today',
             'editForm.address' => 'nullable|string|max:1000',
             'editForm.position' => 'nullable|string|max:255',
             'editForm.status' => 'required|in:Candidate,Employee,Retired',
@@ -199,7 +216,7 @@ class Show extends Component
             'editForm.portfolio_url' => 'nullable|url|max:500',
             'editForm.emergency_contact_name' => 'nullable|string|max:255',
             'editForm.emergency_contact_relationship' => 'nullable|string|max:255',
-            'editForm.emergency_contact_phone' => 'nullable|string|max:255',
+            'editForm.emergency_contact_phone' => ['nullable', 'string', 'max:255', new LatvianPhoneNumber],
         ]);
 
         $this->person->update([
@@ -234,6 +251,9 @@ class Show extends Component
             'personHistory.performedBy',
         ]);
 
+        // Clear timeline cache
+        $this->clearTimelineCache();
+
         $this->isEditing = false;
     }
 
@@ -245,6 +265,8 @@ class Show extends Component
 
     public function editNote($noteId)
     {
+        $this->authorize('manageNotes', $this->person);
+
         $note = Note::find($noteId);
 
         if (! $note || $note->note_type !== 'person' || $note->entity_id !== $this->person->id) {
@@ -269,6 +291,8 @@ class Show extends Component
 
     public function saveNoteEdit()
     {
+        $this->authorize('manageNotes', $this->person);
+
         $this->validate([
             'noteEditForm.note_text' => 'required|string|max:1000',
         ]);
@@ -289,12 +313,14 @@ class Show extends Component
             'note_text' => '',
         ];
 
-        // Refresh notes
-        $this->person->load('notes');
+        // Clear timeline cache
+        $this->clearTimelineCache();
     }
 
     public function deleteNote($noteId)
     {
+        $this->authorize('manageNotes', $this->person);
+
         $note = Note::find($noteId);
 
         if (! $note || $note->note_type !== 'person' || $note->entity_id !== $this->person->id) {
@@ -303,8 +329,8 @@ class Show extends Component
 
         $note->delete();
 
-        // Refresh notes
-        $this->person->load('notes');
+        // Clear timeline cache
+        $this->clearTimelineCache();
     }
 
     protected function rules(): array
@@ -314,13 +340,13 @@ class Show extends Component
             'noteEditForm.note_text' => 'required|string|max:1000',
             'editForm.first_name' => 'required|string|max:255',
             'editForm.last_name' => 'required|string|max:255',
-            'editForm.email' => 'nullable|email|max:255',
-            'editForm.email2' => 'nullable|email|max:255',
-            'editForm.phone' => 'nullable|string|max:255',
-            'editForm.phone2' => 'nullable|string|max:255',
-            'editForm.date_of_birth' => 'nullable|date',
-            'editForm.starting_date' => 'nullable|date',
-            'editForm.last_working_date' => 'nullable|date',
+            'editForm.email' => 'nullable|email:rfc,spoof|max:255',
+            'editForm.email2' => 'nullable|email:rfc,spoof|max:255',
+            'editForm.phone' => ['nullable', 'string', 'max:255', new LatvianPhoneNumber],
+            'editForm.phone2' => ['nullable', 'string', 'max:255', new LatvianPhoneNumber],
+            'editForm.date_of_birth' => 'nullable|date|before:today',
+            'editForm.starting_date' => 'nullable|date|before_or_equal:today',
+            'editForm.last_working_date' => 'nullable|date|before_or_equal:today',
             'editForm.address' => 'nullable|string|max:1000',
             'editForm.position' => 'nullable|string|max:255',
             'editForm.status' => 'required|in:Candidate,Employee,Retired',
@@ -332,7 +358,7 @@ class Show extends Component
             'editForm.portfolio_url' => 'nullable|url|max:500',
             'editForm.emergency_contact_name' => 'nullable|string|max:255',
             'editForm.emergency_contact_relationship' => 'nullable|string|max:255',
-            'editForm.emergency_contact_phone' => 'nullable|string|max:255',
+            'editForm.emergency_contact_phone' => ['nullable', 'string', 'max:255', new LatvianPhoneNumber],
         ];
     }
 
@@ -349,6 +375,11 @@ class Show extends Component
     public function getCvsProperty()
     {
         return \App\Models\CV::with('person')->orderBy('created_at', 'desc')->get();
+    }
+
+    private function clearTimelineCache(): void
+    {
+        Cache::forget("person_timeline_{$this->person->id}");
     }
 
     public function render()

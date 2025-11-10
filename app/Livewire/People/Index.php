@@ -5,12 +5,14 @@ namespace App\Livewire\People;
 use App\Models\Client;
 use App\Models\Person;
 use App\Models\Vacancy;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
+use Illuminate\Support\Facades\Cache;
 use Livewire\Component;
 use Livewire\WithPagination;
 
 class Index extends Component
 {
-    use WithPagination;
+    use AuthorizesRequests, WithPagination;
 
     public $search = '';
 
@@ -24,6 +26,8 @@ class Index extends Component
 
     public function delete(Person $person)
     {
+        $this->authorize('delete', $person);
+
         $person->delete();
         session()->flash('message', 'Person deleted successfully.');
     }
@@ -38,21 +42,28 @@ class Index extends Component
 
     public function getClientsProperty()
     {
-        return Client::orderBy('name')->get();
+        return Cache::remember('clients_for_select', 3600, function () {
+            return Client::orderBy('name')->get(['id', 'name']);
+        });
     }
 
     public function getVacanciesProperty()
     {
-        return Vacancy::with('client')->orderBy('title')->get();
+        return Cache::remember('vacancies_for_select', 3600, function () {
+            return Vacancy::with('client:id,name')->orderBy('title')->get(['id', 'title', 'client_id']);
+        });
     }
 
     public function render()
     {
         $people = Person::query()
             ->when($this->search, function ($query) {
-                $query->where('first_name', 'like', '%'.$this->search.'%')
-                    ->orWhere('last_name', 'like', '%'.$this->search.'%')
-                    ->orWhere('email', 'like', '%'.$this->search.'%');
+                $searchTerm = '%'.$this->search.'%';
+                $query->where(function ($q) use ($searchTerm) {
+                    $q->where('first_name', 'like', $searchTerm)
+                        ->orWhere('last_name', 'like', $searchTerm)
+                        ->orWhere('email', 'like', $searchTerm);
+                });
             })
             ->when($this->statusFilter, function ($query) {
                 $query->where('status', $this->statusFilter);
@@ -63,8 +74,8 @@ class Index extends Component
             ->when($this->vacancyFilter, function ($query) {
                 $query->where('vacancy_id', $this->vacancyFilter);
             })
-            ->with(['client', 'vacancy'])
-            ->latest()
+            ->with(['client:id,name', 'vacancy:id,title,client_id'])
+            ->orderBy('created_at', 'desc')
             ->paginate(50);
 
         return view('livewire.people.index', [

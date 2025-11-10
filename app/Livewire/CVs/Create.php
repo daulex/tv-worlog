@@ -4,10 +4,13 @@ namespace App\Livewire\CVs;
 
 use App\Models\CV;
 use App\Models\Person;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Livewire\Component;
 
 class Create extends Component
 {
+    use AuthorizesRequests;
+
     public $person_id;
 
     public $file_path_or_url;
@@ -33,6 +36,8 @@ class Create extends Component
 
     public function save()
     {
+        $this->authorize('create', CV::class);
+
         $this->validate();
 
         CV::create([

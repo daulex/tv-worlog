@@ -4,10 +4,13 @@ namespace App\Livewire\Equipment;
 
 use App\Models\Equipment;
 use App\Models\Person;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Livewire\Component;
 
 class Edit extends Component
 {
+    use AuthorizesRequests;
+
     public Equipment $equipment;
 
     public $brand;
@@ -36,6 +39,8 @@ class Edit extends Component
 
     public function mount(Equipment $equipment)
     {
+        $this->authorize('update', $equipment);
+
         $this->equipment = $equipment;
         $this->brand = $equipment->brand;
         $this->model = $equipment->model;
@@ -47,6 +52,8 @@ class Edit extends Component
 
     public function save()
     {
+        $this->authorize('update', $this->equipment);
+
         $this->validate();
 
         $this->equipment->update([

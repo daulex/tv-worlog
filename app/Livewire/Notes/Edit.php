@@ -7,10 +7,13 @@ use App\Models\Equipment;
 use App\Models\Note;
 use App\Models\Person;
 use App\Models\Vacancy;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Livewire\Component;
 
 class Edit extends Component
 {
+    use AuthorizesRequests;
+
     public Note $note;
 
     public $note_text;
@@ -41,6 +44,8 @@ class Edit extends Component
 
     public function mount(Note $note)
     {
+        $this->authorize('update', $note);
+
         $this->note = $note;
         $this->note_text = $note->note_text;
         $this->note_type = $note->note_type;
@@ -55,6 +60,8 @@ class Edit extends Component
 
     public function save()
     {
+        $this->authorize('update', $this->note);
+
         $this->validate();
 
         $this->note->update([

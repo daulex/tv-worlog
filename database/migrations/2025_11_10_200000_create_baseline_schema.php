@@ -47,8 +47,20 @@ return new class extends Migration
             $table->string('emergency_contact_name')->nullable();
             $table->string('emergency_contact_relationship')->nullable();
             $table->string('emergency_contact_phone')->nullable();
-
             $table->timestamps();
+
+            // Performance indexes
+            $table->index(['first_name', 'last_name'], 'people_full_name_index');
+            $table->index('email', 'people_email_index');
+            $table->index('status', 'people_status_index');
+            $table->index('client_id', 'people_client_id_index');
+            $table->index('vacancy_id', 'people_vacancy_id_index');
+            $table->index('created_at', 'people_created_at_index');
+            $table->index('updated_at', 'people_updated_at_index');
+
+            // Composite indexes for common filtering
+            $table->index(['status', 'client_id'], 'people_status_client_index');
+            $table->index(['status', 'vacancy_id'], 'people_status_vacancy_index');
         });
 
         Schema::create('clients', function (Blueprint $table) {

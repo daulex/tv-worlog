@@ -5,10 +5,15 @@ namespace App\Livewire\People;
 use App\Models\Client;
 use App\Models\Person;
 use App\Models\Vacancy;
+use App\Rules\LatvianPersonalCode;
+use App\Rules\LatvianPhoneNumber;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Livewire\Component;
 
 class Edit extends Component
 {
+    use AuthorizesRequests;
+
     public Person $person;
 
     public $first_name;
@@ -46,15 +51,15 @@ class Edit extends Component
         return [
             'first_name' => 'required|string|max:255',
             'last_name' => 'required|string|max:255',
-            'pers_code' => 'required|string|unique:people,pers_code,'.$this->person->id,
-            'phone' => 'nullable|string|max:20',
-            'phone2' => 'nullable|string|max:20',
-            'email' => 'required|email|unique:people,email,'.$this->person->id,
-            'email2' => 'nullable|email|unique:people,email2,'.$this->person->id,
-            'date_of_birth' => 'required|date',
-            'address' => 'nullable|string',
-            'starting_date' => 'nullable|date',
-            'last_working_date' => 'nullable|date',
+            'pers_code' => ['required', 'string', 'unique:people,pers_code,'.$this->person->id, new LatvianPersonalCode],
+            'phone' => ['nullable', 'string', 'max:20', new LatvianPhoneNumber],
+            'phone2' => ['nullable', 'string', 'max:20', new LatvianPhoneNumber],
+            'email' => 'required|email:rfc,spoof|unique:people,email,'.$this->person->id,
+            'email2' => 'nullable|email:rfc,spoof|unique:people,email2,'.$this->person->id,
+            'date_of_birth' => 'required|date|before:today',
+            'address' => 'nullable|string|max:1000',
+            'starting_date' => 'nullable|date|before_or_equal:today',
+            'last_working_date' => 'nullable|date|before_or_equal:today',
             'position' => 'nullable|string|max:255',
             'status' => 'required|in:Candidate,Employee,Retired',
             'client_id' => 'nullable|exists:clients,id',
@@ -64,6 +69,8 @@ class Edit extends Component
 
     public function mount(Person $person)
     {
+        $this->authorize('update', $person);
+
         $this->person = $person;
         $this->first_name = $person->first_name;
         $this->last_name = $person->last_name;
@@ -84,7 +91,18 @@ class Edit extends Component
 
     public function save()
     {
+        $this->authorize('update', $this->person);
+
         $this->validate();
+
+        // Custom validation for date range
+        if ($this->starting_date && $this->last_working_date) {
+            if (strtotime($this->last_working_date) < strtotime($this->starting_date)) {
+                $this->addError('last_working_date', 'The last working date must be after or equal to the starting date.');
+
+                return;
+            }
+        }
 
         $this->person->update([
             'first_name' => $this->first_name,

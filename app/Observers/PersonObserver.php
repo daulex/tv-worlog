@@ -65,9 +65,9 @@ class PersonObserver
     }
 
     /**
-     * Handle the Person "deleted" event.
+     * Handle the Person "deleting" event.
      */
-    public function deleted(Person $person): void
+    public function deleting(Person $person): void
     {
         // Only create history if someone else deleted the person, not self-deletion
         if (Auth::id() && Auth::id() !== $person->id) {

@@ -4,10 +4,13 @@ namespace App\Livewire\Vacancies;
 
 use App\Models\Client;
 use App\Models\Vacancy;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Livewire\Component;
 
 class Create extends Component
 {
+    use AuthorizesRequests;
+
     public $title;
 
     public $description;
@@ -37,6 +40,8 @@ class Create extends Component
 
     public function save()
     {
+        $this->authorize('create', Vacancy::class);
+
         $this->validate();
 
         Vacancy::create([

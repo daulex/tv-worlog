@@ -5,12 +5,15 @@ use App\Models\Person;
 use Livewire\Livewire;
 
 it('displays person details correctly', function () {
+    $user = Person::factory()->create();
+    $this->actingAs($user);
+
     $client = Client::factory()->create();
     $person = Person::factory()->create([
         'first_name' => 'John',
         'last_name' => 'Doe',
         'email' => 'john@example.com',
-        'phone' => '555-1234',
+        'phone' => '+371 21234567',
         'position' => 'Developer',
         'status' => 'Employee',
         'client_id' => $client->id,
@@ -19,13 +22,16 @@ it('displays person details correctly', function () {
     Livewire::test('people.show', ['person' => $person])
         ->assertSee('John Doe')
         ->assertSee('john@example.com')
-        ->assertSee('555-1234')
+        ->assertSee('+371 21234567')
         ->assertSee('Developer')
         ->assertSee('Employee')
         ->assertSee($client->name);
 });
 
 it('can add a note to a person', function () {
+    $user = Person::factory()->create();
+    $this->actingAs($user);
+
     $person = Person::factory()->create();
 
     Livewire::test('people.show', ['person' => $person])
@@ -41,8 +47,15 @@ it('can add a note to a person', function () {
 });
 
 it('can edit person information', function () {
+    $user = Person::factory()->create();
+    $this->actingAs($user);
+
     $client = Client::factory()->create();
-    $person = Person::factory()->create(['first_name' => 'Jane']);
+    $person = Person::factory()->create([
+        'first_name' => 'Jane',
+        'phone' => '+371 21234567',
+        'phone2' => '+371 26123456',
+    ]);
 
     Livewire::test('people.show', ['person' => $person])
         ->call('toggleEditMode')
@@ -94,6 +107,9 @@ it('displays timeline items in correct order', function () {
 });
 
 it('validates note input', function () {
+    $user = Person::factory()->create();
+    $this->actingAs($user);
+
     $person = Person::factory()->create();
 
     Livewire::test('people.show', ['person' => $person])
@@ -102,22 +118,34 @@ it('validates note input', function () {
 });
 
 it('can add and edit secondary email and phone', function () {
-    $person = Person::factory()->create();
+    $user = Person::factory()->create();
+    $this->actingAs($user);
+
+    $person = Person::factory()->create([
+        'phone' => '+371 21234567',
+        'phone2' => '+371 26123456',
+    ]);
 
     Livewire::test('people.show', ['person' => $person])
         ->call('toggleEditMode')
         ->set('editForm.email2', 'secondary@example.com')
-        ->set('editForm.phone2', '555-9876')
+        ->set('editForm.phone2', '+371 23456789')
         ->call('savePerson')
         ->assertHasNoErrors();
 
     $person->refresh();
     expect($person->email2)->toBe('secondary@example.com');
-    expect($person->phone2)->toBe('555-9876');
+    expect($person->phone2)->toBe('+371 23456789');
 });
 
 it('validates secondary email format', function () {
-    $person = Person::factory()->create();
+    $user = Person::factory()->create();
+    $this->actingAs($user);
+
+    $person = Person::factory()->create([
+        'phone' => '+371 21234567',
+        'phone2' => '+371 26123456',
+    ]);
 
     Livewire::test('people.show', ['person' => $person])
         ->call('toggleEditMode')
@@ -127,9 +155,13 @@ it('validates secondary email format', function () {
 });
 
 it('can clear secondary email and phone', function () {
+    $user = Person::factory()->create();
+    $this->actingAs($user);
+
     $person = Person::factory()->create([
         'email2' => 'old.secondary@example.com',
-        'phone2' => '555-1234',
+        'phone2' => '+371 23456789',
+        'phone' => '+371 21234567',
     ]);
 
     Livewire::test('people.show', ['person' => $person])
@@ -145,7 +177,13 @@ it('can clear secondary email and phone', function () {
 });
 
 it('validates person edit form', function () {
-    $person = Person::factory()->create();
+    $user = Person::factory()->create();
+    $this->actingAs($user);
+
+    $person = Person::factory()->create([
+        'phone' => '+371 21234567',
+        'phone2' => '+371 26123456',
+    ]);
 
     Livewire::test('people.show', ['person' => $person])
         ->call('toggleEditMode')

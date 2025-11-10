@@ -3,10 +3,13 @@
 namespace App\Livewire\Clients;
 
 use App\Models\Client;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Livewire\Component;
 
 class Edit extends Component
 {
+    use AuthorizesRequests;
+
     public Client $client;
 
     public $name;

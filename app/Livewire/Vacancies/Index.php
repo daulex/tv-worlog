@@ -3,23 +3,28 @@
 namespace App\Livewire\Vacancies;
 
 use App\Models\Vacancy;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Livewire\Component;
 use Livewire\WithPagination;
 
 class Index extends Component
 {
-    use WithPagination;
+    use AuthorizesRequests, WithPagination;
 
     public $search = '';
 
     public function delete(Vacancy $vacancy)
     {
+        $this->authorize('delete', $vacancy);
+
         $vacancy->delete();
         session()->flash('message', 'Vacancy deleted successfully.');
     }
 
     public function render()
     {
+        $this->authorize('viewAny', Vacancy::class);
+
         $vacancies = Vacancy::with('client')
             ->where('title', 'like', '%'.$this->search.'%')
             ->orWhere('description', 'like', '%'.$this->search.'%')

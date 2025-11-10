@@ -25,6 +25,9 @@ it('can save and display new fields correctly', function () {
 });
 
 it('validates new fields correctly', function () {
+    $user = Person::factory()->create();
+    $this->actingAs($user);
+
     $person = Person::factory()->create();
 
     Livewire::test('people.show', ['person' => $person])
@@ -41,7 +44,13 @@ it('validates new fields correctly', function () {
 });
 
 it('can update new fields', function () {
-    $person = Person::factory()->create();
+    $user = Person::factory()->create();
+    $this->actingAs($user);
+
+    $person = Person::factory()->create([
+        'phone' => '+371 21234567',
+        'phone2' => '+371 26123456',
+    ]);
 
     Livewire::test('people.show', ['person' => $person])
         ->call('toggleEditMode')
@@ -50,7 +59,7 @@ it('can update new fields', function () {
         ->set('editForm.portfolio_url', 'https://updated.dev')
         ->set('editForm.emergency_contact_name', 'Updated Contact')
         ->set('editForm.emergency_contact_relationship', 'Parent')
-        ->set('editForm.emergency_contact_phone', '+371 98765432')
+        ->set('editForm.emergency_contact_phone', '+371 23456789')
         ->call('savePerson')
         ->assertHasNoErrors();
 
@@ -61,5 +70,5 @@ it('can update new fields', function () {
     expect($person->portfolio_url)->toBe('https://updated.dev');
     expect($person->emergency_contact_name)->toBe('Updated Contact');
     expect($person->emergency_contact_relationship)->toBe('Parent');
-    expect($person->emergency_contact_phone)->toBe('+371 98765432');
+    expect($person->emergency_contact_phone)->toBe('+371 23456789');
 });

@@ -4,10 +4,13 @@ namespace App\Livewire\Vacancies;
 
 use App\Models\Client;
 use App\Models\Vacancy;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Livewire\Component;
 
 class Edit extends Component
 {
+    use AuthorizesRequests;
+
     public Vacancy $vacancy;
 
     public $title;
@@ -39,6 +42,8 @@ class Edit extends Component
 
     public function mount(Vacancy $vacancy)
     {
+        $this->authorize('update', $vacancy);
+
         $this->vacancy = $vacancy;
         $this->title = $vacancy->title;
         $this->description = $vacancy->description;
@@ -51,6 +56,8 @@ class Edit extends Component
 
     public function save()
     {
+        $this->authorize('update', $this->vacancy);
+
         $this->validate();
 
         $this->vacancy->update([

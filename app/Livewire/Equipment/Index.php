@@ -3,23 +3,28 @@
 namespace App\Livewire\Equipment;
 
 use App\Models\Equipment;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Livewire\Component;
 use Livewire\WithPagination;
 
 class Index extends Component
 {
-    use WithPagination;
+    use AuthorizesRequests, WithPagination;
 
     public $search = '';
 
     public function delete(Equipment $equipment)
     {
+        $this->authorize('delete', $equipment);
+
         $equipment->delete();
         session()->flash('message', 'Equipment deleted successfully.');
     }
 
     public function render()
     {
+        $this->authorize('viewAny', Equipment::class);
+
         $equipment = Equipment::with('currentHolder')
             ->where('brand', 'like', '%'.$this->search.'%')
             ->orWhere('model', 'like', '%'.$this->search.'%')
