@@ -57,7 +57,7 @@ class DatabaseSeeder extends Seeder
                 'name' => $name,
                 'address' => $faker->swedishAddress(),
                 'contact_email' => $faker->companyEmail(),
-                'contact_phone' => '+46 '.$faker->phoneNumber(),
+                'contact_phone' => $this->generateSwedishPhoneNumber($faker),
             ]);
             $createdClients[] = $client->id;
         }
@@ -72,5 +72,37 @@ class DatabaseSeeder extends Seeder
         Equipment::factory(15)->create();
         Event::factory(8)->create();
         Person::factory(20)->create();
+    }
+
+    /**
+     * Generate a proper Swedish phone number
+     */
+    private function generateSwedishPhoneNumber($faker): string
+    {
+        // Swedish phone formats:
+        // Mobile: +46 70 123 45 67, +46 73 987 65 43
+        // Landline: +46 8 123 45 67 (Stockholm), +46 911 123 45 (other areas)
+        
+        $mobilePrefixes = ['70', '72', '73', '76', '79'];
+        $areaCodes = ['8', '911', '912', '913', '914', '915', '916', '917', '918', '919'];
+        
+        if (rand(0, 1)) {
+            // Mobile number
+            $prefix = $faker->randomElement($mobilePrefixes);
+            $number = $faker->numerify('### ## ##');
+            return "+46 {$prefix} {$number}";
+        } else {
+            // Landline number
+            $areaCode = $faker->randomElement($areaCodes);
+            if ($areaCode === '8') {
+                // Stockholm format
+                $number = $faker->numerify('### ## ##');
+                return "+46 {$areaCode} {$number}";
+            } else {
+                // Other areas format
+                $number = $faker->numerify('### ##');
+                return "+46 {$areaCode} {$number}";
+            }
+        }
     }
 }
