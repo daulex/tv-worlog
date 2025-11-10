@@ -5,7 +5,11 @@
         <flux:text class="font-medium text-gray-900 dark:text-gray-100">{{ $label }}</flux:text>
         <div class="text-right">
             @if($value)
-                <flux:text>{{ $value }}</flux:text>
+                @if(str_starts_with($value, 'http://') || str_starts_with($value, 'https://'))
+                    <flux:link href="{{ $value }}" target="_blank" rel="noopener noreferrer">{{ $value }}</flux:link>
+                @else
+                    <flux:text>{{ $value }}</flux:text>
+                @endif
             @elseif(isset($isUnassigned) && $isUnassigned)
                 <flux:text class="text-gray-400 italic">{{ __('Unassigned') }}</flux:text>
             @else

@@ -35,6 +35,18 @@ class Create extends Component
 
     public $vacancy_id;
 
+    public $linkedin_profile;
+
+    public $github_profile;
+
+    public $portfolio_url;
+
+    public $emergency_contact_name;
+
+    public $emergency_contact_relationship;
+
+    public $emergency_contact_phone;
+
     protected function rules(): array
     {
         return [
@@ -51,6 +63,12 @@ class Create extends Component
             'status' => 'required|in:Candidate,Employee,Retired',
             'client_id' => 'nullable|exists:clients,id',
             'vacancy_id' => 'nullable|exists:vacancies,id',
+            'linkedin_profile' => 'nullable|url|max:500',
+            'github_profile' => 'nullable|url|max:500',
+            'portfolio_url' => 'nullable|url|max:500',
+            'emergency_contact_name' => 'nullable|string|max:255',
+            'emergency_contact_relationship' => 'nullable|string|max:255',
+            'emergency_contact_phone' => 'nullable|string|max:255',
         ];
     }
 
@@ -72,6 +90,12 @@ class Create extends Component
             'status' => $this->status,
             'client_id' => $this->client_id,
             'vacancy_id' => $this->vacancy_id,
+            'linkedin_profile' => $this->linkedin_profile,
+            'github_profile' => $this->github_profile,
+            'portfolio_url' => $this->portfolio_url,
+            'emergency_contact_name' => $this->emergency_contact_name,
+            'emergency_contact_relationship' => $this->emergency_contact_relationship,
+            'emergency_contact_phone' => $this->emergency_contact_phone,
         ]);
 
         session()->flash('message', 'Person created successfully.');

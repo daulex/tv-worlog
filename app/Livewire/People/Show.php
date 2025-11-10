@@ -37,6 +37,12 @@ class Show extends Component
         'client_id' => '',
         'vacancy_id' => '',
         'cv_id' => '',
+        'linkedin_profile' => '',
+        'github_profile' => '',
+        'portfolio_url' => '',
+        'emergency_contact_name' => '',
+        'emergency_contact_relationship' => '',
+        'emergency_contact_phone' => '',
         'starting_date' => '',
         'last_working_date' => '',
     ];
@@ -127,6 +133,12 @@ class Show extends Component
             'client_id' => $this->person->client_id ?? '',
             'vacancy_id' => $this->person->vacancy_id ?? '',
             'cv_id' => $this->person->cv_id ?? '',
+            'linkedin_profile' => $this->person->linkedin_profile,
+            'github_profile' => $this->person->github_profile,
+            'portfolio_url' => $this->person->portfolio_url,
+            'emergency_contact_name' => $this->person->emergency_contact_name,
+            'emergency_contact_relationship' => $this->person->emergency_contact_relationship,
+            'emergency_contact_phone' => $this->person->emergency_contact_phone,
         ];
     }
 
@@ -182,6 +194,12 @@ class Show extends Component
             'editForm.client_id' => 'nullable|exists:clients,id',
             'editForm.vacancy_id' => 'nullable|exists:vacancies,id',
             'editForm.cv_id' => 'nullable|exists:c_vs,id',
+            'editForm.linkedin_profile' => 'nullable|url|max:500',
+            'editForm.github_profile' => 'nullable|url|max:500',
+            'editForm.portfolio_url' => 'nullable|url|max:500',
+            'editForm.emergency_contact_name' => 'nullable|string|max:255',
+            'editForm.emergency_contact_relationship' => 'nullable|string|max:255',
+            'editForm.emergency_contact_phone' => 'nullable|string|max:255',
         ]);
 
         $this->person->update([
@@ -200,6 +218,12 @@ class Show extends Component
             'client_id' => $this->editForm['client_id'] ?: null,
             'vacancy_id' => $this->editForm['vacancy_id'] ?: null,
             'cv_id' => $this->editForm['cv_id'] ?: null,
+            'linkedin_profile' => $this->editForm['linkedin_profile'],
+            'github_profile' => $this->editForm['github_profile'],
+            'portfolio_url' => $this->editForm['portfolio_url'],
+            'emergency_contact_name' => $this->editForm['emergency_contact_name'],
+            'emergency_contact_relationship' => $this->editForm['emergency_contact_relationship'],
+            'emergency_contact_phone' => $this->editForm['emergency_contact_phone'],
         ]);
 
         // Refresh person data
@@ -303,6 +327,12 @@ class Show extends Component
             'editForm.client_id' => 'nullable|exists:clients,id',
             'editForm.vacancy_id' => 'nullable|exists:vacancies,id',
             'editForm.cv_id' => 'nullable|exists:c_vs,id',
+            'editForm.linkedin_profile' => 'nullable|url|max:500',
+            'editForm.github_profile' => 'nullable|url|max:500',
+            'editForm.portfolio_url' => 'nullable|url|max:500',
+            'editForm.emergency_contact_name' => 'nullable|string|max:255',
+            'editForm.emergency_contact_relationship' => 'nullable|string|max:255',
+            'editForm.emergency_contact_phone' => 'nullable|string|max:255',
         ];
     }
 

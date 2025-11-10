@@ -16,6 +16,7 @@
             <flux:input
                 wire:model.live.debounce.300ms="search"
                 placeholder="Search people..."
+                label="Search"
             />
             
             <flux:select

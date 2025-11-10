@@ -32,6 +32,12 @@ class Person extends Authenticatable
         'client_id',
         'vacancy_id',
         'cv_id',
+        'linkedin_profile',
+        'github_profile',
+        'portfolio_url',
+        'emergency_contact_name',
+        'emergency_contact_relationship',
+        'emergency_contact_phone',
         'password',
     ];
 

@@ -169,3 +169,53 @@ it('shows success message after creation', function () {
         ->assertRedirect(route('people.index'))
         ->assertSessionHas('message', 'Person created successfully.');
 });
+
+it('can create person with new fields', function () {
+    Livewire::test('people.create')
+        ->set('first_name', 'John')
+        ->set('last_name', 'Doe')
+        ->set('email', 'john@example.com')
+        ->set('pers_code', '123456')
+        ->set('date_of_birth', '1990-01-01')
+        ->set('status', 'Employee')
+        ->set('linkedin_profile', 'https://linkedin.com/in/johndoe')
+        ->set('github_profile', 'https://github.com/johndoe')
+        ->set('portfolio_url', 'https://johndoe.dev')
+        ->set('emergency_contact_name', 'Jane Doe')
+        ->set('emergency_contact_relationship', 'Spouse')
+        ->set('emergency_contact_phone', '+371 23456789')
+        ->call('save')
+        ->assertRedirect(route('people.index'))
+        ->assertHasNoErrors();
+
+    $this->assertDatabaseHas('people', [
+        'first_name' => 'John',
+        'last_name' => 'Doe',
+        'email' => 'john@example.com',
+        'linkedin_profile' => 'https://linkedin.com/in/johndoe',
+        'github_profile' => 'https://github.com/johndoe',
+        'portfolio_url' => 'https://johndoe.dev',
+        'emergency_contact_name' => 'Jane Doe',
+        'emergency_contact_relationship' => 'Spouse',
+        'emergency_contact_phone' => '+371 23456789',
+    ]);
+});
+
+it('validates new fields on creation', function () {
+    Livewire::test('people.create')
+        ->set('first_name', 'John')
+        ->set('last_name', 'Doe')
+        ->set('email', 'john@example.com')
+        ->set('pers_code', '123456')
+        ->set('date_of_birth', '1990-01-01')
+        ->set('status', 'Employee')
+        ->set('linkedin_profile', 'not-a-valid-url')
+        ->set('github_profile', 'also-not-valid')
+        ->set('portfolio_url', 'invalid-url')
+        ->call('save')
+        ->assertHasErrors([
+            'linkedin_profile',
+            'github_profile',
+            'portfolio_url',
+        ]);
+});

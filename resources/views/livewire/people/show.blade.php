@@ -25,210 +25,341 @@
         
         @if(!$isEditing)
             <!-- View Mode -->
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div class="space-y-4">
-                    @include('livewire.partials.field-view', [
-                        'label' => __('First Name'),
-                        'value' => $person->first_name,
-                    ])
-                    
-                    @include('livewire.partials.field-view', [
-                        'label' => __('Last Name'),
-                        'value' => $person->last_name,
-                    ])
-                    
-                    @include('livewire.partials.field-view', [
-                        'label' => __('Email'),
-                        'value' => $person->email,
-                    ])
-                    
-                    @include('livewire.partials.field-view', [
-                        'label' => __('Secondary Email'),
-                        'value' => $person->email2,
-                    ])
-                    
-                    @include('livewire.partials.field-view', [
-                        'label' => __('Phone'),
-                        'value' => $person->phone,
-                    ])
-                    
-                    @include('livewire.partials.field-view', [
-                        'label' => __('Secondary Phone'),
-                        'value' => $person->phone2,
-                    ])
-                    
-                    @include('livewire.partials.field-view', [
-                        'label' => __('Date of Birth'),
-                        'value' => $person->date_of_birth?->format('M d, Y'),
-                    ])
-                    
-                    @include('livewire.partials.field-view', [
-                        'label' => __('Starting Date'),
-                        'value' => $person->starting_date?->format('M d, Y'),
-                    ])
-                    
-                    @include('livewire.partials.field-view', [
-                        'label' => __('Last Working Date'),
-                        'value' => $person->last_working_date?->format('M d, Y'),
-                    ])
-                </div>
-                
-                <div class="space-y-4">
-                    @include('livewire.partials.field-view', [
-                        'label' => __('Position'),
-                        'value' => $person->position,
-                    ])
-                    
-                    @include('livewire.partials.field-view', [
-                        'label' => __('Address'),
-                        'value' => $person->address,
-                    ])
-                    
-                    @include('livewire.partials.field-view', [
-                        'label' => __('Client'),
-                        'value' => $person->client?->name,
-                        'isUnassigned' => !$person->client,
-                    ])
-                    
-                    @include('livewire.partials.field-view', [
-                        'label' => __('Vacancy'),
-                        'value' => $person->vacancy?->title,
-                        'isUnassigned' => !$person->vacancy,
-                    ])
-                    
-                    @include('livewire.partials.field-view', [
-                        'label' => __('CV'),
-                        'value' => $person->cv?->title,
-                        'isUnassigned' => !$person->cv,
-                    ])
-                </div>
+            <div class="space-y-8">
+                <!-- Personal Information Fieldset -->
+                <flux:fieldset legend="{{ __('Personal Information') }}">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div class="space-y-4">
+                            @include('livewire.partials.field-view', [
+                                'label' => __('First Name'),
+                                'value' => $person->first_name,
+                            ])
+                            
+                            @include('livewire.partials.field-view', [
+                                'label' => __('Last Name'),
+                                'value' => $person->last_name,
+                            ])
+                            
+                            @include('livewire.partials.field-view', [
+                                'label' => __('Date of Birth'),
+                                'value' => $person->date_of_birth?->format('M d, Y'),
+                            ])
+                            
+                            @include('livewire.partials.field-view', [
+                                'label' => __('Address'),
+                                'value' => $person->address,
+                            ])
+                        </div>
+                        
+                        <div class="space-y-4">
+                            @include('livewire.partials.field-view', [
+                                'label' => __('Email'),
+                                'value' => $person->email,
+                            ])
+                            
+                            @include('livewire.partials.field-view', [
+                                'label' => __('Secondary Email'),
+                                'value' => $person->email2,
+                            ])
+                            
+                            @include('livewire.partials.field-view', [
+                                'label' => __('Phone'),
+                                'value' => $person->phone,
+                            ])
+                            
+                            @include('livewire.partials.field-view', [
+                                'label' => __('Secondary Phone'),
+                                'value' => $person->phone2,
+                            ])
+                        </div>
+                    </div>
+                </flux:fieldset>
+
+                <!-- Professional Information Fieldset -->
+                <flux:fieldset legend="{{ __('Professional Information') }}">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div class="space-y-4">
+                            @include('livewire.partials.field-view', [
+                                'label' => __('Position'),
+                                'value' => $person->position,
+                            ])
+                            
+                            @include('livewire.partials.field-view', [
+                                'label' => __('Status'),
+                                'value' => __($person->status),
+                            ])
+                            
+                            @include('livewire.partials.field-view', [
+                                'label' => __('Starting Date'),
+                                'value' => $person->starting_date?->format('M d, Y'),
+                            ])
+                            
+                            @include('livewire.partials.field-view', [
+                                'label' => __('Last Working Date'),
+                                'value' => $person->last_working_date?->format('M d, Y'),
+                            ])
+                        </div>
+                        
+                        <div class="space-y-4">
+                            @include('livewire.partials.field-view', [
+                                'label' => __('Client'),
+                                'value' => $person->client?->name,
+                                'isUnassigned' => !$person->client,
+                            ])
+                            
+                            @include('livewire.partials.field-view', [
+                                'label' => __('Vacancy'),
+                                'value' => $person->vacancy?->title,
+                                'isUnassigned' => !$person->vacancy,
+                            ])
+                            
+                            @include('livewire.partials.field-view', [
+                                'label' => __('CV'),
+                                'value' => $person->cv?->title,
+                                'isUnassigned' => !$person->cv,
+                            ])
+                        </div>
+                    </div>
+                </flux:fieldset>
+
+                <!-- Professional Profiles Fieldset -->
+                <flux:fieldset legend="{{ __('Professional Profiles') }}">
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        @include('livewire.partials.field-view', [
+                            'label' => __('LinkedIn Profile'),
+                            'value' => $person->linkedin_profile,
+                        ])
+                        
+                        @include('livewire.partials.field-view', [
+                            'label' => __('GitHub Profile'),
+                            'value' => $person->github_profile,
+                        ])
+                        
+                        @include('livewire.partials.field-view', [
+                            'label' => __('Portfolio URL'),
+                            'value' => $person->portfolio_url,
+                        ])
+                    </div>
+                </flux:fieldset>
+
+                <!-- Emergency Contact Fieldset -->
+                <flux:fieldset legend="{{ __('Emergency Contact') }}">
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        @include('livewire.partials.field-view', [
+                            'label' => __('Contact Name'),
+                            'value' => $person->emergency_contact_name,
+                        ])
+                        
+                        @include('livewire.partials.field-view', [
+                            'label' => __('Relationship'),
+                            'value' => $person->emergency_contact_relationship,
+                        ])
+                        
+                        @include('livewire.partials.field-view', [
+                            'label' => __('Contact Phone'),
+                            'value' => $person->emergency_contact_phone,
+                        ])
+                    </div>
+                </flux:fieldset>
             </div>
         @else
             <!-- Edit Mode -->
             <form wire:submit="savePerson">
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div class="space-y-4">
-                        @include('livewire.partials.field-edit', [
-                            'label' => __('First Name'),
-                            'name' => 'editForm.first_name',
-                            'type' => 'text',
-                            'value' => $editForm['first_name'],
-                        ])
-                        
-                        @include('livewire.partials.field-edit', [
-                            'label' => __('Last Name'),
-                            'name' => 'editForm.last_name',
-                            'type' => 'text',
-                            'value' => $editForm['last_name'],
-                        ])
-                        
-                        @include('livewire.partials.field-edit', [
-                            'label' => __('Email'),
-                            'name' => 'editForm.email',
-                            'type' => 'email',
-                            'value' => $editForm['email'],
-                        ])
-                        
-                        @include('livewire.partials.field-edit', [
-                            'label' => __('Secondary Email'),
-                            'name' => 'editForm.email2',
-                            'type' => 'email',
-                            'value' => $editForm['email2'],
-                        ])
-                        
-                        @include('livewire.partials.field-edit', [
-                            'label' => __('Phone'),
-                            'name' => 'editForm.phone',
-                            'type' => 'tel',
-                            'value' => $editForm['phone'],
-                        ])
-                        
-                        @include('livewire.partials.field-edit', [
-                            'label' => __('Secondary Phone'),
-                            'name' => 'editForm.phone2',
-                            'type' => 'tel',
-                            'value' => $editForm['phone2'],
-                        ])
-                        
-                        @include('livewire.partials.field-edit', [
-                            'label' => __('Date of Birth'),
-                            'name' => 'editForm.date_of_birth',
-                            'type' => 'date',
-                            'value' => $editForm['date_of_birth'],
-                        ])
-                        
-                        @include('livewire.partials.field-edit', [
-                            'label' => __('Starting Date'),
-                            'name' => 'editForm.starting_date',
-                            'type' => 'date',
-                            'value' => $editForm['starting_date'],
-                        ])
-                        
-                        @include('livewire.partials.field-edit', [
-                            'label' => __('Last Working Date'),
-                            'name' => 'editForm.last_working_date',
-                            'type' => 'date',
-                            'value' => $editForm['last_working_date'],
-                        ])
-                    </div>
-                    
-                    <div class="space-y-4">
-                        @include('livewire.partials.field-edit', [
-                            'label' => __('Position'),
-                            'name' => 'editForm.position',
-                            'type' => 'text',
-                            'value' => $editForm['position'],
-                        ])
-                        
-                        @include('livewire.partials.field-edit', [
-                            'label' => __('Address'),
-                            'name' => 'editForm.address',
-                            'type' => 'textarea',
-                            'value' => $editForm['address'],
-                        ])
-                        
-                        @include('livewire.partials.field-edit', [
-                            'label' => __('Status'),
-                            'name' => 'editForm.status',
-                            'type' => 'select',
-                            'value' => $editForm['status'],
-                            'options' => ['Candidate' => 'Candidate', 'Employee' => 'Employee', 'Retired' => 'Retired'],
-                        ])
-                        
-                        @include('livewire.partials.field-edit', [
-                            'label' => __('Client'),
-                            'name' => 'editForm.client_id',
-                            'type' => 'select',
-                            'value' => $editForm['client_id'],
-                            'options' => $this->clients->pluck('name', 'id')->toArray(),
-                            'placeholder' => 'Select Client',
-                        ])
-                        
-                        @include('livewire.partials.field-edit', [
-                            'label' => __('Vacancy'),
-                            'name' => 'editForm.vacancy_id',
-                            'type' => 'select',
-                            'value' => $editForm['vacancy_id'],
-                            'options' => $this->vacancies->mapWithKeys(function ($vacancy) {
-                                return [$vacancy->id => "{$vacancy->title} - {$vacancy->client->name}"];
-                            })->toArray(),
-                            'placeholder' => 'Select Vacancy',
-                        ])
-                        
-                        @include('livewire.partials.field-edit', [
-                            'label' => __('CV'),
-                            'name' => 'editForm.cv_id',
-                            'type' => 'select',
-                            'value' => $editForm['cv_id'],
-                            'options' => $this->cvs->mapWithKeys(function ($cv) {
-                                return [$cv->id => "CV - {$cv->person->first_name} {$cv->person->last_name}"];
-                            })->toArray(),
-                            'placeholder' => 'Select CV',
-                        ])
-                    </div>
+                <div class="space-y-8">
+                    <!-- Personal Information Fieldset -->
+                    <flux:fieldset legend="{{ __('Personal Information') }}">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div class="space-y-4">
+                                @include('livewire.partials.field-edit', [
+                                    'label' => __('First Name'),
+                                    'name' => 'editForm.first_name',
+                                    'type' => 'text',
+                                    'value' => $editForm['first_name'],
+                                ])
+                                
+                                @include('livewire.partials.field-edit', [
+                                    'label' => __('Last Name'),
+                                    'name' => 'editForm.last_name',
+                                    'type' => 'text',
+                                    'value' => $editForm['last_name'],
+                                ])
+                                
+                                @include('livewire.partials.field-edit', [
+                                    'label' => __('Date of Birth'),
+                                    'name' => 'editForm.date_of_birth',
+                                    'type' => 'date',
+                                    'value' => $editForm['date_of_birth'],
+                                ])
+                                
+                                @include('livewire.partials.field-edit', [
+                                    'label' => __('Address'),
+                                    'name' => 'editForm.address',
+                                    'type' => 'textarea',
+                                    'value' => $editForm['address'],
+                                ])
+                            </div>
+                            
+                            <div class="space-y-4">
+                                @include('livewire.partials.field-edit', [
+                                    'label' => __('Email'),
+                                    'name' => 'editForm.email',
+                                    'type' => 'email',
+                                    'value' => $editForm['email'],
+                                ])
+                                
+                                @include('livewire.partials.field-edit', [
+                                    'label' => __('Secondary Email'),
+                                    'name' => 'editForm.email2',
+                                    'type' => 'email',
+                                    'value' => $editForm['email2'],
+                                ])
+                                
+                                @include('livewire.partials.field-edit', [
+                                    'label' => __('Phone'),
+                                    'name' => 'editForm.phone',
+                                    'type' => 'tel',
+                                    'value' => $editForm['phone'],
+                                ])
+                                
+                                @include('livewire.partials.field-edit', [
+                                    'label' => __('Secondary Phone'),
+                                    'name' => 'editForm.phone2',
+                                    'type' => 'tel',
+                                    'value' => $editForm['phone2'],
+                                ])
+                            </div>
+                        </div>
+                    </flux:fieldset>
+
+                    <!-- Professional Information Fieldset -->
+                    <flux:fieldset legend="{{ __('Professional Information') }}">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div class="space-y-4">
+                                @include('livewire.partials.field-edit', [
+                                    'label' => __('Position'),
+                                    'name' => 'editForm.position',
+                                    'type' => 'text',
+                                    'value' => $editForm['position'],
+                                ])
+                                
+                                @include('livewire.partials.field-edit', [
+                                    'label' => __('Status'),
+                                    'name' => 'editForm.status',
+                                    'type' => 'select',
+                                    'value' => $editForm['status'],
+                                    'options' => ['Candidate' => 'Candidate', 'Employee' => 'Employee', 'Retired' => 'Retired'],
+                                ])
+                                
+                                @include('livewire.partials.field-edit', [
+                                    'label' => __('Starting Date'),
+                                    'name' => 'editForm.starting_date',
+                                    'type' => 'date',
+                                    'value' => $editForm['starting_date'],
+                                ])
+                                
+                                @include('livewire.partials.field-edit', [
+                                    'label' => __('Last Working Date'),
+                                    'name' => 'editForm.last_working_date',
+                                    'type' => 'date',
+                                    'value' => $editForm['last_working_date'],
+                                ])
+                            </div>
+                            
+                            <div class="space-y-4">
+                                @include('livewire.partials.field-edit', [
+                                    'label' => __('Client'),
+                                    'name' => 'editForm.client_id',
+                                    'type' => 'select',
+                                    'value' => $editForm['client_id'],
+                                    'options' => $this->clients->pluck('name', 'id')->toArray(),
+                                    'placeholder' => 'Select Client',
+                                ])
+                                
+                                @include('livewire.partials.field-edit', [
+                                    'label' => __('Vacancy'),
+                                    'name' => 'editForm.vacancy_id',
+                                    'type' => 'select',
+                                    'value' => $editForm['vacancy_id'],
+                                    'options' => $this->vacancies->mapWithKeys(function ($vacancy) {
+                                        return [$vacancy->id => "{$vacancy->title} - {$vacancy->client->name}"];
+                                    })->toArray(),
+                                    'placeholder' => 'Select Vacancy',
+                                ])
+                                
+                                @include('livewire.partials.field-edit', [
+                                    'label' => __('CV'),
+                                    'name' => 'editForm.cv_id',
+                                    'type' => 'select',
+                                    'value' => $editForm['cv_id'],
+                                    'options' => $this->cvs->mapWithKeys(function ($cv) {
+                                        return [$cv->id => "CV - {$cv->person->first_name} {$cv->person->last_name}"];
+                                    })->toArray(),
+                                    'placeholder' => 'Select CV',
+                                ])
+                            </div>
+                        </div>
+                    </flux:fieldset>
+
+                    <!-- Professional Profiles Fieldset -->
+                    <flux:fieldset legend="{{ __('Professional Profiles') }}">
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                            @include('livewire.partials.field-edit', [
+                                'label' => __('LinkedIn Profile'),
+                                'name' => 'editForm.linkedin_profile',
+                                'type' => 'url',
+                                'value' => $editForm['linkedin_profile'],
+                                'placeholder' => 'https://linkedin.com/in/username',
+                            ])
+                            
+                            @include('livewire.partials.field-edit', [
+                                'label' => __('GitHub Profile'),
+                                'name' => 'editForm.github_profile',
+                                'type' => 'url',
+                                'value' => $editForm['github_profile'],
+                                'placeholder' => 'https://github.com/username',
+                            ])
+                            
+                            @include('livewire.partials.field-edit', [
+                                'label' => __('Portfolio URL'),
+                                'name' => 'editForm.portfolio_url',
+                                'type' => 'url',
+                                'value' => $editForm['portfolio_url'],
+                                'placeholder' => 'https://yourportfolio.com',
+                            ])
+                        </div>
+                    </flux:fieldset>
+
+                    <!-- Emergency Contact Fieldset -->
+                    <flux:fieldset legend="{{ __('Emergency Contact') }}">
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                            @include('livewire.partials.field-edit', [
+                                'label' => __('Contact Name'),
+                                'name' => 'editForm.emergency_contact_name',
+                                'type' => 'text',
+                                'value' => $editForm['emergency_contact_name'],
+                                'placeholder' => 'Emergency contact name',
+                            ])
+                            
+                            @include('livewire.partials.field-edit', [
+                                'label' => __('Relationship'),
+                                'name' => 'editForm.emergency_contact_relationship',
+                                'type' => 'text',
+                                'value' => $editForm['emergency_contact_relationship'],
+                                'placeholder' => 'Spouse, Parent, Sibling, etc.',
+                            ])
+                            
+                            @include('livewire.partials.field-edit', [
+                                'label' => __('Contact Phone'),
+                                'name' => 'editForm.emergency_contact_phone',
+                                'type' => 'tel',
+                                'value' => $editForm['emergency_contact_phone'],
+                                'placeholder' => '+371 123 45678',
+                            ])
+                        </div>
+                    </flux:fieldset>
                 </div>
                 
-                <div class="flex space-x-4 mt-6">
+                <div class="flex space-x-4 mt-8">
                     <flux:button type="submit" icon="check">
                         {{ __('Save') }}
                     </flux:button>
@@ -374,11 +505,59 @@
                                 <!-- Timeline Content -->
                                 <div class="flex-1 min-w-0 ml-8">
                                     <div class="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-3">
-                                        <div class="flex items-center justify-between mb-1">
+                                        <div class="flex items-center justify-between mb-2">
                                             <div class="flex items-center space-x-2">
-                                                <flux:badge variant="outline" class="bg-{{ $history->action_type_color }}-50 text-{{ $history->action_type_color }}-700 border-{{ $history->action_type_color }}-200 text-xs">
-                                                    {{ __(ucfirst($history->action_type)) }}
-                                                </flux:badge>
+                                                @switch($history->action_type)
+                                                    @case('profile_updated')
+                                                        <flux:badge variant="outline" class="bg-blue-50 text-blue-700 border-blue-200 text-xs">
+                                                            {{ __('Profile Updated') }}
+                                                        </flux:badge>
+                                                        @break
+                                                    @case('equipment_assigned')
+                                                        <flux:badge variant="outline" class="bg-orange-50 text-orange-700 border-orange-200 text-xs">
+                                                            {{ __('Equipment Assigned') }}
+                                                        </flux:badge>
+                                                        @break
+                                                    @case('equipment_returned')
+                                                        <flux:badge variant="outline" class="bg-yellow-50 text-yellow-700 border-yellow-200 text-xs">
+                                                            {{ __('Equipment Returned') }}
+                                                        </flux:badge>
+                                                        @break
+                                                    @case('event_joined')
+                                                        <flux:badge variant="outline" class="bg-green-50 text-green-700 border-green-200 text-xs">
+                                                            {{ __('Joined Event') }}
+                                                        </flux:badge>
+                                                        @break
+                                                    @case('event_left')
+                                                        <flux:badge variant="outline" class="bg-red-50 text-red-700 border-red-200 text-xs">
+                                                            {{ __('Left Event') }}
+                                                        </flux:badge>
+                                                        @break
+                                                    @case('note_added')
+                                                        <flux:badge variant="outline" class="bg-blue-50 text-blue-700 border-blue-200 text-xs">
+                                                            {{ __('Note Added') }}
+                                                        </flux:badge>
+                                                        @break
+                                                    @case('cv_updated')
+                                                        <flux:badge variant="outline" class="bg-purple-50 text-purple-700 border-purple-200 text-xs">
+                                                            {{ __('CV Updated') }}
+                                                        </flux:badge>
+                                                        @break
+                                                    @case('vacancy_assigned')
+                                                        <flux:badge variant="outline" class="bg-indigo-50 text-indigo-700 border-indigo-200 text-xs">
+                                                            {{ __('Vacancy Assigned') }}
+                                                        </flux:badge>
+                                                        @break
+                                                    @case('vacancy_removed')
+                                                        <flux:badge variant="outline" class="bg-red-50 text-red-700 border-red-200 text-xs">
+                                                            {{ __('Vacancy Removed') }}
+                                                        </flux:badge>
+                                                        @break
+                                                    @default
+                                                        <flux:badge variant="outline" class="bg-gray-50 text-gray-700 border-gray-200 text-xs">
+                                                            {{ __(ucfirst($history->action_type)) }}
+                                                        </flux:badge>
+                                                @endswitch
                                                 <span class="text-xs text-gray-500 dark:text-gray-400">
                                                     {{ $history->change_date->setTimezone(config('app.timezone'))->format('M d, Y H:i') }}
                                                 </span>
@@ -393,9 +572,9 @@
                                         <!-- History Content -->
                                         @if($history->notes)
                                             <flux:text class="text-gray-700 dark:text-gray-300">{{ $history->notes }}</flux:text>
+                                        @else
+                                            <flux:text class="text-gray-700 dark:text-gray-300">{{ $history->action }}</flux:text>
                                         @endif
-                                        
-                                        <flux:text class="text-gray-600 dark:text-gray-400 text-sm mt-1">{{ $history->action }}</flux:text>
                                     </div>
                                 </div>
                             </div>

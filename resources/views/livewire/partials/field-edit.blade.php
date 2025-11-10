@@ -22,6 +22,7 @@
                 type="{{ $type ?? 'text' }}" 
                 wire:model="{{ $name }}" 
                 step="{{ $step ?? 'any' }}"
+                placeholder="{{ $placeholder ?? '' }}"
             />
         @endif
         <flux:error name="{{ $name }}" />
