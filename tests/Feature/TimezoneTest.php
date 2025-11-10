@@ -32,10 +32,11 @@ it('uses latvian locale for faker data', function () {
 });
 
 it('displays currency in euros', function () {
+    $user = \App\Models\Person::factory()->create();
     $equipment = \App\Models\Equipment::factory()->create(['purchase_price' => 1000]);
 
     // Test that the equipment Livewire component shows EUR symbol
-    Livewire::test(\App\Livewire\Equipment\Index::class)
-        ->assertSee('€'.number_format($equipment->purchase_price, 2))
-        ->assertDontSee('$'.number_format($equipment->purchase_price, 2));
+    Livewire::actingAs($user)->test(\App\Livewire\Equipment\Index::class)
+        ->assertSee('€1,000.00')
+        ->assertDontSee('$1,000.00');
 });
