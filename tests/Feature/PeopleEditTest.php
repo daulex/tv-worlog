@@ -183,6 +183,8 @@ it('allows keeping current email on update', function () {
         ->set('client_id', $newClient->id)
         ->set('vacancy_id', $newVacancy->id)
         ->set('pers_code', '280394-15750') // Valid Latvian personal code
+        ->set('starting_date', '2024-01-01') // Set valid date range
+        ->set('last_working_date', '2024-12-01') // Set valid date range
         ->call('save')
         ->assertHasNoErrors()
         ->assertRedirect(route('people.index'));
