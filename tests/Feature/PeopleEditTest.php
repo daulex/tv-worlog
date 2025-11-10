@@ -224,7 +224,7 @@ it('shows success message after update', function () {
         ->set('first_name', 'Jane')
         ->set('last_name', 'Smith')
         ->set('email', 'jane@example.com')
-        ->set('pers_code', '123456')
+        ->set('pers_code', '987654-32101')
         ->set('date_of_birth', '1990-01-01')
         ->set('status', 'Employee')
         ->call('save')

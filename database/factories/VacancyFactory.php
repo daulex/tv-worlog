@@ -29,7 +29,7 @@ class VacancyFactory extends Factory
             'date_opened' => fake()->dateTimeBetween('-6 months', 'now'),
             'date_closed' => fake()->optional(0.3)->dateTimeBetween('-3 months', 'now'),
             'budget' => fake()->optional(0.8)->randomFloat(0, 3000, 6000),
-            'status' => fake()->randomElement(['Open', 'Closed', 'Paused']),
+            'status' => fake()->randomElement(['Open', 'Closed', 'On Hold']),
         ];
     }
 }
