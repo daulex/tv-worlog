@@ -40,8 +40,8 @@
             @auth
                 <flux:dropdown class="hidden lg:block" position="bottom" align="start">
                     <flux:profile
-                        :name="auth()->user()?->name ?? 'User'"
-                        :initials="auth()->user()?->initials() ?? 'U'"
+                        :name="(auth()->user() ? auth()->user()->name : 'User')"
+                        :initials="(auth()->user() ? auth()->user()->initials() : 'U')"
                         icon:trailing="chevrons-up-down"
                     />
 
@@ -53,13 +53,13 @@
                                         <span
                                             class="flex h-full w-full items-center justify-center rounded-lg bg-neutral-200 text-black dark:bg-neutral-700 dark:text-white"
                                         >
-                                            {{ auth()->user()?->initials() ?? 'U' }}
+                                            {{ auth()->user() ? auth()->user()->initials() : 'U' }}
                                         </span>
                                     </span>
 
                                     <div class="grid flex-1 text-start text-sm leading-tight">
-                                        <span class="truncate font-semibold">{{ auth()->user()?->name ?? 'User' }}</span>
-                                        <span class="truncate text-xs">{{ auth()->user()?->email ?? 'user@example.com' }}</span>
+                                        <span class="truncate font-semibold">{{ auth()->user() ? auth()->user()->name : 'User' }}</span>
+                                        <span class="truncate text-xs">{{ auth()->user() ? auth()->user()->email : 'user@example.com' }}</span>
                                     </div>
                                 </div>
                             </div>
@@ -93,7 +93,7 @@
 
                 <flux:dropdown position="top" align="end">
                     <flux:profile
-                        :initials="auth()->user()?->initials() ?? 'U'"
+                        :initials="(auth()->user() ? auth()->user()->initials() : 'U')"
                         icon-trailing="chevron-down"
                     />
 
@@ -105,13 +105,13 @@
                                         <span
                                             class="flex h-full w-full items-center justify-center rounded-lg bg-neutral-200 text-black dark:bg-neutral-700 dark:text-white"
                                         >
-                                            {{ auth()->user()?->initials() ?? 'U' }}
+                                            {{ auth()->user() ? auth()->user()->initials() : 'U' }}
                                         </span>
                                     </span>
 
                                     <div class="grid flex-1 text-start text-sm leading-tight">
-                                        <span class="truncate font-semibold">{{ auth()->user()?->name ?? 'User' }}</span>
-                                        <span class="truncate text-xs">{{ auth()->user()?->email ?? 'user@example.com' }}</span>
+                                        <span class="truncate font-semibold">{{ auth()->user() ? auth()->user()->name : 'User' }}</span>
+                                        <span class="truncate text-xs">{{ auth()->user() ? auth()->user()->email : 'user@example.com' }}</span>
                                     </div>
                                 </div>
                             </div>

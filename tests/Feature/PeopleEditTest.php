@@ -277,7 +277,7 @@ it('shows success message after update', function () {
     Livewire::test('people.edit', ['person' => $person])
         ->set('first_name', 'Jane')
         ->set('last_name', 'Smith')
-        ->set('email', $person->email)
+        ->set('email', 'jane.smith.updated@example.com')
         ->set('phone', '+371 21234567')
         ->set('phone2', '+371 61234567')
         ->set('email2', 'jane2.updated@example.com')
