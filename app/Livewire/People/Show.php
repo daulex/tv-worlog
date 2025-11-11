@@ -41,7 +41,7 @@ class Show extends Component
         'status' => '',
         'client_id' => '',
         'vacancy_id' => '',
-        'cv_id' => '',
+
         'linkedin_profile' => '',
         'github_profile' => '',
         'portfolio_url' => '',
@@ -59,7 +59,7 @@ class Show extends Component
         $this->person = $person->load([
             'client',
             'vacancy',
-            'cv',
+            'files',
             'personHistory.performedBy',
             'notes',
             'events',
@@ -145,7 +145,7 @@ class Show extends Component
             'status' => $this->person->status,
             'client_id' => $this->person->client_id ?? '',
             'vacancy_id' => $this->person->vacancy_id ?? '',
-            'cv_id' => $this->person->cv_id ?? '',
+
             'linkedin_profile' => $this->person->linkedin_profile,
             'github_profile' => $this->person->github_profile,
             'portfolio_url' => $this->person->portfolio_url,
@@ -210,7 +210,6 @@ class Show extends Component
             'editForm.status' => 'required|in:Candidate,Employee,Retired',
             'editForm.client_id' => 'nullable|exists:clients,id',
             'editForm.vacancy_id' => 'nullable|exists:vacancies,id',
-            'editForm.cv_id' => 'nullable|exists:c_vs,id',
             'editForm.linkedin_profile' => 'nullable|url|max:500',
             'editForm.github_profile' => 'nullable|url|max:500',
             'editForm.portfolio_url' => 'nullable|url|max:500',
@@ -234,7 +233,6 @@ class Show extends Component
             'status' => $this->editForm['status'],
             'client_id' => $this->editForm['client_id'] ?: null,
             'vacancy_id' => $this->editForm['vacancy_id'] ?: null,
-            'cv_id' => $this->editForm['cv_id'] ?: null,
             'linkedin_profile' => $this->editForm['linkedin_profile'],
             'github_profile' => $this->editForm['github_profile'],
             'portfolio_url' => $this->editForm['portfolio_url'],
@@ -247,7 +245,7 @@ class Show extends Component
         $this->person->load([
             'client',
             'vacancy',
-            'cv',
+            'files',
             'personHistory.performedBy',
         ]);
 
@@ -352,7 +350,6 @@ class Show extends Component
             'editForm.status' => 'required|in:Candidate,Employee,Retired',
             'editForm.client_id' => 'nullable|exists:clients,id',
             'editForm.vacancy_id' => 'nullable|exists:vacancies,id',
-            'editForm.cv_id' => 'nullable|exists:c_vs,id',
             'editForm.linkedin_profile' => 'nullable|url|max:500',
             'editForm.github_profile' => 'nullable|url|max:500',
             'editForm.portfolio_url' => 'nullable|url|max:500',
@@ -372,9 +369,11 @@ class Show extends Component
         return \App\Models\Vacancy::with('client')->orderBy('title')->get();
     }
 
-    public function getCvsProperty()
+    public function getFilesProperty()
     {
-        return \App\Models\CV::with('person')->orderBy('created_at', 'desc')->get();
+        return \App\Models\File::where('person_id', $this->person->id)
+            ->orderBy('uploaded_at', 'desc')
+            ->get();
     }
 
     private function clearTimelineCache(): void

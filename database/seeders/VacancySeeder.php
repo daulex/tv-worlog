@@ -96,7 +96,10 @@ class VacancySeeder extends Seeder
         ];
 
         foreach ($vacancies as $vacancy) {
-            Vacancy::create($vacancy);
+            Vacancy::firstOrCreate(
+                ['title' => $vacancy['title'], 'client_id' => $vacancy['client_id']],
+                $vacancy
+            );
         }
     }
 }

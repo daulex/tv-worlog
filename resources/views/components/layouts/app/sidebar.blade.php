@@ -23,7 +23,7 @@
                     <flux:navlist.item icon="cog" href="{{ route('equipment.index') }}" wire:navigate>{{ __('Equipment') }}</flux:navlist.item>
                     <flux:navlist.item icon="calendar" href="{{ route('events.index') }}" wire:navigate>{{ __('Events') }}</flux:navlist.item>
                     <flux:navlist.item icon="document-text" href="{{ route('notes.index') }}" wire:navigate>{{ __('Notes') }}</flux:navlist.item>
-                    <flux:navlist.item icon="document" href="{{ route('c-vs.index') }}" wire:navigate>{{ __('CVs') }}</flux:navlist.item>
+                    <flux:navlist.item icon="document" href="{{ route('files.index') }}" wire:navigate>{{ __('Files') }}</flux:navlist.item>
                 </flux:navlist.group>
             </flux:navlist>
 

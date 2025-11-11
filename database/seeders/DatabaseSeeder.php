@@ -19,7 +19,6 @@ class DatabaseSeeder extends Seeder
             PersonSeeder::class,
             EquipmentSeeder::class,
             EventSeeder::class,
-            CVSeeder::class,
             NoteSeeder::class,
         ]);
 

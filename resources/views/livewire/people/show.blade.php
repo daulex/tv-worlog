@@ -2,7 +2,6 @@
     <!-- Person Details Header -->
     <flux:container>
         <flux:heading>{{ $person->full_name }}</flux:heading>
-        <flux:text>{{ __('Person Details and History') }}</flux:text>
     </flux:container>
 
     <!-- Person Information -->
@@ -112,15 +111,57 @@
                                 'value' => $person->vacancy?->title,
                                 'isUnassigned' => !$person->vacancy,
                             ])
-                            
-                            @include('livewire.partials.field-view', [
-                                'label' => __('CV'),
-                                'value' => $person->cv?->title,
-                                'isUnassigned' => !$person->cv,
-                            ])
                         </div>
                     </div>
                 </flux:fieldset>
+
+                <!-- Files Section -->
+                @if ($person->files->count() > 0)
+                    <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6">
+                        <h2 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Files ({{ $person->files->count() }})</h2>
+                        <div class="space-y-3">
+                            @foreach ($person->files as $file)
+                                <div class="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-700 rounded-lg">
+                                    <div class="flex-1">
+                                        <div class="font-medium text-gray-900 dark:text-white">{{ $file->filename }}</div>
+                                        @if ($file->description)
+                                            <div class="text-sm text-gray-500 dark:text-gray-400">{{ $file->description }}</div>
+                                        @endif
+                                        <div class="text-xs text-gray-400 dark:text-gray-500 mt-1">
+                                            {{ $file->file_size_formatted }} • {{ ucfirst($file->file_category) }} • {{ $file->uploaded_at->format('M j, Y') }}
+                                        </div>
+                                    </div>
+                                    <div class="flex gap-2 ml-4">
+                                        <flux:button variant="ghost" size="sm" href="{{ route('files.show', $file) }}">
+                                            View
+                                        </flux:button>
+                                        <flux:button variant="outline" size="sm" href="{{ route('files.download', $file) }}">
+                                            Download
+                                        </flux:button>
+                                    </div>
+                                </div>
+                            @endforeach
+                        </div>
+                        @if ($person->files->count() > 3)
+                            <div class="mt-4 text-center">
+                                <flux:button href="{{ route('files.index', ['personFilter' => $person->id]) }}" variant="ghost">
+                                    View All Files →
+                                </flux:button>
+                            </div>
+                        @endif
+                    </div>
+                @else
+                    <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6">
+                        <h2 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Files</h2>
+                        <div class="text-center py-8">
+                            <flux:icon name="document" class="w-12 h-12 mx-auto text-gray-400 mb-4" />
+                            <p class="text-gray-500 dark:text-gray-400">No files uploaded for this person</p>
+                            <flux:button href="{{ route('files.create') }}" variant="primary" class="mt-4">
+                                Add First File
+                            </flux:button>
+                        </div>
+                    </div>
+                @endif
 
                 <!-- Professional Profiles Fieldset -->
                 <flux:fieldset legend="{{ __('Professional Profiles') }}">
@@ -286,16 +327,7 @@
                                     'placeholder' => 'Select Vacancy',
                                 ])
                                 
-                                @include('livewire.partials.field-edit', [
-                                    'label' => __('CV'),
-                                    'name' => 'editForm.cv_id',
-                                    'type' => 'select',
-                                    'value' => $editForm['cv_id'],
-                                    'options' => $this->cvs->mapWithKeys(function ($cv) {
-                                        return [$cv->id => "CV - {$cv->person->first_name} {$cv->person->last_name}"];
-                                    })->toArray(),
-                                    'placeholder' => 'Select CV',
-                                ])
+
                             </div>
                         </div>
                     </flux:fieldset>
@@ -373,8 +405,8 @@
     </flux:container>
 
     <!-- Add Note Section -->
-    <flux:container>
-        <flux:heading level="2" class="mb-4">{{ __('Add Note') }}</flux:heading>
+    <flux:container class="py-5 mb-5">
+        <flux:heading level="2" size="xl" class="mt-4 mb-4">{{ __('Add Note') }}</flux:heading>
         
         @if($showNoteForm)
             <div class="space-y-4">
@@ -409,7 +441,7 @@
 
     <!-- Unified Timeline -->
     <flux:container>
-        <flux:heading level="2" class="mb-2">{{ __('Timeline & History') }}</flux:heading>
+        <flux:heading level="2" size="xl" class="mb-6">{{ __('Timeline & History') }}</flux:heading>
         
         <!-- Unified Timeline -->
         @php
@@ -538,9 +570,9 @@
                                                             {{ __('Note Added') }}
                                                         </flux:badge>
                                                         @break
-                                                    @case('cv_updated')
+                                                    @case('file_updated')
                                                         <flux:badge variant="outline" class="bg-purple-50 text-purple-700 border-purple-200 text-xs">
-                                                            {{ __('CV Updated') }}
+                                                            {{ __('File Updated') }}
                                                         </flux:badge>
                                                         @break
                                                     @case('vacancy_assigned')
@@ -631,7 +663,7 @@
 
     <!-- Action Buttons -->
     <flux:container>
-        <div class="flex space-x-4">
+        <div class="flex space-x-4 mt-6">
             @if(!$isEditing)
                 <flux:button href="{{ route('people.index') }}" variant="outline" icon="arrow-left">
                     {{ __('Back to People') }}

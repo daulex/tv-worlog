@@ -46,7 +46,10 @@ class ClientSeeder extends Seeder
         ];
 
         foreach ($clients as $client) {
-            Client::create($client);
+            Client::firstOrCreate(
+                ['name' => $client['name']],
+                $client
+            );
         }
     }
 }

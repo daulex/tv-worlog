@@ -3,21 +3,21 @@
 namespace App\Providers;
 
 use App\Models\Client;
-use App\Models\CV;
 use App\Models\Equipment;
 use App\Models\EquipmentHistory;
 use App\Models\Event;
 use App\Models\EventParticipant;
+use App\Models\File;
 use App\Models\Note;
 use App\Models\Person;
 use App\Models\PersonHistory;
 use App\Models\Vacancy;
 use App\Policies\ClientPolicy;
-use App\Policies\CVPolicy;
 use App\Policies\EquipmentHistoryPolicy;
 use App\Policies\EquipmentPolicy;
 use App\Policies\EventParticipantPolicy;
 use App\Policies\EventPolicy;
+use App\Policies\FilePolicy;
 use App\Policies\NotePolicy;
 use App\Policies\PersonHistoryPolicy;
 use App\Policies\PersonPolicy;
@@ -34,11 +34,11 @@ class AuthServiceProvider extends ServiceProvider
      */
     protected $policies = [
         Client::class => ClientPolicy::class,
-        CV::class => CVPolicy::class,
         Equipment::class => EquipmentPolicy::class,
         EquipmentHistory::class => EquipmentHistoryPolicy::class,
         Event::class => EventPolicy::class,
         EventParticipant::class => EventParticipantPolicy::class,
+        File::class => FilePolicy::class,
         Note::class => NotePolicy::class,
         Person::class => PersonPolicy::class,
         PersonHistory::class => PersonHistoryPolicy::class,

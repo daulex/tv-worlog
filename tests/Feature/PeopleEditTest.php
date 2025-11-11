@@ -63,6 +63,7 @@ it('updates person with valid data', function () {
         ->set('client_id', $newClient->id)
         ->set('vacancy_id', $newVacancy->id)
         ->set('pers_code', '280394-15750') // Valid Latvian personal code
+        ->set('last_working_date', null) // Explicitly set to null to avoid validation issues
         ->call('save')
         ->assertHasNoErrors()
         ->assertRedirect(route('people.index'));

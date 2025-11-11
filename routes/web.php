@@ -67,9 +67,10 @@ Route::middleware(['auth'])->group(function () {
     Route::get('notes/{note}', \App\Livewire\Notes\Show::class)->name('notes.show');
     Route::get('notes/{note}/edit', \App\Livewire\Notes\Edit::class)->name('notes.edit');
 
-    // CV routes
-    Route::get('c-vs', \App\Livewire\CVs\Index::class)->name('c-vs.index');
-    Route::get('c-vs/create', \App\Livewire\CVs\Create::class)->name('c-vs.create');
-    Route::get('c-vs/{cv}', \App\Livewire\CVs\Show::class)->name('c-vs.show');
-    Route::get('c-vs/{cv}/edit', \App\Livewire\CVs\Edit::class)->name('c-vs.edit');
+    // File routes
+    Route::get('files', \App\Livewire\Files\Index::class)->name('files.index');
+    Route::get('files/create', \App\Livewire\Files\Create::class)->name('files.create');
+    Route::get('files/{file}', \App\Livewire\Files\Show::class)->name('files.show');
+    Route::get('files/{file}/edit', \App\Livewire\Files\Edit::class)->name('files.edit');
+    Route::get('files/{file}/download', [\App\Http\Controllers\FileController::class, 'download'])->name('files.download');
 });

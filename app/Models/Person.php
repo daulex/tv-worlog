@@ -2,12 +2,12 @@
 
 namespace App\Models;
 
+use Illuminate\Auth\Passwords\CanResetPassword;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
-use Illuminate\Auth\Passwords\CanResetPassword;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Fortify\TwoFactorAuthenticatable;
@@ -32,7 +32,6 @@ class Person extends Authenticatable
         'position',
         'client_id',
         'vacancy_id',
-        'cv_id',
         'linkedin_profile',
         'github_profile',
         'portfolio_url',
@@ -68,9 +67,29 @@ class Person extends Authenticatable
         return $this->belongsTo(Vacancy::class);
     }
 
-    public function cv(): BelongsTo
+    public function files(): HasMany
     {
-        return $this->belongsTo(CV::class, 'cv_id');
+        return $this->hasMany(File::class);
+    }
+
+    public function cvs(): HasMany
+    {
+        return $this->files()->where('file_category', 'cv');
+    }
+
+    public function contracts(): HasMany
+    {
+        return $this->files()->where('file_category', 'contract');
+    }
+
+    public function certificates(): HasMany
+    {
+        return $this->files()->where('file_category', 'certificate');
+    }
+
+    public function otherFiles(): HasMany
+    {
+        return $this->files()->where('file_category', 'other');
     }
 
     public function password(): HasOne
