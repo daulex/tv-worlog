@@ -4,7 +4,6 @@ namespace App\Livewire\People;
 
 use App\Models\Note;
 use App\Models\Person;
-use App\Rules\LatvianPhoneNumber;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Support\Facades\Cache;
 use Livewire\Component;
@@ -31,6 +30,7 @@ class Show extends Component
     public $editForm = [
         'first_name' => '',
         'last_name' => '',
+        'pers_code' => '',
         'email' => '',
         'email2' => '',
         'phone' => '',
@@ -133,6 +133,7 @@ class Show extends Component
         $this->editForm = [
             'first_name' => $this->person->first_name,
             'last_name' => $this->person->last_name,
+            'pers_code' => $this->person->pers_code,
             'email' => $this->person->email,
             'email2' => $this->person->email2,
             'phone' => $this->person->phone,
@@ -198,29 +199,25 @@ class Show extends Component
         $this->validate([
             'editForm.first_name' => 'required|string|max:255',
             'editForm.last_name' => 'required|string|max:255',
-            'editForm.email' => 'nullable|email:rfc,spoof|max:255',
-            'editForm.email2' => 'nullable|email:rfc,spoof|max:255',
-            'editForm.phone' => ['nullable', 'string', 'max:255', new LatvianPhoneNumber],
-            'editForm.phone2' => ['nullable', 'string', 'max:255', new LatvianPhoneNumber],
-            'editForm.date_of_birth' => 'nullable|date|before:today',
+            'editForm.pers_code' => 'required|string|unique:people,pers_code,'.$this->person->id,
+            'editForm.phone' => 'nullable|string|max:20',
+            'editForm.phone2' => 'nullable|string|max:20',
+            'editForm.email' => 'required|email:rfc,spoof|unique:people,email,'.$this->person->id,
+            'editForm.email2' => 'nullable|email:rfc,spoof|unique:people,email2,'.$this->person->id,
+            'editForm.date_of_birth' => 'required|date|before:today',
+            'editForm.address' => 'nullable|string|max:1000',
             'editForm.starting_date' => 'nullable|date|before_or_equal:today',
             'editForm.last_working_date' => 'nullable|date|before_or_equal:today',
-            'editForm.address' => 'nullable|string|max:1000',
             'editForm.position' => 'nullable|string|max:255',
             'editForm.status' => 'required|in:Candidate,Employee,Retired',
             'editForm.client_id' => 'nullable|exists:clients,id',
             'editForm.vacancy_id' => 'nullable|exists:vacancies,id',
-            'editForm.linkedin_profile' => 'nullable|url|max:500',
-            'editForm.github_profile' => 'nullable|url|max:500',
-            'editForm.portfolio_url' => 'nullable|url|max:500',
-            'editForm.emergency_contact_name' => 'nullable|string|max:255',
-            'editForm.emergency_contact_relationship' => 'nullable|string|max:255',
-            'editForm.emergency_contact_phone' => ['nullable', 'string', 'max:255', new LatvianPhoneNumber],
         ]);
 
         $this->person->update([
             'first_name' => $this->editForm['first_name'],
             'last_name' => $this->editForm['last_name'],
+            'pers_code' => $this->editForm['pers_code'],
             'email' => $this->editForm['email'],
             'email2' => $this->editForm['email2'] ?: null,
             'phone' => $this->editForm['phone'],

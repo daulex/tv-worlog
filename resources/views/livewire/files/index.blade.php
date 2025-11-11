@@ -29,7 +29,7 @@
 
             <flux:field>
                 <flux:label>Category</flux:label>
-                <flux:select wire:model.live="file_category">
+                <flux:select wire:model.live="fileCategory">
                     <option value="">All Categories</option>
                     @foreach ($categories as $category)
                         <option value="{{ $category }}">{{ ucfirst($category) }}</option>

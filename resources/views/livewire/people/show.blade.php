@@ -40,6 +40,11 @@
                             ])
                             
                             @include('livewire.partials.field-view', [
+                                'label' => __('Personal Code'),
+                                'value' => $person->pers_code,
+                            ])
+                            
+                            @include('livewire.partials.field-view', [
                                 'label' => __('Date of Birth'),
                                 'value' => $person->date_of_birth?->format('M d, Y'),
                             ])
@@ -223,6 +228,14 @@
                                     'name' => 'editForm.last_name',
                                     'type' => 'text',
                                     'value' => $editForm['last_name'],
+                                ])
+                                
+                                @include('livewire.partials.field-edit', [
+                                    'label' => __('Personal Code'),
+                                    'name' => 'editForm.pers_code',
+                                    'type' => 'text',
+                                    'value' => $editForm['pers_code'],
+                                    'placeholder' => 'XXXXXX-XXXXX',
                                 ])
                                 
                                 @include('livewire.partials.field-edit', [

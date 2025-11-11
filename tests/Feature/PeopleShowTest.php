@@ -124,6 +124,7 @@ it('can add and edit secondary email and phone', function () {
     $person = Person::factory()->create([
         'phone' => '+371 21234567',
         'phone2' => '+371 26123456',
+        'pers_code' => '161175-19997',
     ]);
 
     Livewire::test('people.show', ['person' => $person])
@@ -145,6 +146,7 @@ it('validates secondary email format', function () {
     $person = Person::factory()->create([
         'phone' => '+371 21234567',
         'phone2' => '+371 26123456',
+        'pers_code' => '161175-19997',
     ]);
 
     Livewire::test('people.show', ['person' => $person])
@@ -162,6 +164,7 @@ it('can clear secondary email and phone', function () {
         'email2' => 'old.secondary@example.com',
         'phone2' => '+371 23456789',
         'phone' => '+371 21234567',
+        'pers_code' => '161175-19997',
     ]);
 
     Livewire::test('people.show', ['person' => $person])
@@ -183,6 +186,7 @@ it('validates person edit form', function () {
     $person = Person::factory()->create([
         'phone' => '+371 21234567',
         'phone2' => '+371 26123456',
+        'pers_code' => '161175-19997',
     ]);
 
     Livewire::test('people.show', ['person' => $person])
