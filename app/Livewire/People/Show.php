@@ -212,6 +212,12 @@ class Show extends Component
             'editForm.status' => 'required|in:Candidate,Employee,Retired',
             'editForm.client_id' => 'nullable|exists:clients,id',
             'editForm.vacancy_id' => 'nullable|exists:vacancies,id',
+            'editForm.linkedin_profile' => 'nullable|url|max:500',
+            'editForm.github_profile' => 'nullable|url|max:500',
+            'editForm.portfolio_url' => 'nullable|url|max:500',
+            'editForm.emergency_contact_name' => 'nullable|string|max:255',
+            'editForm.emergency_contact_relationship' => 'nullable|string|max:255',
+            'editForm.emergency_contact_phone' => 'nullable|string|max:20',
         ]);
 
         $this->person->update([
