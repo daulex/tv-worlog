@@ -30,7 +30,9 @@
                 <div class="space-y-4">
                     <div class="flex items-center space-x-4">
                         @if ($file->isImage())
-                            <img src="{{ $file->public_url }}" alt="{{ $file->filename }}" class="h-24 w-24 object-cover rounded-lg">
+                            <div class="h-24 w-24 flex-shrink-0 overflow-hidden rounded-lg">
+                                <img src="{{ $file->public_url }}" alt="{{ $file->filename }}" class="h-full w-full object-cover">
+                            </div>
                         @else
                             <div class="h-24 w-24 bg-gray-100 dark:bg-gray-700 rounded-lg flex items-center justify-center">
                                 <span class="text-4xl">{{ $file->file_icon }}</span>
@@ -72,7 +74,7 @@
             @if ($file->isImage())
                 <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6 mt-6">
                     <h2 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Preview</h2>
-                    <img src="{{ $file->public_url }}" alt="{{ $file->filename }}" class="w-full rounded-lg">
+                    <img src="{{ $file->public_url }}" alt="{{ $file->filename }}" class="max-w-full h-auto rounded-lg">
                 </div>
             @endif
         </div>
