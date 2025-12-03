@@ -15,6 +15,9 @@
             </div>
             @if(!$isEditing)
                 <div class="flex space-x-2">
+                    <flux:button href="{{ route('people.index') }}" variant="outline" size="sm" icon="arrow-left">
+                        {{ __('Back to People') }}
+                    </flux:button>
                     <flux:button wire:click="toggleEditMode" variant="outline" size="sm" icon="pencil">
                         {{ __('Edit') }}
                     </flux:button>
@@ -411,6 +414,10 @@
                     
                     <flux:button wire:click="cancelEdit" variant="outline" type="button" icon="x-mark">
                         {{ __('Cancel') }}
+                    </flux:button>
+
+                    <flux:button wire:click="deletePerson" wire:confirm="Are you sure you want to delete this person? This action cannot be undone." variant="danger" type="button" icon="trash" class="ml-auto">
+                        {{ __('Delete Person') }}
                     </flux:button>
                 </div>
             </form>

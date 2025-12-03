@@ -123,7 +123,7 @@ class Show extends Component
 
             // Sort by date first, then by ID (newest first)
             return $timeline->sortByDesc(function ($item) {
-                return $item['date']->timestamp.str_pad((string) $item['id'], 10, '0', STR_PAD_LEFT);
+                return $item['date']->timestamp . str_pad((string) $item['id'], 10, '0', STR_PAD_LEFT);
             })->values();
         });
     }
@@ -179,13 +179,13 @@ class Show extends Component
 
     public function toggleNoteForm()
     {
-        $this->showNoteForm = ! $this->showNoteForm;
+        $this->showNoteForm = !$this->showNoteForm;
         $this->newNote = '';
     }
 
     public function toggleEditMode()
     {
-        $this->isEditing = ! $this->isEditing;
+        $this->isEditing = !$this->isEditing;
 
         if ($this->isEditing) {
             $this->initializeEditForm();
@@ -199,11 +199,11 @@ class Show extends Component
         $this->validate([
             'editForm.first_name' => 'required|string|max:255',
             'editForm.last_name' => 'required|string|max:255',
-            'editForm.pers_code' => 'required|string|unique:people,pers_code,'.$this->person->id,
+            'editForm.pers_code' => 'required|string|unique:people,pers_code,' . $this->person->id,
             'editForm.phone' => 'nullable|string|max:20',
             'editForm.phone2' => 'nullable|string|max:20',
-            'editForm.email' => 'required|email:rfc,spoof|unique:people,email,'.$this->person->id,
-            'editForm.email2' => 'nullable|email:rfc,spoof|unique:people,email2,'.$this->person->id,
+            'editForm.email' => 'required|email:rfc,spoof|unique:people,email,' . $this->person->id,
+            'editForm.email2' => 'nullable|email:rfc,spoof|unique:people,email2,' . $this->person->id,
             'editForm.date_of_birth' => 'required|date|before:today',
             'editForm.address' => 'nullable|string|max:1000',
             'editForm.starting_date' => 'nullable|date|before_or_equal:today',
@@ -258,6 +258,17 @@ class Show extends Component
         $this->isEditing = false;
     }
 
+    public function deletePerson()
+    {
+        $this->authorize('delete', $this->person);
+
+        $this->person->delete();
+
+        session()->flash('message', 'Person deleted successfully.');
+
+        return redirect()->route('people.index');
+    }
+
     public function cancelEdit()
     {
         $this->isEditing = false;
@@ -270,7 +281,7 @@ class Show extends Component
 
         $note = Note::find($noteId);
 
-        if (! $note || $note->note_type !== 'person' || $note->entity_id !== $this->person->id) {
+        if (!$note || $note->note_type !== 'person' || $note->entity_id !== $this->person->id) {
             return;
         }
 
@@ -300,7 +311,7 @@ class Show extends Component
 
         $note = Note::find($this->noteEditForm['id']);
 
-        if (! $note || $note->note_type !== 'person' || $note->entity_id !== $this->person->id) {
+        if (!$note || $note->note_type !== 'person' || $note->entity_id !== $this->person->id) {
             return;
         }
 
@@ -324,7 +335,7 @@ class Show extends Component
 
         $note = Note::find($noteId);
 
-        if (! $note || $note->note_type !== 'person' || $note->entity_id !== $this->person->id) {
+        if (!$note || $note->note_type !== 'person' || $note->entity_id !== $this->person->id) {
             return;
         }
 
