@@ -189,6 +189,15 @@ class Show extends Component
         $this->initializeEditForm();
     }
 
+    public function deleteEquipment()
+    {
+        $this->authorize('delete', $this->equipment);
+
+        $this->equipment->delete();
+
+        return redirect()->route('equipment.index')->with('message', 'Equipment deleted successfully.');
+    }
+
     public function toggleRetireForm()
     {
         $this->showRetireForm = ! $this->showRetireForm;

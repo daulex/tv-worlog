@@ -132,15 +132,19 @@
                     </div>
                 </div>
                 
-                <div class="flex space-x-4 mt-6">
-                    <flux:button type="submit" variant="primary" icon="check">
-                        {{ __('Save Changes') }}
-                    </flux:button>
-                    
-                    <flux:button wire:click="cancelEdit" variant="outline" type="button" icon="x-mark">
-                        {{ __('Cancel') }}
-                    </flux:button>
-                </div>
+                 <div class="flex space-x-4 mt-6">
+                     <flux:button type="submit" variant="primary" icon="check">
+                         {{ __('Save Changes') }}
+                     </flux:button>
+
+                     <flux:button wire:click="cancelEdit" variant="outline" type="button" icon="x-mark">
+                         {{ __('Cancel') }}
+                     </flux:button>
+
+                     <flux:button wire:click="deleteEquipment" variant="danger" type="button" icon="trash" wire:confirm="Are you sure you want to delete this equipment?">
+                         {{ __('Delete') }}
+                     </flux:button>
+                 </div>
             </form>
         @endif
     </flux:container>
@@ -409,7 +413,7 @@
                                                     @break
                                                     
                                                 @case('assigned')
-                                                    <flux:text>{{ $history->change_date->setTimezone(config('app.timezone'))->format('M d, Y H:i') }} - Transferred to {{ $history->owner?->full_name ?? 'Unassigned' }}</flux:text>
+                                                     <flux:text>{{ $history->change_date->setTimezone(config('app.timezone'))->format('M d, Y H:i') }} - Transferred to {{ $history->holder?->full_name ?? 'Unassigned' }}</flux:text>
                                                     @break
                                                     
                                                 @case('retired')

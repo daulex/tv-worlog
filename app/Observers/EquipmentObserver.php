@@ -39,9 +39,9 @@ class EquipmentObserver
             if ($oldHolderId !== $newHolderId) {
                 $equipmentAction = $newHolderId
                     ? ($oldHolderId ? 'Assignment transferred' : 'Initial assignment')
-                    : 'Equipment unassigned';
+                    : 'Transferred to Unassigned';
 
-                $equipmentActionType = $newHolderId ? 'assigned' : 'retired';
+                $equipmentActionType = 'assigned';
 
                 // Create equipment history
                 EquipmentHistory::create([

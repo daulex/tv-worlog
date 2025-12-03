@@ -20,38 +20,32 @@
         <table class="w-full divide-y divide-gray-200 border border-gray-200">
             <thead class="bg-gray-50">
                 <tr>
-                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Brand</th>
-                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Model</th>
-                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Serial</th>
-                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Holder</th>
-                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Purchase Price</th>
-                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Brand</th>
+                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Model</th>
+                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Serial</th>
+                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Holder</th>
+                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Purchase Price</th>
                 </tr>
             </thead>
             <tbody class="bg-white divide-y divide-gray-200">
                 @forelse ($equipment as $item)
                     <tr>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{{ $item->brand }}</td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ $item->model }}</td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ $item->serial }}</td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                            @if($item->currentHolder)
-                                {{ $item->currentHolder->first_name }} {{ $item->currentHolder->last_name }}
-                            @else
-                                -
-                            @endif
-                        </td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">€{{ number_format($item->purchase_price, 2, '.', ',') }}</td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                            <flux:button variant="ghost" size="sm" href="{{ route('equipment.show', $item) }}">View</flux:button>
-                            <flux:button variant="ghost" size="sm" href="{{ route('equipment.edit', $item) }}">Edit</flux:button>
-                            <flux:button variant="ghost" size="sm" wire:click="delete({{ $item->id }})" wire:confirm="Are you sure?">Delete</flux:button>
-                        </td>
+                         <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900"><a href="{{ route('equipment.show', $item) }}" class="text-gray-900 hover:text-gray-900 hover:underline">{{ $item->brand }}</a></td>
+                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500"><a href="{{ route('equipment.show', $item) }}" class="text-gray-500 hover:text-gray-500 hover:underline">{{ $item->model }}</a></td>
+                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ $item->serial }}</td>
+                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                             @if($item->currentHolder)
+                                 {{ $item->currentHolder->first_name }} {{ $item->currentHolder->last_name }}
+                             @else
+                                 -
+                             @endif
+                         </td>
+                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">€{{ number_format($item->purchase_price, 2, '.', ',') }}</td>
                     </tr>
                 @empty
-                    <tr>
-                        <td colspan="6" class="px-6 py-4 text-center text-sm text-gray-500">No equipment found.</td>
-                    </tr>
+                     <tr>
+                         <td colspan="5" class="px-6 py-4 text-center text-sm text-gray-500">No equipment found.</td>
+                     </tr>
                 @endforelse
             </tbody>
         </table>
