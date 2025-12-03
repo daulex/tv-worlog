@@ -24,6 +24,13 @@ class Index extends Component
 
     protected $paginationTheme = 'tailwind';
 
+    protected $queryString = [
+        'search' => ['except' => ''],
+        'statusFilter' => ['except' => ''],
+        'clientFilter' => ['except' => ''],
+        'vacancyFilter' => ['except' => ''],
+    ];
+
     public function delete(Person $person)
     {
         $this->authorize('delete', $person);
@@ -58,7 +65,7 @@ class Index extends Component
     {
         $people = Person::query()
             ->when($this->search, function ($query) {
-                $searchTerm = '%'.$this->search.'%';
+                $searchTerm = '%' . $this->search . '%';
                 $query->where(function ($q) use ($searchTerm) {
                     $q->where('first_name', 'like', $searchTerm)
                         ->orWhere('last_name', 'like', $searchTerm)

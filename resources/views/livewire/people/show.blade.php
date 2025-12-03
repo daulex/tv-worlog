@@ -164,7 +164,7 @@
                         <div class="text-center py-8">
                             <flux:icon name="document" class="w-12 h-12 mx-auto text-gray-400 mb-4" />
                             <p class="text-gray-500 dark:text-gray-400">No files uploaded for this person</p>
-                            <flux:button href="{{ route('files.create') }}" variant="primary" class="mt-4">
+                            <flux:button href="{{ route('files.create', ['person' => $person->id]) }}" variant="primary" class="mt-4">
                                 Add First File
                             </flux:button>
                         </div>

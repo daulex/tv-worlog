@@ -24,9 +24,13 @@ class Create extends Component
 
     public $people;
 
+    protected $queryString = [
+        'person_id' => ['as' => 'person'],
+    ];
+
     public function mount()
     {
-        $this->people = Person::orderBy('name')->get();
+        $this->people = Person::orderBy('first_name')->orderBy('last_name')->get();
         $this->uploaded_at = now()->format('Y-m-d\TH:i');
     }
 
