@@ -60,7 +60,7 @@ class Create extends Component
             'last_name' => 'required|string|max:255',
             'pers_code' => ['required', 'string', 'unique:people,pers_code', new LatvianPersonalCode],
             'phone' => ['nullable', 'string', 'max:20', new LatvianPhoneNumber],
-            'email' => 'required|email:rfc,spoof|unique:people,email',
+            'email' => 'required|email:rfc|unique:people,email',
             'date_of_birth' => 'required|date|before:today',
             'address' => 'nullable|string|max:1000',
             'starting_date' => 'nullable|date|before_or_equal:today',

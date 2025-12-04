@@ -86,16 +86,8 @@ class EquipmentObserver
      */
     public function deleted(Equipment $equipment): void
     {
-        // Create retirement history when equipment is deleted
-        EquipmentHistory::create([
-            'equipment_id' => $equipment->id,
-            'owner_id' => $equipment->current_owner_id,
-            'change_date' => now(),
-            'action' => 'Equipment removed from inventory',
-            'action_type' => 'retired',
-            'notes' => 'Equipment deleted from system',
-            'performed_by_id' => Auth::id(),
-        ]);
+        // Equipment and all its history records are automatically deleted by CASCADE
+        // No additional cleanup needed
     }
 
     /**

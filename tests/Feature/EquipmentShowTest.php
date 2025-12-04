@@ -359,3 +359,34 @@ it('does not create duplicate history entries for holder changes', function () {
         'performed_by_id' => $user->id,
     ]);
 });
+
+it('deletes equipment and cleans up all associated history records', function () {
+    $user = Person::factory()->create();
+    $equipment = Equipment::factory()->create();
+
+    // Create some history records for the equipment
+    $equipment->equipmentHistory()->create([
+        'holder_id' => $user->id,
+        'change_date' => now(),
+        'action' => 'Test history',
+        'action_type' => 'assigned',
+        'performed_by_id' => $user->id,
+    ]);
+
+    $initialHistoryCount = $equipment->equipmentHistory()->count();
+    expect($initialHistoryCount)->toBeGreaterThan(0); // Should have at least the created record plus any from factory/observer
+
+    Livewire::actingAs($user)
+        ->test(\App\Livewire\Equipment\Edit::class, ['equipment' => $equipment])
+        ->call('delete')
+        ->assertRedirect(route('equipment.index'));
+
+    // Equipment should be deleted
+    $this->assertDatabaseMissing('equipment', [
+        'id' => $equipment->id,
+    ]);
+
+    // All history records for this equipment should be deleted by CASCADE
+    $remainingHistoryCount = \App\Models\EquipmentHistory::where('equipment_id', $equipment->id)->count();
+    expect($remainingHistoryCount)->toBe(0);
+});
