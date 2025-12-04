@@ -1,4 +1,4 @@
-<div>
+<flux:container>
     <div class="flex justify-between items-center mb-6">
         <h1 class="text-2xl font-bold">Edit Vacancy</h1>
         <flux:button href="{{ route('vacancies.index') }}">Back</flux:button>
@@ -60,7 +60,8 @@
 
         <div class="mt-6 flex gap-3">
             <flux:button type="submit" variant="primary">Update</flux:button>
-            <flux:button href="{{ route('vacancies.index') }}" variant="ghost">Cancel</flux:button>
+            <flux:button href="{{ route('vacancies.index') }}" variant="outline">Cancel</flux:button>
+            <flux:button wire:click="delete" variant="danger" wire:confirm="Are you sure you want to delete this vacancy? This action cannot be undone." class="ml-auto">Delete</flux:button>
         </div>
     </form>
-</div>
+</flux:container>

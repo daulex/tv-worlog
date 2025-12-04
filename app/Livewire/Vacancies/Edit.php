@@ -75,6 +75,15 @@ class Edit extends Component
         return redirect()->route('vacancies.index');
     }
 
+    public function delete()
+    {
+        $this->authorize('delete', $this->vacancy);
+
+        $this->vacancy->delete();
+
+        return redirect()->route('vacancies.index')->with('message', 'Vacancy deleted successfully.');
+    }
+
     public function render()
     {
         $clients = Client::orderBy('name')->get();
