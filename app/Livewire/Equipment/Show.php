@@ -19,8 +19,6 @@ class Show extends Component
 
     public $showNoteForm = false;
 
-    public $isEditing = false;
-
     public $showRetireForm = false;
 
     public $retirementNotes = '';
@@ -40,15 +38,6 @@ class Show extends Component
         'note_text' => '',
     ];
 
-    public $editForm = [
-        'brand' => '',
-        'model' => '',
-        'serial' => '',
-        'purchase_date' => '',
-        'purchase_price' => '',
-        'current_holder_id' => '',
-    ];
-
     public function mount(Equipment $equipment)
     {
         $this->authorize('view', $equipment);
@@ -59,8 +48,6 @@ class Show extends Component
             'equipmentHistory.performedBy',
             'notes',
         ]);
-
-        $this->initializeEditForm();
     }
 
     public function getTimeline()
@@ -103,18 +90,6 @@ class Show extends Component
         })->values();
     }
 
-    private function initializeEditForm()
-    {
-        $this->editForm = [
-            'brand' => $this->equipment->brand,
-            'model' => $this->equipment->model,
-            'serial' => $this->equipment->serial,
-            'purchase_date' => $this->equipment->purchase_date->format('Y-m-d'),
-            'purchase_price' => $this->equipment->purchase_price,
-            'current_holder_id' => $this->equipment->current_holder_id,
-        ];
-    }
-
     public function addNote()
     {
         $this->validate([
@@ -136,15 +111,6 @@ class Show extends Component
     {
         $this->showNoteForm = ! $this->showNoteForm;
         $this->newNote = '';
-    }
-
-    public function toggleEditMode()
-    {
-        $this->isEditing = ! $this->isEditing;
-
-        if ($this->isEditing) {
-            $this->initializeEditForm();
-        }
     }
 
     public function saveEquipment()
@@ -421,12 +387,6 @@ class Show extends Component
             'historyEditForm.notes' => 'required|string|max:1000',
             'historyEditForm.action' => 'required|string|max:255',
             'noteEditForm.note_text' => 'required|string|max:1000',
-            'editForm.brand' => 'required|string|max:255',
-            'editForm.model' => 'required|string|max:255',
-            'editForm.serial' => 'required|string|max:255',
-            'editForm.purchase_date' => 'required|date',
-            'editForm.purchase_price' => 'required|numeric|min:0',
-            'editForm.current_holder_id' => 'nullable|exists:people,id',
         ];
     }
 

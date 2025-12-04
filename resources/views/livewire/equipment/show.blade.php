@@ -17,136 +17,59 @@
                     </flux:badge>
                 @endif
             </div>
-            @if(!$isEditing)
-                <div class="flex space-x-2">
-                    @if($equipment->isRetired())
-                        <flux:button wire:click="unretireEquipment" variant="outline" size="sm" icon="arrow-path">
-                            {{ __('Return to Service') }}
-                        </flux:button>
-                    @else
-                        <flux:button wire:click="toggleRetireForm" variant="outline" size="sm" icon="archive-box-x-mark">
-                            {{ __('Retire') }}
-                        </flux:button>
-                    @endif
-                    <flux:button wire:click="toggleEditMode" variant="outline" size="sm" icon="pencil">
-                        {{ __('Edit') }}
-                    </flux:button>
-                </div>
-            @endif
+             <div class="flex space-x-2">
+                 @if($equipment->isRetired())
+                     <flux:button wire:click="unretireEquipment" variant="outline" size="sm" icon="arrow-path">
+                         {{ __('Return to Service') }}
+                     </flux:button>
+                 @else
+                     <flux:button wire:click="toggleRetireForm" variant="outline" size="sm" icon="archive-box-x-mark">
+                         {{ __('Retire') }}
+                     </flux:button>
+                 @endif
+                 <flux:button href="{{ route('equipment.edit', $equipment) }}" variant="outline" size="sm" icon="pencil">
+                     {{ __('Edit') }}
+                 </flux:button>
+             </div>
         </div>
         
-        @if(!$isEditing)
-            <!-- View Mode -->
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div class="space-y-4">
-                    @include('livewire.partials.field-view', [
-                        'label' => __('Brand'),
-                        'value' => $equipment->brand,
-                    ])
-                    
-                    @include('livewire.partials.field-view', [
-                        'label' => __('Model'),
-                        'value' => $equipment->model,
-                    ])
-                    
-                    @include('livewire.partials.field-view', [
-                        'label' => __('Serial Number'),
-                        'value' => $equipment->serial,
-                    ])
-                </div>
-                
-                <div class="space-y-4">
-                    @include('livewire.partials.field-view', [
-                        'label' => __('Purchase Date'),
-                        'value' => $equipment->purchase_date->format('M d, Y'),
-                    ])
-                    
-                    @include('livewire.partials.field-view', [
-                        'label' => __('Purchase Price'),
-                        'value' => '€' . number_format($equipment->purchase_price, 2),
-                    ])
-                    
-                    @include('livewire.partials.field-view', [
-                        'label' => __('Holder'),
-                        'value' => $equipment->currentHolder ? $equipment->currentHolder->full_name : __('Unassigned'),
-                        'isUnassigned' => !$equipment->currentHolder,
-                    ])
-                </div>
-            </div>
-        @else
-            <!-- Edit Mode -->
-            <form wire:submit="saveEquipment">
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div class="space-y-4">
-                        @include('livewire.partials.field-edit', [
-                            'label' => __('Brand'),
-                            'name' => 'editForm.brand',
-                            'type' => 'text',
-                            'value' => $editForm['brand'],
-                            'required' => true,
-                        ])
-                        
-                        @include('livewire.partials.field-edit', [
-                            'label' => __('Model'),
-                            'name' => 'editForm.model',
-                            'type' => 'text',
-                            'value' => $editForm['model'],
-                            'required' => true,
-                        ])
-                        
-                        @include('livewire.partials.field-edit', [
-                            'label' => __('Serial Number'),
-                            'name' => 'editForm.serial',
-                            'type' => 'text',
-                            'value' => $editForm['serial'],
-                            'required' => true,
-                        ])
-                    </div>
-                    
-                    <div class="space-y-4">
-                        @include('livewire.partials.field-edit', [
-                            'label' => __('Purchase Date'),
-                            'name' => 'editForm.purchase_date',
-                            'type' => 'date',
-                            'value' => $editForm['purchase_date'],
-                            'required' => true,
-                        ])
-                        
-                        @include('livewire.partials.field-edit', [
-                            'label' => __('Purchase Price'),
-                            'name' => 'editForm.purchase_price',
-                            'type' => 'number',
-                            'value' => $editForm['purchase_price'],
-                            'required' => true,
-                            'step' => '0.01',
-                            'min' => '0',
-                        ])
-                        
-                        @include('livewire.partials.field-select', [
-                            'label' => __('Holder'),
-                            'name' => 'editForm.current_holder_id',
-                            'value' => $editForm['current_holder_id'],
-                            'options' => $this->people,
-                            'placeholder' => __('Select Owner'),
-                        ])
-                    </div>
-                </div>
-                
-                 <div class="flex space-x-4 mt-6">
-                     <flux:button type="submit" variant="primary" icon="check">
-                         {{ __('Save Changes') }}
-                     </flux:button>
+         <!-- View Mode -->
+         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+             <div class="space-y-4">
+                 @include('livewire.partials.field-view', [
+                     'label' => __('Brand'),
+                     'value' => $equipment->brand,
+                 ])
 
-                     <flux:button wire:click="cancelEdit" variant="outline" type="button" icon="x-mark">
-                         {{ __('Cancel') }}
-                     </flux:button>
+                 @include('livewire.partials.field-view', [
+                     'label' => __('Model'),
+                     'value' => $equipment->model,
+                 ])
 
-                     <flux:button wire:click="deleteEquipment" variant="danger" type="button" icon="trash" wire:confirm="Are you sure you want to delete this equipment?">
-                         {{ __('Delete') }}
-                     </flux:button>
-                 </div>
-            </form>
-        @endif
+                 @include('livewire.partials.field-view', [
+                     'label' => __('Serial Number'),
+                     'value' => $equipment->serial,
+                 ])
+             </div>
+
+             <div class="space-y-4">
+                 @include('livewire.partials.field-view', [
+                     'label' => __('Purchase Date'),
+                     'value' => $equipment->purchase_date->format('M d, Y'),
+                 ])
+
+                 @include('livewire.partials.field-view', [
+                     'label' => __('Purchase Price'),
+                     'value' => '€' . number_format($equipment->purchase_price, 2),
+                 ])
+
+                 @include('livewire.partials.field-view', [
+                     'label' => __('Holder'),
+                     'value' => $equipment->currentHolder ? $equipment->currentHolder->full_name : __('Unassigned'),
+                     'isUnassigned' => !$equipment->currentHolder,
+                 ])
+             </div>
+         </div>
     </flux:container>
 
     <!-- Retirement Section -->
@@ -454,11 +377,9 @@
     <!-- Action Buttons -->
     <flux:container>
         <div class="flex space-x-4">
-            @if(!$isEditing)
-                <flux:button href="{{ route('equipment.index') }}" variant="outline" icon="arrow-left">
-                    {{ __('Back to Equipment') }}
-                </flux:button>
-            @endif
+            <flux:button href="{{ route('equipment.index') }}" variant="outline" icon="arrow-left">
+                {{ __('Back to Equipment') }}
+            </flux:button>
         </div>
     </flux:container>
 </div>

@@ -48,26 +48,28 @@ it('can add a note to equipment', function () {
     ]);
 });
 
-it('can edit equipment details inline', function () {
+it('can edit equipment details on separate page', function () {
     $user = Person::factory()->create();
     $person = Person::factory()->create();
     $equipment = Equipment::factory()->create();
 
     Livewire::actingAs($user)
-        ->test(\App\Livewire\Equipment\Show::class, ['equipment' => $equipment])
-        ->call('toggleEditMode')
-        ->set('editForm.brand', 'Updated Brand')
-        ->set('editForm.model', 'Updated Model')
-        ->set('editForm.serial', 'Updated Serial')
-        ->set('editForm.purchase_date', '2024-01-01')
-        ->set('editForm.purchase_price', '999.99')
-        ->set('editForm.current_holder_id', $person->id)
-        ->call('saveEquipment')
+        ->test(\App\Livewire\Equipment\Edit::class, ['equipment' => $equipment])
+        ->set('brand', 'Updated Brand')
+        ->set('model', 'Updated Model')
+        ->set('serial', 'Updated Serial')
+        ->set('purchase_date', '2024-01-01')
+        ->set('purchase_price', '999.99')
+        ->set('current_holder_id', $person->id)
+        ->call('save')
         ->assertHasNoErrors();
 
     $equipment->refresh();
     expect($equipment->brand)->toBe('Updated Brand');
     expect($equipment->model)->toBe('Updated Model');
+    expect($equipment->serial)->toBe('Updated Serial');
+    expect($equipment->purchase_date->format('Y-m-d'))->toBe('2024-01-01');
+    expect($equipment->purchase_price)->toBe('999.99'); // Cast to string for comparison
     expect($equipment->current_holder_id)->toBe($person->id);
 });
 
@@ -77,10 +79,9 @@ it('creates history record when equipment holder changes', function () {
     $equipment = Equipment::factory()->create(['current_holder_id' => null]);
 
     Livewire::actingAs($user)
-        ->test(\App\Livewire\Equipment\Show::class, ['equipment' => $equipment])
-        ->call('toggleEditMode')
-        ->set('editForm.current_holder_id', $person->id)
-        ->call('saveEquipment')
+        ->test(\App\Livewire\Equipment\Edit::class, ['equipment' => $equipment])
+        ->set('current_holder_id', $person->id)
+        ->call('save')
         ->assertHasNoErrors();
 
     $this->assertDatabaseHas('equipment_history', [
@@ -96,14 +97,13 @@ it('validates equipment edit form', function () {
     $equipment = Equipment::factory()->create();
 
     Livewire::actingAs($user)
-        ->test(\App\Livewire\Equipment\Show::class, ['equipment' => $equipment])
-        ->call('toggleEditMode')
-        ->set('editForm.brand', '')
-        ->set('editForm.purchase_price', -50)
-        ->call('saveEquipment')
+        ->test(\App\Livewire\Equipment\Edit::class, ['equipment' => $equipment])
+        ->set('brand', '')
+        ->set('purchase_price', -50)
+        ->call('save')
         ->assertHasErrors([
-            'editForm.brand' => 'required',
-            'editForm.purchase_price' => 'min',
+            'brand' => 'required',
+            'purchase_price' => 'min',
         ]);
 });
 
@@ -342,10 +342,9 @@ it('does not create duplicate history entries for holder changes', function () {
     $initialHistoryCount = $equipment->equipmentHistory()->count();
 
     Livewire::actingAs($user)
-        ->test(\App\Livewire\Equipment\Show::class, ['equipment' => $equipment])
-        ->call('toggleEditMode')
-        ->set('editForm.current_holder_id', $person->id)
-        ->call('saveEquipment')
+        ->test(\App\Livewire\Equipment\Edit::class, ['equipment' => $equipment])
+        ->set('current_holder_id', $person->id)
+        ->call('save')
         ->assertHasNoErrors();
 
     // Should only create ONE history entry for holder change (handled by observer)

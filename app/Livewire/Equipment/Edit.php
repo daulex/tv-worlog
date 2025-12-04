@@ -61,13 +61,22 @@ class Edit extends Component
             'model' => $this->model,
             'serial' => $this->serial,
             'purchase_date' => $this->purchase_date,
-            'purchase_price' => $this->purchase_price,
+            'purchase_price' => (float) $this->purchase_price,
             'current_holder_id' => $this->current_holder_id,
         ]);
 
         session()->flash('message', 'Equipment updated successfully.');
 
-        return redirect()->route('equipment.index');
+        return redirect()->route('equipment.show', $this->equipment);
+    }
+
+    public function delete()
+    {
+        $this->authorize('delete', $this->equipment);
+
+        $this->equipment->delete();
+
+        return redirect()->route('equipment.index')->with('message', 'Equipment deleted successfully.');
     }
 
     public function render()
