@@ -50,19 +50,18 @@ it('can edit person information', function () {
     $user = Person::factory()->create();
     $this->actingAs($user);
 
-    $client = Client::factory()->create();
     $person = Person::factory()->create([
-        'first_name' => 'Jane',
-        'phone' => '+371 21234567',
-        'phone2' => '+371 26123456',
+        'first_name' => 'John',
+        'client_id' => null,
     ]);
+    $client = Client::factory()->create();
 
-    Livewire::test('people.show', ['person' => $person])
-        ->call('toggleEditMode')
-        ->set('editForm.first_name', 'Sarah')
-        ->set('editForm.client_id', $client->id)
-        ->call('savePerson')
-        ->assertHasNoErrors();
+    Livewire::test('people.edit', ['person' => $person])
+        ->set('first_name', 'Sarah')
+        ->set('client_id', $client->id)
+        ->call('save')
+        ->assertHasNoErrors()
+        ->assertRedirect(route('people.show', $person));
 
     $person->refresh();
     expect($person->first_name)->toBe('Sarah');
@@ -122,17 +121,16 @@ it('can add and edit secondary email and phone', function () {
     $this->actingAs($user);
 
     $person = Person::factory()->create([
-        'phone' => '+371 21234567',
-        'phone2' => '+371 26123456',
-        'pers_code' => '161175-19997',
+        'email2' => null,
+        'phone2' => null,
     ]);
 
-    Livewire::test('people.show', ['person' => $person])
-        ->call('toggleEditMode')
-        ->set('editForm.email2', 'secondary@example.com')
-        ->set('editForm.phone2', '+371 23456789')
-        ->call('savePerson')
-        ->assertHasNoErrors();
+    Livewire::test('people.edit', ['person' => $person])
+        ->set('email2', 'secondary@example.com')
+        ->set('phone2', '+371 23456789')
+        ->call('save')
+        ->assertHasNoErrors()
+        ->assertRedirect(route('people.show', $person));
 
     $person->refresh();
     expect($person->email2)->toBe('secondary@example.com');
@@ -144,16 +142,16 @@ it('validates secondary email format', function () {
     $this->actingAs($user);
 
     $person = Person::factory()->create([
+        'email' => 'primary@example.com',
         'phone' => '+371 21234567',
         'phone2' => '+371 26123456',
         'pers_code' => '161175-19997',
     ]);
 
-    Livewire::test('people.show', ['person' => $person])
-        ->call('toggleEditMode')
-        ->set('editForm.email2', 'invalid-email')
-        ->call('savePerson')
-        ->assertHasErrors(['editForm.email2' => 'email']);
+    Livewire::test('people.edit', ['person' => $person])
+        ->set('email2', 'invalid-email')
+        ->call('save')
+        ->assertHasErrors(['email2' => 'email']);
 });
 
 it('can clear secondary email and phone', function () {
@@ -167,12 +165,12 @@ it('can clear secondary email and phone', function () {
         'pers_code' => '161175-19997',
     ]);
 
-    Livewire::test('people.show', ['person' => $person])
-        ->call('toggleEditMode')
-        ->set('editForm.email2', '')
-        ->set('editForm.phone2', '')
-        ->call('savePerson')
-        ->assertHasNoErrors();
+    Livewire::test('people.edit', ['person' => $person])
+        ->set('email2', '')
+        ->set('phone2', '')
+        ->call('save')
+        ->assertHasNoErrors()
+        ->assertRedirect(route('people.show', $person));
 
     $person->refresh();
     expect($person->email2)->toBeNull();
@@ -189,9 +187,8 @@ it('validates person edit form', function () {
         'pers_code' => '161175-19997',
     ]);
 
-    Livewire::test('people.show', ['person' => $person])
-        ->call('toggleEditMode')
-        ->set('editForm.first_name', '') // Empty first name should fail
-        ->call('savePerson')
-        ->assertHasErrors(['editForm.first_name' => 'required']);
+    Livewire::test('people.edit', ['person' => $person])
+        ->set('first_name', '') // Empty first name should fail
+        ->call('save')
+        ->assertHasErrors(['first_name' => 'required']);
 });

@@ -235,19 +235,11 @@
         </flux:fieldset>
     </div>
     
-    <div class="flex space-x-4 mt-8">
-        <flux:button type="submit" icon="check">
-            {{ $submitText ?? __('Save') }}
-        </flux:button>
-        
-        @if(isset($cancelAction))
-            <flux:button wire:click="{{ $cancelAction }}" variant="outline" type="button" icon="x-mark">
-                {{ $cancelText ?? __('Cancel') }}
-            </flux:button>
-        @else
-            <flux:button href="{{ $cancelUrl ?? route('people.index') }}" variant="outline" icon="x-mark">
-                {{ $cancelText ?? __('Cancel') }}
-            </flux:button>
+    <div class="mt-6 flex gap-3">
+        <flux:button type="submit" variant="primary">Update</flux:button>
+        <flux:button href="{{ $cancelUrl ?? route('people.index') }}" variant="outline">Cancel</flux:button>
+        @if(isset($showDeleteButton) && $showDeleteButton)
+            <flux:button wire:click="delete" variant="danger" wire:confirm="Are you sure you want to delete this person? This action cannot be undone." class="ml-auto">Delete</flux:button>
         @endif
     </div>
 </form>

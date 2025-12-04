@@ -18,6 +18,9 @@
                 @endif
             </div>
              <div class="flex space-x-2">
+                 <flux:button href="{{ route('equipment.index') }}" variant="outline" size="sm" icon="arrow-left">
+                     {{ __('Back to Equipment') }}
+                 </flux:button>
                  @if($equipment->isRetired())
                      <flux:button wire:click="unretireEquipment" variant="outline" size="sm" icon="arrow-path">
                          {{ __('Return to Service') }}

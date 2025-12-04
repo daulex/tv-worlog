@@ -160,7 +160,6 @@ it('can clear nullable fields by setting them to empty', function () {
 
     // Clear all nullable fields (but keep required ones)
     $component
-        ->set('phone', $person->phone) // Keep required phone
         ->set('phone2', '')
         ->set('email2', '')
         ->set('address', '')

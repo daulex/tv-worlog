@@ -18,38 +18,11 @@ class Show extends Component
 
     public $showNoteForm = false;
 
-    public $isEditing = false;
-
     public $editingNote = null;
 
     public $noteEditForm = [
         'id' => null,
         'note_text' => '',
-    ];
-
-    public $editForm = [
-        'first_name' => '',
-        'last_name' => '',
-        'pers_code' => '',
-        'email' => '',
-        'email2' => '',
-        'phone' => '',
-        'phone2' => '',
-        'date_of_birth' => '',
-        'address' => '',
-        'position' => '',
-        'status' => '',
-        'client_id' => '',
-        'vacancy_id' => '',
-
-        'linkedin_profile' => '',
-        'github_profile' => '',
-        'portfolio_url' => '',
-        'emergency_contact_name' => '',
-        'emergency_contact_relationship' => '',
-        'emergency_contact_phone' => '',
-        'starting_date' => '',
-        'last_working_date' => '',
     ];
 
     public function mount(Person $person)
@@ -65,8 +38,6 @@ class Show extends Component
             'events',
             'equipment',
         ]);
-
-        $this->initializeEditForm();
     }
 
     public function getTimeline()
@@ -128,34 +99,6 @@ class Show extends Component
         });
     }
 
-    private function initializeEditForm()
-    {
-        $this->editForm = [
-            'first_name' => $this->person->first_name,
-            'last_name' => $this->person->last_name,
-            'pers_code' => $this->person->pers_code,
-            'email' => $this->person->email,
-            'email2' => $this->person->email2,
-            'phone' => $this->person->phone,
-            'phone2' => $this->person->phone2,
-            'date_of_birth' => $this->person->date_of_birth?->format('Y-m-d'),
-            'starting_date' => $this->person->starting_date?->format('Y-m-d'),
-            'last_working_date' => $this->person->last_working_date?->format('Y-m-d'),
-            'address' => $this->person->address,
-            'position' => $this->person->position,
-            'status' => $this->person->status,
-            'client_id' => $this->person->client_id ?? '',
-            'vacancy_id' => $this->person->vacancy_id ?? '',
-
-            'linkedin_profile' => $this->person->linkedin_profile,
-            'github_profile' => $this->person->github_profile,
-            'portfolio_url' => $this->person->portfolio_url,
-            'emergency_contact_name' => $this->person->emergency_contact_name,
-            'emergency_contact_relationship' => $this->person->emergency_contact_relationship,
-            'emergency_contact_phone' => $this->person->emergency_contact_phone,
-        ];
-    }
-
     public function addNote()
     {
         $this->authorize('manageNotes', $this->person);
@@ -181,98 +124,6 @@ class Show extends Component
     {
         $this->showNoteForm = ! $this->showNoteForm;
         $this->newNote = '';
-    }
-
-    public function toggleEditMode()
-    {
-        $this->isEditing = ! $this->isEditing;
-
-        if ($this->isEditing) {
-            $this->initializeEditForm();
-        }
-    }
-
-    public function savePerson()
-    {
-        $this->authorize('update', $this->person);
-
-        $this->validate([
-            'editForm.first_name' => 'required|string|max:255',
-            'editForm.last_name' => 'required|string|max:255',
-            'editForm.pers_code' => 'required|string|unique:people,pers_code,'.$this->person->id,
-            'editForm.phone' => 'nullable|string|max:20',
-            'editForm.phone2' => 'nullable|string|max:20',
-            'editForm.email' => 'required|email:rfc|unique:people,email,'.$this->person->id,
-            'editForm.email2' => 'nullable|email:rfc|unique:people,email2,'.$this->person->id,
-            'editForm.date_of_birth' => 'required|date|before:today',
-            'editForm.address' => 'nullable|string|max:1000',
-            'editForm.starting_date' => 'nullable|date|before_or_equal:today',
-            'editForm.last_working_date' => 'nullable|date|before_or_equal:today',
-            'editForm.position' => 'nullable|string|max:255',
-            'editForm.status' => 'required|in:Candidate,Employee,Retired',
-            'editForm.client_id' => 'nullable|exists:clients,id',
-            'editForm.vacancy_id' => 'nullable|exists:vacancies,id',
-            'editForm.linkedin_profile' => 'nullable|url|max:500',
-            'editForm.github_profile' => 'nullable|url|max:500',
-            'editForm.portfolio_url' => 'nullable|url|max:500',
-            'editForm.emergency_contact_name' => 'nullable|string|max:255',
-            'editForm.emergency_contact_relationship' => 'nullable|string|max:255',
-            'editForm.emergency_contact_phone' => 'nullable|string|max:20',
-        ]);
-
-        $this->person->update([
-            'first_name' => $this->editForm['first_name'],
-            'last_name' => $this->editForm['last_name'],
-            'pers_code' => $this->editForm['pers_code'],
-            'email' => $this->editForm['email'],
-            'email2' => $this->editForm['email2'] ?: null,
-            'phone' => $this->editForm['phone'],
-            'phone2' => $this->editForm['phone2'] ?: null,
-            'date_of_birth' => $this->editForm['date_of_birth'] ?: null,
-            'starting_date' => $this->editForm['starting_date'] ?: null,
-            'last_working_date' => $this->editForm['last_working_date'] ?: null,
-            'address' => $this->editForm['address'],
-            'position' => $this->editForm['position'],
-            'status' => $this->editForm['status'],
-            'client_id' => $this->editForm['client_id'] ?: null,
-            'vacancy_id' => $this->editForm['vacancy_id'] ?: null,
-            'linkedin_profile' => $this->editForm['linkedin_profile'],
-            'github_profile' => $this->editForm['github_profile'],
-            'portfolio_url' => $this->editForm['portfolio_url'],
-            'emergency_contact_name' => $this->editForm['emergency_contact_name'],
-            'emergency_contact_relationship' => $this->editForm['emergency_contact_relationship'],
-            'emergency_contact_phone' => $this->editForm['emergency_contact_phone'],
-        ]);
-
-        // Refresh person data
-        $this->person->load([
-            'client',
-            'vacancy',
-            'files',
-            'personHistory.performedBy',
-        ]);
-
-        // Clear timeline cache
-        $this->clearTimelineCache();
-
-        $this->isEditing = false;
-    }
-
-    public function deletePerson()
-    {
-        $this->authorize('delete', $this->person);
-
-        $this->person->delete();
-
-        session()->flash('message', 'Person deleted successfully.');
-
-        return redirect()->route('people.index');
-    }
-
-    public function cancelEdit()
-    {
-        $this->isEditing = false;
-        $this->initializeEditForm();
     }
 
     public function editNote($noteId)
@@ -350,37 +201,7 @@ class Show extends Component
         return [
             'newNote' => 'required|string|max:1000',
             'noteEditForm.note_text' => 'required|string|max:1000',
-            'editForm.first_name' => 'required|string|max:255',
-            'editForm.last_name' => 'required|string|max:255',
-            'editForm.email' => 'nullable|email:rfc|max:255',
-            'editForm.email2' => 'nullable|email:rfc|max:255',
-            'editForm.phone' => ['nullable', 'string', 'max:255', new LatvianPhoneNumber],
-            'editForm.phone2' => ['nullable', 'string', 'max:255', new LatvianPhoneNumber],
-            'editForm.date_of_birth' => 'nullable|date|before:today',
-            'editForm.starting_date' => 'nullable|date|before_or_equal:today',
-            'editForm.last_working_date' => 'nullable|date|before_or_equal:today',
-            'editForm.address' => 'nullable|string|max:1000',
-            'editForm.position' => 'nullable|string|max:255',
-            'editForm.status' => 'required|in:Candidate,Employee,Retired',
-            'editForm.client_id' => 'nullable|exists:clients,id',
-            'editForm.vacancy_id' => 'nullable|exists:vacancies,id',
-            'editForm.linkedin_profile' => 'nullable|url|max:500',
-            'editForm.github_profile' => 'nullable|url|max:500',
-            'editForm.portfolio_url' => 'nullable|url|max:500',
-            'editForm.emergency_contact_name' => 'nullable|string|max:255',
-            'editForm.emergency_contact_relationship' => 'nullable|string|max:255',
-            'editForm.emergency_contact_phone' => ['nullable', 'string', 'max:255', new LatvianPhoneNumber],
         ];
-    }
-
-    public function getClientsProperty()
-    {
-        return \App\Models\Client::orderBy('name')->get();
-    }
-
-    public function getVacanciesProperty()
-    {
-        return \App\Models\Vacancy::with('client')->orderBy('title')->get();
     }
 
     public function getFilesProperty()

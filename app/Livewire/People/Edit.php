@@ -62,8 +62,8 @@ class Edit extends Component
             'first_name' => 'required|string|max:255',
             'last_name' => 'required|string|max:255',
             'pers_code' => 'required|string|unique:people,pers_code,'.$this->person->id,
-            'phone' => 'nullable|string|max:20',
-            'phone2' => 'nullable|string|max:20',
+            'phone' => ['nullable', 'string', 'max:255', new \App\Rules\LatvianPhoneNumber],
+            'phone2' => ['nullable', 'string', 'max:255', new \App\Rules\LatvianPhoneNumber],
             'email' => 'required|email:rfc|unique:people,email,'.$this->person->id,
             'email2' => 'nullable|email:rfc|unique:people,email2,'.$this->person->id,
             'date_of_birth' => 'required|date|before:today',
@@ -79,7 +79,7 @@ class Edit extends Component
             'portfolio_url' => 'nullable|url|max:500',
             'emergency_contact_name' => 'nullable|string|max:255',
             'emergency_contact_relationship' => 'nullable|string|max:255',
-            'emergency_contact_phone' => 'nullable|string|max:20',
+            'emergency_contact_phone' => ['nullable', 'string', 'max:255', new \App\Rules\LatvianPhoneNumber],
         ];
     }
 
@@ -153,6 +153,15 @@ class Edit extends Component
         session()->flash('message', 'Person updated successfully.');
 
         return redirect()->route('people.show', $this->person);
+    }
+
+    public function delete()
+    {
+        $this->authorize('delete', $this->person);
+
+        $this->person->delete();
+
+        return redirect()->route('people.index')->with('message', 'Person deleted successfully.');
     }
 
     public function render()

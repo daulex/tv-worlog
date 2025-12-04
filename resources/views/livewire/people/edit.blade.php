@@ -1,15 +1,17 @@
-<div>
-    <div class="max-w-2xl mx-auto bg-white dark:bg-gray-800 shadow rounded-lg p-6">
-        <h1 class="text-2xl font-bold mb-6">Edit Person</h1>
-
-        @include('livewire.partials.person-form', [
-            'fieldPrefix' => '',
-            'submitAction' => 'save',
-            'submitText' => 'Update Person',
-            'cancelUrl' => route('people.index'),
-            'cancelText' => 'Cancel',
-            'clients' => $clients,
-            'vacancies' => $vacancies,
-        ])
+<flux:container>
+    <div class="flex justify-between items-center mb-6">
+        <h1 class="text-2xl font-bold">Edit Person</h1>
+        <flux:button href="{{ route('people.show', $person) }}">Back</flux:button>
     </div>
-</div>
+
+    @include('livewire.partials.person-form', [
+        'fieldPrefix' => '',
+        'submitAction' => 'save',
+        'submitText' => 'Update',
+        'cancelUrl' => route('people.show', $person),
+        'cancelText' => 'Cancel',
+        'clients' => $clients,
+        'vacancies' => $vacancies,
+        'showDeleteButton' => true,
+    ])
+</flux:container>

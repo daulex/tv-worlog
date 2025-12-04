@@ -1,4 +1,4 @@
-<div>
+<flux:container>
     <div class="flex justify-between items-center mb-6">
         <h1 class="text-2xl font-bold">Edit Equipment</h1>
         <flux:button href="{{ route('equipment.show', $equipment) }}">Back</flux:button>
@@ -54,4 +54,4 @@
               <flux:button wire:click="delete" variant="danger" wire:confirm="Are you sure you want to delete this equipment?" class="ml-auto">Delete</flux:button>
           </div>
     </form>
-</div>
+</flux:container>
