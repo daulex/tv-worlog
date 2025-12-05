@@ -14,6 +14,8 @@ class Edit extends Component
 
     public Person $person;
 
+    public $deleteAttempted = false;
+
     public $first_name;
 
     public $last_name;
@@ -159,9 +161,35 @@ class Edit extends Component
     {
         $this->authorize('delete', $this->person);
 
+        $this->deleteAttempted = true;
+
+        // Check for related records that would prevent deletion
+        $associatedEquipment = $this->person->equipment();
+
+        if ($associatedEquipment->exists()) {
+            $this->addError('delete', 'Cannot delete this person because they have equipment assigned. Please reassign the equipment first.');
+
+            return;
+        }
+
         $this->person->delete();
 
         return redirect()->route('people.index')->with('message', 'Person deleted successfully.');
+    }
+
+    public function unassignEquipment($equipmentId)
+    {
+        $this->authorize('update', $this->person);
+
+        $equipment = $this->person->equipment()->findOrFail($equipmentId);
+
+        $equipment->update(['current_holder_id' => null]);
+
+        // Clear any delete errors and reset the attempted flag
+        $this->resetErrorBag('delete');
+        $this->deleteAttempted = false;
+
+        session()->flash('message', 'Equipment unassigned from person successfully.');
     }
 
     public function render()
@@ -169,6 +197,7 @@ class Edit extends Component
         return view('livewire.people.edit', [
             'clients' => Client::all(),
             'vacancies' => Vacancy::with('client')->get(),
+            'associatedEquipment' => $this->person->equipment()->select('id', 'brand', 'model', 'serial')->get(),
         ]);
     }
 }

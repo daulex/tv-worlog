@@ -48,6 +48,8 @@
             </flux:field>
         </div>
 
+
+
           <div class="mt-6 flex gap-3">
               <flux:button type="submit" variant="primary">Update</flux:button>
               <flux:button href="{{ route('equipment.show', $equipment) }}" variant="outline">Cancel</flux:button>

@@ -12,6 +12,8 @@ class Edit extends Component
 
     public Client $client;
 
+    public $deleteAttempted = false;
+
     public $name;
 
     public $address;
@@ -55,8 +57,62 @@ class Edit extends Component
         return redirect()->route('clients.index');
     }
 
+    public function delete()
+    {
+        $this->authorize('delete', $this->client);
+
+        $this->deleteAttempted = true;
+
+        // Check for related records that would prevent deletion
+        $relatedPeople = $this->client->people();
+        $relatedVacancies = $this->client->vacancies();
+
+        if ($relatedPeople->exists() || $relatedVacancies->exists()) {
+            $this->addError('delete', 'Cannot delete this client because it has associated records. Please reassign or remove these associations first.');
+
+            return;
+        }
+
+        $this->client->delete();
+
+        return redirect()->route('clients.index')->with('message', 'Client deleted successfully.');
+    }
+
+    public function unassignPerson($personId)
+    {
+        $this->authorize('update', $this->client);
+
+        $person = $this->client->people()->findOrFail($personId);
+
+        $person->update(['client_id' => null]);
+
+        // Clear any delete errors and reset the attempted flag
+        $this->resetErrorBag('delete');
+        $this->deleteAttempted = false;
+
+        session()->flash('message', 'Person unassigned from client successfully.');
+    }
+
+    public function unassignVacancy($vacancyId)
+    {
+        $this->authorize('update', $this->client);
+
+        $vacancy = $this->client->vacancies()->findOrFail($vacancyId);
+
+        $vacancy->update(['client_id' => null]);
+
+        // Clear any delete errors and reset the attempted flag
+        $this->resetErrorBag('delete');
+        $this->deleteAttempted = false;
+
+        session()->flash('message', 'Vacancy unassigned from client successfully.');
+    }
+
     public function render()
     {
-        return view('livewire.clients.edit');
+        return view('livewire.clients.edit', [
+            'associatedPeople' => $this->client->people()->select('id', 'first_name', 'last_name')->get(),
+            'associatedVacancies' => $this->client->vacancies()->select('id', 'title')->get(),
+        ]);
     }
 }

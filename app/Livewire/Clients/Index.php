@@ -13,14 +13,6 @@ class Index extends Component
 
     public $search = '';
 
-    public function delete(Client $client)
-    {
-        $this->authorize('delete', $client);
-
-        $client->delete();
-        session()->flash('message', 'Client deleted successfully.');
-    }
-
     public function render()
     {
         $this->authorize('viewAny', Client::class);

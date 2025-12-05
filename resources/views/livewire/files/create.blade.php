@@ -1,4 +1,4 @@
-<div>
+<flux:container>
     <div class="flex justify-between items-center mb-6">
         <h1 class="text-2xl font-bold">Upload File</h1>
         <flux:button href="{{ route('files.index') }}">Back</flux:button>
@@ -29,9 +29,9 @@
 
             <flux:field class="md:col-span-2">
                 <flux:label>File</flux:label>
-                <flux:input 
-                    type="file" 
-                    wire:model="file" 
+                <flux:input
+                    type="file"
+                    wire:model="file"
                     required
                     accept=".pdf,.doc,.docx,.jpg,.jpeg,.png,.gif"
                 />
@@ -43,8 +43,8 @@
 
             <flux:field class="md:col-span-2">
                 <flux:label>Description</flux:label>
-                <flux:textarea 
-                    wire:model="description" 
+                <flux:textarea
+                    wire:model="description"
                     placeholder="Enter a description for this file..."
                     rows="3"
                 />
@@ -90,7 +90,7 @@
                     Uploading...
                 </span>
             </flux:button>
-            <flux:button href="{{ route('files.index') }}" variant="ghost">Cancel</flux:button>
+            <flux:button href="{{ route('files.index') }}" variant="outline">Cancel</flux:button>
         </div>
     </form>
-</div>
+</flux:container>

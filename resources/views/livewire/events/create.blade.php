@@ -1,4 +1,4 @@
-<div>
+<flux:container>
     <div class="flex justify-between items-center mb-6">
         <h1 class="text-2xl font-bold">Create Event</h1>
         <flux:button href="{{ route('events.index') }}">Back</flux:button>
@@ -51,7 +51,7 @@
 
         <div class="mt-6 flex gap-3">
             <flux:button type="submit" variant="primary">Save</flux:button>
-            <flux:button href="{{ route('events.index') }}" variant="ghost">Cancel</flux:button>
+            <flux:button href="{{ route('events.index') }}" variant="outline">Cancel</flux:button>
         </div>
     </form>
-</div>
+</flux:container>

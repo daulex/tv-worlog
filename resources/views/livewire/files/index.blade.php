@@ -1,10 +1,7 @@
 <div>
     <div class="flex justify-between items-center mb-6">
         <h1 class="text-2xl font-bold">Files</h1>
-        <flux:button href="{{ route('files.create') }}" variant="primary">
-            <flux:icon name="plus" class="w-4 h-4 mr-2" />
-            Add File
-        </flux:button>
+        <flux:button href="{{ route('files.create') }}">Add File</flux:button>
     </div>
 
     @if (session()->has('message'))
@@ -165,10 +162,7 @@
                     @endif
                 </p>
                 @if (!$search && !$fileCategory && !$personFilter)
-                    <flux:button href="{{ route('files.create') }}" variant="primary">
-                        <flux:icon name="plus" class="w-4 h-4 mr-2" />
-                        Add File
-                    </flux:button>
+                    <flux:button href="{{ route('files.create') }}">Add File</flux:button>
                 @endif
             </div>
         @endif

@@ -1,6 +1,7 @@
 <?php
 
 use App\Models\Client;
+use App\Models\Equipment;
 use App\Models\Person;
 use App\Models\Vacancy;
 use Livewire\Livewire;
@@ -172,4 +173,52 @@ it('shows success message after update', function () {
         ->call('save')
         ->assertRedirect(route('people.show', $person))
         ->assertSessionHas('message', 'Person updated successfully.');
+});
+
+it('prevents deletion of person with associated equipment', function () {
+    $user = Person::factory()->create();
+    $this->actingAs($user);
+
+    $person = Person::factory()->create();
+    $equipment = Equipment::factory()->create(['current_holder_id' => $person->id]);
+
+    $component = Livewire::test('people.edit', ['person' => $person]);
+
+    $component->call('delete');
+
+    $component->assertHasErrors('delete');
+
+    expect(Person::find($person->id))->not->toBeNull();
+});
+
+it('allows deletion of person with no equipment', function () {
+    $user = Person::factory()->create();
+    $this->actingAs($user);
+
+    $person = Person::factory()->create();
+
+    $component = Livewire::test('people.edit', ['person' => $person]);
+
+    $component->call('delete');
+
+    $component->assertHasNoErrors();
+
+    expect(Person::find($person->id))->toBeNull();
+});
+
+it('can unassign equipment from person', function () {
+    $user = Person::factory()->create();
+    $this->actingAs($user);
+
+    $person = Person::factory()->create();
+    $equipment = Equipment::factory()->create(['current_holder_id' => $person->id]);
+
+    $component = Livewire::test('people.edit', ['person' => $person]);
+
+    $component->call('unassignEquipment', $equipment->id);
+
+    $component->assertHasNoErrors();
+
+    $equipment->refresh();
+    expect($equipment->current_holder_id)->toBeNull();
 });

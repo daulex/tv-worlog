@@ -1,8 +1,10 @@
-<div>
-    <div class="max-w-2xl mx-auto bg-white dark:bg-gray-800 shadow rounded-lg p-6">
-        <h1 class="text-2xl font-bold mb-6">Create Person</h1>
+<flux:container>
+    <div class="flex justify-between items-center mb-6">
+        <h1 class="text-2xl font-bold">Create Person</h1>
+        <flux:button href="{{ route('people.index') }}">Back</flux:button>
+    </div>
 
-        <form wire:submit="save" class="space-y-8">
+    <form wire:submit="save">
                 <!-- Personal Information Fieldset -->
                 <flux:fieldset legend="{{ __('Personal Information') }}">
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -260,14 +262,9 @@
                     </div>
                 </flux:fieldset>
 
-            <div class="flex justify-end">
-                <flux:button variant="primary" type="submit">
-                    Create Person
-                </flux:button>
-                <flux:button variant="ghost" href="{{ route('people.index') }}">
-                    Cancel
-                </flux:button>
-            </div>
-        </form>
-    </div>
-</div>
+        <div class="mt-6 flex gap-3">
+            <flux:button type="submit" variant="primary">Save</flux:button>
+            <flux:button href="{{ route('people.index') }}" variant="outline">Cancel</flux:button>
+        </div>
+    </form>
+</flux:container>

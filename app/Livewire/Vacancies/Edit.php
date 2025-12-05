@@ -13,6 +13,8 @@ class Edit extends Component
 
     public Vacancy $vacancy;
 
+    public $deleteAttempted = false;
+
     public $title;
 
     public $description;
@@ -79,9 +81,35 @@ class Edit extends Component
     {
         $this->authorize('delete', $this->vacancy);
 
+        $this->deleteAttempted = true;
+
+        // Check for related records that would prevent deletion
+        $relatedPeople = $this->vacancy->people();
+
+        if ($relatedPeople->exists()) {
+            $this->addError('delete', 'Cannot delete this vacancy because it has associated people. Please unassign or reassign these people first.');
+
+            return;
+        }
+
         $this->vacancy->delete();
 
         return redirect()->route('vacancies.index')->with('message', 'Vacancy deleted successfully.');
+    }
+
+    public function unassignPerson($personId)
+    {
+        $this->authorize('update', $this->vacancy);
+
+        $person = $this->vacancy->people()->findOrFail($personId);
+
+        $person->update(['vacancy_id' => null]);
+
+        // Clear any delete errors and reset the attempted flag
+        $this->resetErrorBag('delete');
+        $this->deleteAttempted = false;
+
+        session()->flash('message', 'Person unassigned from vacancy successfully.');
     }
 
     public function render()
@@ -90,6 +118,7 @@ class Edit extends Component
 
         return view('livewire.vacancies.edit', [
             'clients' => $clients,
+            'associatedPeople' => $this->vacancy->people()->select('id', 'first_name', 'last_name')->get(),
         ]);
     }
 }
