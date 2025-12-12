@@ -2,6 +2,9 @@
 
 namespace App\Livewire\People;
 
+use App\Models\Checklist;
+use App\Models\ChecklistInstance;
+use App\Models\ChecklistItemInstance;
 use App\Models\Note;
 use App\Models\Person;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
@@ -25,6 +28,10 @@ class Show extends Component
         'note_text' => '',
     ];
 
+    public $showChecklistDropdown = false;
+
+    public $selectedChecklistId = null;
+
     public function mount(Person $person)
     {
         $this->authorize('view', $person);
@@ -37,6 +44,7 @@ class Show extends Component
             'notes',
             'events',
             'equipment',
+            'checklistInstances.checklist',
         ]);
     }
 
@@ -89,6 +97,16 @@ class Show extends Component
                     'date' => $event->start_date,
                     'id' => $event->id,
                     'data' => $event,
+                ]);
+            });
+
+            // Add checklist instances
+            $freshPerson->checklistInstances->each(function ($checklistInstance) use ($timeline) {
+                $timeline->push([
+                    'type' => 'checklist',
+                    'date' => $checklistInstance->started_at,
+                    'id' => $checklistInstance->id,
+                    'data' => $checklistInstance,
                 ]);
             });
 
@@ -194,6 +212,58 @@ class Show extends Component
 
         // Clear timeline cache
         $this->clearTimelineCache();
+    }
+
+    public function startChecklist()
+    {
+        $this->authorize('create', ChecklistInstance::class);
+
+        $this->validate([
+            'selectedChecklistId' => 'required|exists:checklists,id',
+        ]);
+
+        // Check if this checklist is already started for this person
+        $existing = ChecklistInstance::where('person_id', $this->person->id)
+            ->where('checklist_id', $this->selectedChecklistId)
+            ->first();
+
+        if ($existing) {
+            session()->flash('error', 'This checklist has already been started for this person.');
+
+            return;
+        }
+
+        $checklist = Checklist::find($this->selectedChecklistId);
+
+        // Create checklist instance
+        $instance = ChecklistInstance::create([
+            'checklist_id' => $checklist->id,
+            'person_id' => $this->person->id,
+            'started_at' => now(),
+        ]);
+
+        // Create item instances
+        foreach ($checklist->items as $item) {
+            ChecklistItemInstance::create([
+                'checklist_instance_id' => $instance->id,
+                'checklist_item_id' => $item->id,
+                'value' => null,
+            ]);
+        }
+
+        $this->showChecklistDropdown = false;
+        $this->selectedChecklistId = null;
+
+        // Reload person with new checklist instances
+        $this->person->load('checklistInstances.checklist');
+
+        session()->flash('message', 'Checklist started successfully.');
+    }
+
+    public function toggleChecklistDropdown()
+    {
+        $this->showChecklistDropdown = ! $this->showChecklistDropdown;
+        $this->selectedChecklistId = null;
     }
 
     protected function rules(): array

@@ -122,6 +122,11 @@ class Person extends Authenticatable
         return $this->hasMany(PersonHistory::class)->orderBy('change_date', 'desc')->orderBy('id', 'desc');
     }
 
+    public function checklistInstances(): HasMany
+    {
+        return $this->hasMany(ChecklistInstance::class);
+    }
+
     public function getFullNameAttribute(): string
     {
         return "{$this->first_name} {$this->last_name}";

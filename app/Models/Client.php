@@ -18,8 +18,6 @@ class Client extends Model
         'contact_phone',
     ];
 
-
-
     public function people(): HasMany
     {
         return $this->hasMany(Person::class);

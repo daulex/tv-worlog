@@ -205,12 +205,75 @@
                             'value' => $person->emergency_contact_phone,
                         ])
                     </div>
-                </flux:fieldset>
-            </div>
+                 </flux:fieldset>
 
-    </flux:container>
+                 <!-- Checklists Section -->
+                 @if ($person->checklistInstances->count() > 0)
+                     <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6">
+                         <h2 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Checklists ({{ $person->checklistInstances->count() }})</h2>
+                         <div class="space-y-3">
+                             @foreach ($person->checklistInstances as $instance)
+                                 <div class="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-700 rounded-lg">
+                                     <div class="flex-1">
+                                         <div class="font-medium text-gray-900 dark:text-white">{{ $instance->checklist->title }}</div>
+                                         <div class="flex items-center space-x-2 mt-1">
+                                             <flux:badge variant="{{ $instance->is_completed ? 'success' : 'warning' }}">
+                                                 {{ $instance->progress['completed'] }}/{{ $instance->progress['total'] }}
+                                             </flux:badge>
+                                             <span class="text-xs text-gray-500 dark:text-gray-400">
+                                                 Started {{ $instance->started_at->diffForHumans() }}
+                                             </span>
+                                         </div>
+                                     </div>
+                                     <flux:button variant="outline" size="sm" href="{{ route('people.checklist-instances.show', [$person, $instance]) }}">
+                                         {{ $instance->is_completed ? 'View' : 'Continue' }}
+                                     </flux:button>
+                                 </div>
+                             @endforeach
+                         </div>
+                     </div>
+                 @endif
+             </div>
 
-    <!-- Add Note Section -->
+     </flux:container>
+
+     <!-- Start Checklist Section -->
+     <flux:container class="py-5 mb-5">
+         <flux:heading level="2" size="xl" class="mt-4 mb-4">{{ __('Checklists') }}</flux:heading>
+
+         @if($showChecklistDropdown)
+             <div class="space-y-4">
+                 <flux:field>
+                     <flux:label>Select Checklist</flux:label>
+                     <flux:select wire:model="selectedChecklistId">
+                         <flux:select.option value="">Choose a checklist...</flux:select.option>
+                         @foreach(\App\Models\Checklist::all() as $checklist)
+                             <flux:select.option value="{{ $checklist->id }}">{{ $checklist->title }}</flux:select.option>
+                         @endforeach
+                     </flux:select>
+                     @error('selectedChecklistId')
+                         <flux:text color="red">{{ $message }}</flux:text>
+                     @enderror
+                 </flux:field>
+
+                 <div class="flex space-x-4">
+                     <flux:button wire:click="startChecklist" icon="check">
+                         {{ __('Start Checklist') }}
+                     </flux:button>
+
+                     <flux:button wire:click="toggleChecklistDropdown" variant="outline" icon="x-mark">
+                         {{ __('Cancel') }}
+                     </flux:button>
+                 </div>
+             </div>
+         @else
+             <flux:button wire:click="toggleChecklistDropdown" variant="outline" icon="plus">
+                 {{ __('Start New Checklist') }}
+             </flux:button>
+         @endif
+     </flux:container>
+
+     <!-- Add Note Section -->
     <flux:container class="py-5 mb-5">
         <flux:heading level="2" size="xl" class="mt-4 mb-4">{{ __('Add Note') }}</flux:heading>
         
@@ -416,47 +479,91 @@
                                     </div>
                                 </div>
                             </div>
-                        @elseif($item['type'] === 'event')
-                            @php
-                                $event = $item['data'];
-                            @endphp
-                            <div class="relative flex items-start">
-                                <!-- Timeline Icon -->
-                                <div class="absolute -left-8 flex-shrink-0 w-8 h-8 rounded-full bg-green-100 dark:bg-green-900 flex items-center justify-center ring-4 ring-white dark:ring-gray-800 border-2 border-green-200 dark:border-green-800">
-                                    <flux:icon name="calendar" class="w-4 h-4 text-green-600 dark:text-green-400" />
-                                </div>
-                                
-                                <!-- Timeline Content -->
-                                <div class="flex-1 min-w-0 ml-8">
-                                    <div class="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-3">
-                                        <div class="flex items-center justify-between mb-1">
-                                            <div class="flex items-center space-x-2">
-                                                <flux:badge variant="outline" class="bg-green-50 text-green-700 border-green-200 text-xs">
-                                                    {{ __('Event') }}
-                                                </flux:badge>
-                                                <span class="text-xs text-gray-500 dark:text-gray-400">
-                                                    {{ $event->start_date->format('M d, Y H:i') }}
-                                                </span>
-                                                @if($event->end_date)
-                                                    <span class="text-xs text-gray-500 dark:text-gray-400">
-                                                        {{ __('to :date', ['date' => $event->end_date->format('M d, Y H:i')]) }}
-                                                    </span>
-                                                @endif
-                                            </div>
-                                        </div>
-                                        
-                                        <!-- Event Content -->
-                                        <flux:text class="font-medium text-gray-900 dark:text-gray-100">{{ $event->title }}</flux:text>
-                                        @if($event->description)
-                                            <flux:text class="text-gray-600 dark:text-gray-400 text-sm mt-1">{{ $event->description }}</flux:text>
-                                        @endif
-                                        @if($event->location)
-                                            <flux:text class="text-gray-500 dark:text-gray-500 text-sm mt-1">{{ __('Location: :location', ['location' => $event->location]) }}</flux:text>
-                                        @endif
-                                    </div>
-                                </div>
-                            </div>
-                        @endif
+                         @elseif($item['type'] === 'event')
+                             @php
+                                 $event = $item['data'];
+                             @endphp
+                             <div class="relative flex items-start">
+                                 <!-- Timeline Icon -->
+                                 <div class="absolute -left-8 flex-shrink-0 w-8 h-8 rounded-full bg-green-100 dark:bg-green-900 flex items-center justify-center ring-4 ring-white dark:ring-gray-800 border-2 border-green-200 dark:border-green-800">
+                                     <flux:icon name="calendar" class="w-4 h-4 text-green-600 dark:text-green-400" />
+                                 </div>
+
+                                 <!-- Timeline Content -->
+                                 <div class="flex-1 min-w-0 ml-8">
+                                     <div class="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-3">
+                                         <div class="flex items-center justify-between mb-1">
+                                             <div class="flex items-center space-x-2">
+                                                 <flux:badge variant="outline" class="bg-green-50 text-green-700 border-green-200 text-xs">
+                                                     {{ __('Event') }}
+                                                 </flux:badge>
+                                                 <span class="text-xs text-gray-500 dark:text-gray-400">
+                                                     {{ $event->start_date->format('M d, Y H:i') }}
+                                                 </span>
+                                                 @if($event->end_date)
+                                                     <span class="text-xs text-gray-500 dark:text-gray-400">
+                                                         {{ __('to :date', ['date' => $event->end_date->format('M d, Y H:i')]) }}
+                                                     </span>
+                                                 @endif
+                                             </div>
+                                         </div>
+
+
+<!-- Event Content -->
+                                         <flux:text class="font-medium text-gray-900 dark:text-gray-100">{{ $event->title }}</flux:text>
+                                         @if($event->description)
+                                             <flux:text class="text-gray-600 dark:text-gray-400 text-sm mt-1">{{ $event->description }}</flux:text>
+                                         @endif
+                                         @if($event->location)
+                                             <flux:text class="text-gray-500 dark:text-gray-500 text-sm mt-1">{{ __('Location: :location', ['location' => $event->location]) }}</flux:text>
+                                         @endif
+                                     </div>
+                                 </div>
+                             </div>
+                         @elseif($item['type'] === 'checklist')
+                             @php
+                                 $checklistInstance = $item['data'];
+                             @endphp
+                             <div class="relative flex items-start">
+                                  <!-- Timeline Icon -->
+                                  <div class="absolute -left-8 z-10 flex-shrink-0 w-8 h-8 rounded-full bg-white dark:bg-gray-700 flex items-center justify-center ring-4 ring-gray-300 dark:ring-gray-600 border-2 border-purple-200 dark:border-purple-800">
+                                      <flux:icon name="clipboard-document-check" class="w-4 h-4 text-purple-600 dark:text-purple-400" />
+                                  </div>
+
+                                 <!-- Timeline Content -->
+                                 <div class="flex-1 min-w-0 ml-8">
+                                     <div class="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-3">
+                                         <div class="flex items-center justify-between mb-1">
+                                             <div class="flex items-center space-x-2">
+                                                 <flux:badge variant="outline" class="bg-purple-50 text-purple-700 border-purple-200 text-xs">
+                                                     {{ __('Checklist Started') }}
+                                                 </flux:badge>
+                                                 <span class="text-xs text-gray-500 dark:text-gray-400">
+                                                     {{ $checklistInstance->started_at->setTimezone(config('app.timezone'))->format('M d, Y H:i') }}
+                                                 </span>
+                                             </div>
+                                             <flux:button href="{{ route('people.checklist-instances.show', [$this->person, $checklistInstance]) }}" variant="outline" size="sm" icon="eye">
+                                                 {{ __('View') }}
+                                             </flux:button>
+                                         </div>
+
+                                         <!-- Checklist Content -->
+                                         <flux:text class="font-medium text-gray-900 dark:text-gray-100">{{ $checklistInstance->checklist->title }}</flux:text>
+                                         <div class="flex items-center space-x-4 mt-2">
+                                             <div class="flex items-center space-x-1">
+                                                 <flux:icon name="check-circle" class="w-4 h-4 text-green-600" />
+                                                 <span class="text-sm text-gray-600 dark:text-gray-400">
+                                                     {{ $checklistInstance->progress['completed'] }}/{{ $checklistInstance->progress['total'] }} completed
+                                                 </span>
+                                             </div>
+                                             @if($checklistInstance->is_completed)
+                                                 <flux:badge variant="success" size="sm">{{ __('Completed') }}</flux:badge>
+                                             @endif
+                                         </div>
+                                     </div>
+                                 </div>
+                              </div>
+                          @endif
                     @endforeach
                 </div>
             </div>

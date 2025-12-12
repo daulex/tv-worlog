@@ -71,4 +71,13 @@ Route::middleware(['auth'])->group(function () {
     Route::get('files/{file}', \App\Livewire\Files\Show::class)->name('files.show');
     Route::get('files/{file}/edit', \App\Livewire\Files\Edit::class)->name('files.edit');
     Route::get('files/{file}/download', [\App\Http\Controllers\FileController::class, 'download'])->name('files.download');
+
+    // Checklist routes
+    Route::get('checklists', \App\Livewire\Checklists\Index::class)->name('checklists.index');
+    Route::get('checklists/create', \App\Livewire\Checklists\Create::class)->name('checklists.create');
+    Route::get('checklists/{checklist}', \App\Livewire\Checklists\Show::class)->name('checklists.show');
+    Route::get('checklists/{checklist}/edit', \App\Livewire\Checklists\Edit::class)->name('checklists.edit');
+
+    // Checklist instance routes
+    Route::get('people/{person}/checklists/{checklistInstance}', \App\Livewire\ChecklistInstances\Show::class)->name('people.checklist-instances.show');
 });

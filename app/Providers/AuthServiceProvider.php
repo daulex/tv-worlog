@@ -2,6 +2,8 @@
 
 namespace App\Providers;
 
+use App\Models\Checklist;
+use App\Models\ChecklistInstance;
 use App\Models\Client;
 use App\Models\Equipment;
 use App\Models\EquipmentHistory;
@@ -12,6 +14,8 @@ use App\Models\Note;
 use App\Models\Person;
 use App\Models\PersonHistory;
 use App\Models\Vacancy;
+use App\Policies\ChecklistInstancePolicy;
+use App\Policies\ChecklistPolicy;
 use App\Policies\ClientPolicy;
 use App\Policies\EquipmentHistoryPolicy;
 use App\Policies\EquipmentPolicy;
@@ -33,6 +37,8 @@ class AuthServiceProvider extends ServiceProvider
      * @var array<class-string, class-string>
      */
     protected $policies = [
+        Checklist::class => ChecklistPolicy::class,
+        ChecklistInstance::class => ChecklistInstancePolicy::class,
         Client::class => ClientPolicy::class,
         Equipment::class => EquipmentPolicy::class,
         EquipmentHistory::class => EquipmentHistoryPolicy::class,

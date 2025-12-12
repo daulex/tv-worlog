@@ -24,6 +24,7 @@
                     <flux:navlist.item icon="calendar" href="{{ route('events.index') }}" wire:navigate>{{ __('Events') }}</flux:navlist.item>
                     <flux:navlist.item icon="document-text" href="{{ route('notes.index') }}" wire:navigate>{{ __('Notes') }}</flux:navlist.item>
                     <flux:navlist.item icon="document" href="{{ route('files.index') }}" wire:navigate>{{ __('Files') }}</flux:navlist.item>
+                    <flux:navlist.item icon="check-circle" href="{{ route('checklists.index') }}" wire:navigate>{{ __('Checklists') }}</flux:navlist.item>
                 </flux:navlist.group>
             </flux:navlist>
 

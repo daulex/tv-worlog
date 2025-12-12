@@ -21,31 +21,31 @@
         @endphp
     @endif
 
-    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+    <div class="max-w-4xl mx-auto">
         <!-- File Information -->
-        <div class="lg:col-span-2">
-            <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6">
+        <div class="w-full">
+            <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6 max-w-none">
                 <h2 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">File Information</h2>
                 
                 <div class="space-y-4">
-                    <div class="flex items-center space-x-4">
-                        @if ($file->isImage())
-                            <div class="h-24 w-24 flex-shrink-0 overflow-hidden rounded-lg">
-                                <img src="{{ $file->public_url }}" alt="{{ $file->filename }}" class="h-full w-full object-cover">
-                            </div>
-                        @else
-                            <div class="h-24 w-24 bg-gray-100 dark:bg-gray-700 rounded-lg flex items-center justify-center">
-                                <span class="text-4xl">{{ $file->file_icon }}</span>
-                            </div>
-                        @endif
-                        
-                        <div class="flex-1">
-                            <h3 class="text-lg font-medium text-gray-900 dark:text-white">{{ $file->filename }}</h3>
-                            @if ($file->description)
-                                <p class="text-gray-600 dark:text-gray-400 mt-1">{{ $file->description }}</p>
-                            @endif
-                        </div>
-                    </div>
+                     <div class="flex items-start space-x-6 max-w-full">
+                         @if ($file->isImage())
+                             <div class="w-20 h-20 flex-shrink-0 overflow-hidden rounded-lg">
+                                 <img src="{{ $file->public_url }}" alt="{{ $file->filename }}" class="w-full h-full object-cover rounded-lg">
+                             </div>
+                         @else
+                             <div class="w-24 h-24 bg-gray-100 dark:bg-gray-700 rounded-lg flex items-center justify-center flex-shrink-0">
+                                 <span class="text-4xl">{{ $file->file_icon }}</span>
+                             </div>
+                         @endif
+
+                         <div class="flex-1 min-w-0 overflow-hidden">
+                             <h3 class="text-lg font-medium text-gray-900 dark:text-white break-words" title="{{ $file->filename }}">{{ $file->filename }}</h3>
+                             @if ($file->description)
+                                 <p class="text-gray-600 dark:text-gray-400 mt-1 break-words">{{ $file->description }}</p>
+                             @endif
+                         </div>
+                     </div>
 
                     <div class="grid grid-cols-2 gap-4 pt-4 border-t border-gray-200 dark:border-gray-700">
                         <div>
@@ -68,19 +68,11 @@
                         </div>
                     </div>
                 </div>
-            </div>
-
-            <!-- File Preview -->
-            @if ($file->isImage())
-                <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6 mt-6">
-                    <h2 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Preview</h2>
-                    <img src="{{ $file->public_url }}" alt="{{ $file->filename }}" class="max-w-full h-auto rounded-lg">
-                </div>
-            @endif
+             </div>
         </div>
 
         <!-- Sidebar -->
-        <div class="space-y-6">
+        <div class="space-y-6 mt-6">
             <!-- Person Information -->
             <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6">
                 <h2 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Person</h2>

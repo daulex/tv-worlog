@@ -20,6 +20,7 @@ class DatabaseSeeder extends Seeder
             EquipmentSeeder::class,
             EventSeeder::class,
             NoteSeeder::class,
+            ChecklistSeeder::class,
         ]);
 
         // Create test user for authentication
