@@ -186,8 +186,8 @@ return new class extends Migration
         Schema::create('events', function (Blueprint $table) {
             $table->id();
             $table->string('title');
-            $table->timestamp('start_date');
-            $table->timestamp('end_date');
+            $table->timestamp('start_date')->nullable();
+            $table->timestamp('end_date')->nullable();
             $table->text('description')->nullable();
             $table->string('location')->nullable();
             $table->enum('type', ['Meeting', 'Interview', 'Training', 'Other'])->default('Meeting');
