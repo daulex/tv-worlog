@@ -285,7 +285,7 @@ return new class extends Migration
             $table->timestamps();
 
             $table->index('checklist_instance_id');
-            $table->index(['checklist_instance_id', 'checklist_item_id']);
+            $table->index(['checklist_instance_id', 'checklist_item_id'], 'cii_instance_item_idx');
         });
     }
 
