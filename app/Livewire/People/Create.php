@@ -7,10 +7,7 @@ use App\Models\Person;
 use App\Models\Vacancy;
 use App\Rules\LatvianPersonalCode;
 use App\Rules\LatvianPhoneNumber;
-use App\Rules\ValidDateRange;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Log;
 use Livewire\Component;
 
 class Create extends Component
@@ -25,7 +22,11 @@ class Create extends Component
 
     public $phone;
 
+    public $phone2;
+
     public $email;
+
+    public $email2;
 
     public $date_of_birth;
 
@@ -37,7 +38,7 @@ class Create extends Component
 
     public $position;
 
-    public $status;
+    public $status = 'Candidate';
 
     public $client_id;
 
@@ -61,12 +62,14 @@ class Create extends Component
             'first_name' => 'required|string|max:255',
             'last_name' => 'required|string|max:255',
             'pers_code' => ['required', 'string', 'unique:people,pers_code', new LatvianPersonalCode],
-            'phone' => ['nullable', 'string', 'max:20', new LatvianPhoneNumber],
+            'phone' => ['nullable', 'string', 'max:255', new LatvianPhoneNumber],
+            'phone2' => ['nullable', 'string', 'max:255', new LatvianPhoneNumber],
             'email' => 'required|email:rfc|unique:people,email',
+            'email2' => 'nullable|email:rfc|unique:people,email2',
             'date_of_birth' => 'required|date|before:today',
             'address' => 'nullable|string|max:1000',
             'starting_date' => 'nullable|date|before_or_equal:today',
-            'last_working_date' => ['nullable', 'date', 'before_or_equal:today', new ValidDateRange('starting_date', $this->starting_date)],
+            'last_working_date' => 'nullable|date|before_or_equal:today',
             'position' => 'nullable|string|max:255',
             'status' => 'required|in:Candidate,Employee,Retired',
             'client_id' => 'nullable|exists:clients,id',
@@ -82,49 +85,46 @@ class Create extends Component
 
     public function save()
     {
-        try {
-            $this->authorize('create', Person::class);
+        $this->authorize('create', Person::class);
 
-            Log::info('Authorized, proceeding', [
-                'user_id' => Auth::id(),
-                'data' => $this->all(),
-            ]);
+        $this->validate();
 
-            $this->validate();
+        // Custom validation for date range
+        if ($this->starting_date && $this->last_working_date) {
+            if (strtotime($this->last_working_date) < strtotime($this->starting_date)) {
+                $this->addError('last_working_date', 'The last working date must be after or equal to the starting date.');
 
-            Log::info('Validation passed');
-
-            $person = Person::create([
-                'first_name' => $this->first_name,
-                'last_name' => $this->last_name,
-                'pers_code' => $this->pers_code,
-                'phone' => $this->phone,
-                'email' => $this->email,
-                'date_of_birth' => $this->date_of_birth,
-                'address' => $this->address,
-                'starting_date' => $this->starting_date,
-                'last_working_date' => $this->last_working_date,
-                'position' => $this->position,
-                'status' => $this->status,
-                'client_id' => $this->client_id,
-                'vacancy_id' => $this->vacancy_id,
-                'linkedin_profile' => $this->linkedin_profile,
-                'github_profile' => $this->github_profile,
-                'portfolio_url' => $this->portfolio_url,
-                'emergency_contact_name' => $this->emergency_contact_name,
-                'emergency_contact_relationship' => $this->emergency_contact_relationship,
-                'emergency_contact_phone' => $this->emergency_contact_phone,
-            ]);
-
-            Log::info('Person created', $person->toArray());
-
-            session()->flash('message', 'Person created successfully.');
-
-            $this->redirect(route('people.index'));
-        } catch (\Exception $e) {
-            Log::error('Error in save', ['error' => $e->getMessage(), 'trace' => $e->getTraceAsString()]);
-            $this->addError('general', 'An error occurred: '.$e->getMessage());
+                return;
+            }
         }
+
+        Person::create([
+            'first_name' => $this->first_name,
+            'last_name' => $this->last_name,
+            'pers_code' => $this->pers_code,
+            'phone' => $this->phone ?: null,
+            'phone2' => $this->phone2 ?: null,
+            'email' => $this->email,
+            'email2' => $this->email2 ?: null,
+            'date_of_birth' => $this->date_of_birth ?: null,
+            'address' => $this->address ?: null,
+            'starting_date' => $this->starting_date ?: null,
+            'last_working_date' => $this->last_working_date ?: null,
+            'position' => $this->position ?: null,
+            'status' => $this->status,
+            'client_id' => $this->client_id ?: null,
+            'vacancy_id' => $this->vacancy_id ?: null,
+            'linkedin_profile' => $this->linkedin_profile ?: null,
+            'github_profile' => $this->github_profile ?: null,
+            'portfolio_url' => $this->portfolio_url ?: null,
+            'emergency_contact_name' => $this->emergency_contact_name ?: null,
+            'emergency_contact_relationship' => $this->emergency_contact_relationship ?: null,
+            'emergency_contact_phone' => $this->emergency_contact_phone ?: null,
+        ]);
+
+        session()->flash('message', 'Person created successfully.');
+
+        return redirect()->route('people.index');
     }
 
     public function render()

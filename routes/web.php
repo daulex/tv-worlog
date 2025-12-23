@@ -32,7 +32,6 @@ Route::middleware(['auth'])->group(function () {
     // People routes
     Route::get('people', \App\Livewire\People\Index::class)->name('people.index');
     Route::get('people/create', \App\Livewire\People\Create::class)->name('people.create');
-    Route::post('people', [\App\Http\Controllers\PersonController::class, 'store'])->name('people.store');
     Route::get('people/{person}', \App\Livewire\People\Show::class)->name('people.show');
     Route::get('people/{person}/edit', \App\Livewire\People\Edit::class)->name('people.edit');
 
