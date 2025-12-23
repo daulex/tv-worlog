@@ -61,11 +61,11 @@ class Create extends Component
         return [
             'first_name' => 'required|string|max:255',
             'last_name' => 'required|string|max:255',
-            'pers_code' => ['required', 'string', 'unique:people,pers_code', new LatvianPersonalCode],
-            'phone' => ['nullable', 'string', 'max:255', new LatvianPhoneNumber],
-            'phone2' => ['nullable', 'string', 'max:255', new LatvianPhoneNumber],
-            'email' => 'required|email:rfc|unique:people,email',
-            'email2' => 'nullable|email:rfc|unique:people,email2',
+            'pers_code' => 'required|string|unique:people,pers_code',
+            'phone' => 'nullable|string|max:255',
+            'phone2' => 'nullable|string|max:255',
+            'email' => 'required|email|unique:people,email',
+            'email2' => 'nullable|email|unique:people,email2',
             'date_of_birth' => 'required|date|before:today',
             'address' => 'nullable|string|max:1000',
             'starting_date' => 'nullable|date|before_or_equal:today',
@@ -79,7 +79,7 @@ class Create extends Component
             'portfolio_url' => 'nullable|url|max:500',
             'emergency_contact_name' => 'nullable|string|max:255',
             'emergency_contact_relationship' => 'nullable|string|max:255',
-            'emergency_contact_phone' => ['nullable', 'string', 'max:255', new LatvianPhoneNumber],
+            'emergency_contact_phone' => 'nullable|string|max:255',
         ];
     }
 
@@ -97,6 +97,8 @@ class Create extends Component
                 return;
             }
         }
+
+        dd('About to create');
 
         Person::create([
             'first_name' => $this->first_name,
