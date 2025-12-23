@@ -85,6 +85,8 @@ class Create extends Component
 
     public function save()
     {
+        dd('Save called');
+
         $this->authorize('create', Person::class);
 
         $this->validate();
