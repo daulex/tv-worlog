@@ -9,6 +9,8 @@ use App\Rules\LatvianPersonalCode;
 use App\Rules\LatvianPhoneNumber;
 use App\Rules\ValidDateRange;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 use Livewire\Component;
 
 class Create extends Component
@@ -80,35 +82,49 @@ class Create extends Component
 
     public function save()
     {
-        $this->authorize('create', Person::class);
+        try {
+            $this->authorize('create', Person::class);
 
-        $this->validate();
+            Log::info('Authorized, proceeding', [
+                'user_id' => Auth::id(),
+                'data' => $this->all(),
+            ]);
 
-        Person::create([
-            'first_name' => $this->first_name,
-            'last_name' => $this->last_name,
-            'pers_code' => $this->pers_code,
-            'phone' => $this->phone,
-            'email' => $this->email,
-            'date_of_birth' => $this->date_of_birth,
-            'address' => $this->address,
-            'starting_date' => $this->starting_date,
-            'last_working_date' => $this->last_working_date,
-            'position' => $this->position,
-            'status' => $this->status,
-            'client_id' => $this->client_id,
-            'vacancy_id' => $this->vacancy_id,
-            'linkedin_profile' => $this->linkedin_profile,
-            'github_profile' => $this->github_profile,
-            'portfolio_url' => $this->portfolio_url,
-            'emergency_contact_name' => $this->emergency_contact_name,
-            'emergency_contact_relationship' => $this->emergency_contact_relationship,
-            'emergency_contact_phone' => $this->emergency_contact_phone,
-        ]);
+            $this->validate();
 
-        session()->flash('message', 'Person created successfully.');
+            Log::info('Validation passed');
 
-        return redirect()->route('people.index');
+            $person = Person::create([
+                'first_name' => $this->first_name,
+                'last_name' => $this->last_name,
+                'pers_code' => $this->pers_code,
+                'phone' => $this->phone,
+                'email' => $this->email,
+                'date_of_birth' => $this->date_of_birth,
+                'address' => $this->address,
+                'starting_date' => $this->starting_date,
+                'last_working_date' => $this->last_working_date,
+                'position' => $this->position,
+                'status' => $this->status,
+                'client_id' => $this->client_id,
+                'vacancy_id' => $this->vacancy_id,
+                'linkedin_profile' => $this->linkedin_profile,
+                'github_profile' => $this->github_profile,
+                'portfolio_url' => $this->portfolio_url,
+                'emergency_contact_name' => $this->emergency_contact_name,
+                'emergency_contact_relationship' => $this->emergency_contact_relationship,
+                'emergency_contact_phone' => $this->emergency_contact_phone,
+            ]);
+
+            Log::info('Person created', $person->toArray());
+
+            session()->flash('message', 'Person created successfully.');
+
+            $this->redirect(route('people.index'));
+        } catch (\Exception $e) {
+            Log::error('Error in save', ['error' => $e->getMessage(), 'trace' => $e->getTraceAsString()]);
+            $this->addError('general', 'An error occurred: '.$e->getMessage());
+        }
     }
 
     public function render()

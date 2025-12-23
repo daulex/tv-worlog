@@ -4,7 +4,8 @@
         <flux:button href="{{ route('people.index') }}">Back</flux:button>
     </div>
 
-    <form wire:submit="save">
+    <form wire:submit="save" method="post">
+        @csrf
                 <!-- Personal Information Fieldset -->
                 <flux:fieldset legend="{{ __('Personal Information') }}">
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -260,11 +261,11 @@
                             @enderror
                         </div>
                     </div>
-                </flux:fieldset>
+                 </flux:fieldset>
 
-        <div class="mt-6 flex gap-3">
-            <flux:button type="submit" variant="primary">Save</flux:button>
-            <flux:button href="{{ route('people.index') }}" variant="outline">Cancel</flux:button>
-        </div>
-    </form>
+                 <div class="mt-6 flex gap-3">
+                     <flux:button type="submit" variant="primary">Save</flux:button>
+                     <flux:button href="{{ route('people.index') }}" variant="outline">Cancel</flux:button>
+                 </div>
+             </form>
 </flux:container>
