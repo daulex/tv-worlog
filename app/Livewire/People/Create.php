@@ -85,11 +85,11 @@ class Create extends Component
 
     public function save()
     {
-        dd('Save called');
-
         $this->authorize('create', Person::class);
 
         $this->validate();
+
+        dd('Validation passed');
 
         // Custom validation for date range
         if ($this->starting_date && $this->last_working_date) {
