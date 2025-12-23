@@ -89,8 +89,6 @@ class Create extends Component
 
         $this->validate();
 
-        dd('Validation passed');
-
         // Custom validation for date range
         if ($this->starting_date && $this->last_working_date) {
             if (strtotime($this->last_working_date) < strtotime($this->starting_date)) {
