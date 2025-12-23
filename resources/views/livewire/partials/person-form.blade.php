@@ -1,4 +1,4 @@
-<form wire:submit="{{ $submitAction ?? 'save' }}" method="post">
+<form wire:submit="{{ $submitAction ?? 'save' }}" method="post" action="{{ request()->url() }}">
     <div class="space-y-8">
         <!-- Personal Information Fieldset -->
         <flux:fieldset legend="{{ __('Personal Information') }}">
@@ -278,8 +278,8 @@
     </div>
     
     <div class="mt-6 flex gap-3">
-        <flux:button type="submit" variant="primary">Update</flux:button>
-        <flux:button href="{{ $cancelUrl ?? route('people.index') }}" variant="outline">Cancel</flux:button>
+        <flux:button type="submit" variant="primary">{{ $submitText ?? 'Update' }}</flux:button>
+        <flux:button href="{{ $cancelUrl ?? route('people.index') }}" variant="outline">{{ $cancelText ?? 'Cancel' }}</flux:button>
         @if(isset($showDeleteButton) && $showDeleteButton)
             <flux:button wire:click="delete" variant="danger" wire:confirm="Are you sure you want to delete this person? This action cannot be undone." class="ml-auto">Delete</flux:button>
         @endif

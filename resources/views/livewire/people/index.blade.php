@@ -13,7 +13,10 @@
     <!-- Filters Section -->
     <div class="mb-4 p-4 bg-gray-50 dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700">
         <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
-            <flux:input wire:model.live.debounce.300ms="search" placeholder="Search people..." label="Search" />
+            <div>
+                <label for="search" class="block text-sm font-medium text-gray-700">Search</label>
+                <input wire:model.live.debounce.300ms="search" id="search" type="text" placeholder="Search people..." class="mt-1 block w-full rounded-md border-gray-300 shadow-sm bg-white focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 px-3 py-2" />
+            </div>
 
             <flux:select wire:model.live="statusFilter" label="Status">
                 <option value="">All Statuses</option>
