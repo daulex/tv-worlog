@@ -1,4 +1,4 @@
-<form wire:submit="{{ $submitAction ?? 'save' }}">
+<form wire:submit="{{ $submitAction ?? 'save' }}" method="post">
     <div class="space-y-8">
         <!-- Personal Information Fieldset -->
         <flux:fieldset legend="{{ __('Personal Information') }}">

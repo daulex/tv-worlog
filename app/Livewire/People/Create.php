@@ -5,8 +5,6 @@ namespace App\Livewire\People;
 use App\Models\Client;
 use App\Models\Person;
 use App\Models\Vacancy;
-use App\Rules\LatvianPersonalCode;
-use App\Rules\LatvianPhoneNumber;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Livewire\Component;
 
@@ -97,8 +95,6 @@ class Create extends Component
                 return;
             }
         }
-
-        dd('About to create');
 
         Person::create([
             'first_name' => $this->first_name,
