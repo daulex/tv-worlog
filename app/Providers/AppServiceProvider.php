@@ -42,6 +42,9 @@ class AppServiceProvider extends ServiceProvider
             'client' => 'App\\Models\\Client',
         ]);
 
+        // Register view namespace for layouts
+        View::addNamespace('layouts', resource_path('views/components/layouts'));
+
         // Ensure $errors variable is always available for Flux UI components
         View::composer('*', function (ViewView $view) {
             if (! $view->offsetExists('errors')) {
