@@ -49,6 +49,11 @@
                             ])
                             
                             @include('livewire.partials.field-view', [
+                                'label' => __('Bank Account'),
+                                'value' => $person->bank_account,
+                            ])
+                            
+                            @include('livewire.partials.field-view', [
                                 'label' => __('Address'),
                                 'value' => $person->address,
                             ])

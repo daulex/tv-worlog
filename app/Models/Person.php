@@ -27,6 +27,7 @@ class Person extends Authenticatable
         'email2',
         'date_of_birth',
         'address',
+        'bank_account',
         'starting_date',
         'last_working_date',
         'position',

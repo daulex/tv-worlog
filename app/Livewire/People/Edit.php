@@ -34,6 +34,8 @@ class Edit extends Component
 
     public $address;
 
+    public $bank_account;
+
     public $starting_date;
 
     public $last_working_date;
@@ -70,7 +72,8 @@ class Edit extends Component
             'email2' => 'nullable|email:rfc|unique:people,email2,'.$this->person->id,
             'date_of_birth' => 'required|date|before:today',
             'address' => 'nullable|string|max:1000',
-            'starting_date' => 'nullable|date|before_or_equal:today',
+            'bank_account' => 'nullable|string|max:255',
+            'starting_date' => 'nullable|date',
             'last_working_date' => 'nullable|date|before_or_equal:today',
             'position' => 'nullable|string|max:255',
             'status' => 'required|in:Candidate,Employee,Retired',
@@ -99,6 +102,7 @@ class Edit extends Component
         $this->email2 = $person->email2;
         $this->date_of_birth = $person->date_of_birth?->format('Y-m-d');
         $this->address = $person->address;
+        $this->bank_account = $person->bank_account;
         $this->starting_date = $person->starting_date?->format('Y-m-d');
         $this->last_working_date = $person->last_working_date?->format('Y-m-d');
         $this->position = $person->position;
@@ -138,6 +142,7 @@ class Edit extends Component
             'email2' => $this->email2 ?: null,
             'date_of_birth' => $this->date_of_birth ?: null,
             'address' => $this->address ?: null,
+            'bank_account' => $this->bank_account ?: null,
             'starting_date' => $this->starting_date ?: null,
             'last_working_date' => $this->last_working_date ?: null,
             'position' => $this->position,

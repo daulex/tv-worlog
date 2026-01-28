@@ -11,11 +11,11 @@
                              wire:model="first_name"
                              required
                          />
-                         @error('first_name')
-                             <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                         @enderror
+                          @if($errors->has('first_name'))
+                              <div class="mt-3 text-sm font-medium text-red-500 dark:text-red-400" role="alert" aria-live="polite" aria-atomic="true">{{ $errors->first('first_name') }}</div>
+                          @endif
                     </flux:field>
-                    
+
                     <flux:field>
                         <flux:label>{{ __('Last Name') }}</flux:label>
                          <flux:input
@@ -23,49 +23,62 @@
                              wire:model="last_name"
                              required
                          />
-                         @error('last_name')
-                             <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                         @enderror
+                          @if($errors->has('last_name'))
+                              <div class="mt-3 text-sm font-medium text-red-500 dark:text-red-400" role="alert" aria-live="polite" aria-atomic="true">{{ $errors->first('last_name') }}</div>
+                          @endif
                     </flux:field>
-                    
-                    <flux:field>
-                        <flux:label>{{ __('Personal Code') }}</flux:label>
-                         <flux:input
-                             type="text"
-                             wire:model="pers_code"
-                             placeholder="XXXXXX-XXXXX"
-                             required
-                         />
-                         @error('pers_code')
-                             <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                         @enderror
-                    </flux:field>
-                    
-                    <flux:field>
-                        <flux:label>{{ __('Date of Birth') }}</flux:label>
-                         <flux:input
-                             type="date"
-                             wire:model="date_of_birth"
-                             required
-                         />
-                         @error('date_of_birth')
-                             <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                         @enderror
-                    </flux:field>
-                    
-                    <flux:field>
-                        <flux:label>{{ __('Address') }}</flux:label>
-                         <flux:textarea
-                             wire:model="address"
-                             rows="3"
-                         />
-                         @error('address')
-                             <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                         @enderror
-                    </flux:field>
-                </div>
-                
-                <div class="space-y-4">
+
+                     <flux:field>
+                         <flux:label>{{ __('Personal Code') }}</flux:label>
+                          <flux:input
+                              type="text"
+                              wire:model="pers_code"
+                              placeholder="XXXXXX-XXXXX"
+                              required
+                          />
+                          @if($errors->has('pers_code'))
+                              <div class="mt-3 text-sm font-medium text-red-500 dark:text-red-400" role="alert" aria-live="polite" aria-atomic="true">{{ $errors->first('pers_code') }}</div>
+                          @endif
+                     </flux:field>
+
+                     <flux:field>
+                         <flux:label>{{ __('Date of Birth') }}</flux:label>
+                          <flux:input
+                              type="date"
+                              wire:model="date_of_birth"
+                              required
+                          />
+                          @if($errors->has('date_of_birth'))
+                              <div class="mt-3 text-sm font-medium text-red-500 dark:text-red-400" role="alert" aria-live="polite" aria-atomic="true">{{ $errors->first('date_of_birth') }}</div>
+                          @endif
+                     </flux:field>
+
+                     <flux:field>
+                         <flux:label>{{ __('Bank Account') }}</flux:label>
+                          <flux:input
+                              type="text"
+                              wire:model="bank_account"
+                              placeholder="IBAN or account number"
+                          />
+                          @if($errors->has('bank_account'))
+                              <div class="mt-3 text-sm font-medium text-red-500 dark:text-red-400" role="alert" aria-live="polite" aria-atomic="true">{{ $errors->first('bank_account') }}</div>
+                          @endif
+                     </flux:field>
+
+                     <flux:field>
+                         <flux:label>{{ __('Address') }}</flux:label>
+                          <flux:textarea
+                              wire:model="address"
+                              rows="3"
+                          />
+                          @if($errors->has('address'))
+                              <div class="mt-3 text-sm font-medium text-red-500 dark:text-red-400" role="alert" aria-live="polite" aria-atomic="true">{{ $errors->first('address') }}</div>
+                          @endif
+                      </flux:field>
+
+                 </div>
+                 
+                 <div class="space-y-4">
                     <flux:field>
                         <flux:label>{{ __('Email') }}</flux:label>
                          <flux:input
@@ -73,42 +86,42 @@
                              wire:model="email"
                              required
                          />
-                         @error('email')
-                             <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                         @enderror
+                          @if($errors->has('email'))
+                              <div class="mt-3 text-sm font-medium text-red-500 dark:text-red-400" role="alert" aria-live="polite" aria-atomic="true">{{ $errors->first('email') }}</div>
+                          @endif
                     </flux:field>
-                    
+
                     <flux:field>
                         <flux:label>{{ __('Secondary Email') }}</flux:label>
                          <flux:input
                              type="email"
                              wire:model="email2"
                          />
-                         @error('email2')
-                             <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                         @enderror
+                          @if($errors->has('email2'))
+                              <div class="mt-3 text-sm font-medium text-red-500 dark:text-red-400" role="alert" aria-live="polite" aria-atomic="true">{{ $errors->first('email2') }}</div>
+                          @endif
                     </flux:field>
-                    
+
                     <flux:field>
                         <flux:label>{{ __('Phone') }}</flux:label>
                          <flux:input
                              type="tel"
                              wire:model="phone"
                          />
-                         @error('phone')
-                             <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                         @enderror
+                          @if($errors->has('phone'))
+                              <div class="mt-3 text-sm font-medium text-red-500 dark:text-red-400" role="alert" aria-live="polite" aria-atomic="true">{{ $errors->first('phone') }}</div>
+                          @endif
                     </flux:field>
-                    
+
                     <flux:field>
                         <flux:label>{{ __('Secondary Phone') }}</flux:label>
                          <flux:input
                              type="tel"
                              wire:model="phone2"
                          />
-                         @error('phone2')
-                             <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                         @enderror
+                          @if($errors->has('phone2'))
+                              <div class="mt-3 text-sm font-medium text-red-500 dark:text-red-400" role="alert" aria-live="polite" aria-atomic="true">{{ $errors->first('phone2') }}</div>
+                          @endif
                     </flux:field>
                 </div>
             </div>
@@ -124,9 +137,9 @@
                              type="text"
                              wire:model="position"
                          />
-                         @error('position')
-                             <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                         @enderror
+                          @if($errors->has('position'))
+                              <div class="mt-3 text-sm font-medium text-red-500 dark:text-red-400" role="alert" aria-live="polite" aria-atomic="true">{{ $errors->first('position') }}</div>
+                          @endif
                     </flux:field>
                     
                     <flux:field>
@@ -136,9 +149,9 @@
                              <flux:select.option value="Employee">Employee</flux:select.option>
                              <flux:select.option value="Retired">Retired</flux:select.option>
                          </flux:select>
-                         @error('status')
-                             <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                         @enderror
+                          @if($errors->has('status'))
+                              <div class="mt-3 text-sm font-medium text-red-500 dark:text-red-400" role="alert" aria-live="polite" aria-atomic="true">{{ $errors->first('status') }}</div>
+                          @endif
                     </flux:field>
                     
                     <flux:field>
@@ -147,9 +160,9 @@
                              type="date"
                              wire:model="starting_date"
                          />
-                         @error('starting_date')
-                             <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                         @enderror
+                          @if($errors->has('starting_date'))
+                              <div class="mt-3 text-sm font-medium text-red-500 dark:text-red-400" role="alert" aria-live="polite" aria-atomic="true">{{ $errors->first('starting_date') }}</div>
+                          @endif
                     </flux:field>
                     
                     <flux:field>
@@ -158,9 +171,9 @@
                              type="date"
                              wire:model="last_working_date"
                          />
-                         @error('last_working_date')
-                             <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                         @enderror
+                          @if($errors->has('last_working_date'))
+                              <div class="mt-3 text-sm font-medium text-red-500 dark:text-red-400" role="alert" aria-live="polite" aria-atomic="true">{{ $errors->first('last_working_date') }}</div>
+                          @endif
                     </flux:field>
                 </div>
                 
@@ -173,9 +186,9 @@
                                  <flux:select.option value="{{ $client->id }}">{{ $client->name }}</flux:select.option>
                              @endforeach
                          </flux:select>
-                         @error('client_id')
-                             <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                         @enderror
+                          @if($errors->has('client_id'))
+                              <div class="mt-3 text-sm font-medium text-red-500 dark:text-red-400" role="alert" aria-live="polite" aria-atomic="true">{{ $errors->first('client_id') }}</div>
+                          @endif
                     </flux:field>
                     
                     <flux:field>
@@ -186,9 +199,9 @@
                                  <flux:select.option value="{{ $vacancy->id }}">{{ $vacancy->title }} - {{ $vacancy->client->name }}</flux:select.option>
                              @endforeach
                          </flux:select>
-                         @error('vacancy_id')
-                             <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                         @enderror
+                          @if($errors->has('vacancy_id'))
+                              <div class="mt-3 text-sm font-medium text-red-500 dark:text-red-400" role="alert" aria-live="polite" aria-atomic="true">{{ $errors->first('vacancy_id') }}</div>
+                          @endif
                     </flux:field>
                 </div>
             </div>
@@ -204,9 +217,9 @@
                          wire:model="linkedin_profile"
                          placeholder="https://linkedin.com/in/username"
                      />
-                     @error('linkedin_profile')
-                         <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                     @enderror
+                      @if($errors->has('linkedin_profile'))
+                          <div class="mt-3 text-sm font-medium text-red-500 dark:text-red-400" role="alert" aria-live="polite" aria-atomic="true">{{ $errors->first('linkedin_profile') }}</div>
+                      @endif
                 </flux:field>
                 
                 <flux:field>
@@ -216,9 +229,9 @@
                          wire:model="github_profile"
                          placeholder="https://github.com/username"
                      />
-                     @error('github_profile')
-                         <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                     @enderror
+                      @if($errors->has('github_profile'))
+                          <div class="mt-3 text-sm font-medium text-red-500 dark:text-red-400" role="alert" aria-live="polite" aria-atomic="true">{{ $errors->first('github_profile') }}</div>
+                      @endif
                 </flux:field>
                 
                 <flux:field>
@@ -228,9 +241,9 @@
                          wire:model="portfolio_url"
                          placeholder="https://yourportfolio.com"
                      />
-                     @error('portfolio_url')
-                         <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                     @enderror
+                      @if($errors->has('portfolio_url'))
+                          <div class="mt-3 text-sm font-medium text-red-500 dark:text-red-400" role="alert" aria-live="polite" aria-atomic="true">{{ $errors->first('portfolio_url') }}</div>
+                      @endif
                 </flux:field>
             </div>
         </flux:fieldset>
@@ -245,9 +258,9 @@
                          wire:model="emergency_contact_name"
                          placeholder="Emergency contact name"
                      />
-                     @error('emergency_contact_name')
-                         <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                     @enderror
+                      @if($errors->has('emergency_contact_name'))
+                          <div class="mt-3 text-sm font-medium text-red-500 dark:text-red-400" role="alert" aria-live="polite" aria-atomic="true">{{ $errors->first('emergency_contact_name') }}</div>
+                      @endif
                 </flux:field>
                 
                 <flux:field>
@@ -257,9 +270,9 @@
                          wire:model="emergency_contact_relationship"
                          placeholder="Spouse, Parent, Sibling, etc."
                      />
-                     @error('emergency_contact_relationship')
-                         <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                     @enderror
+                      @if($errors->has('emergency_contact_relationship'))
+                          <div class="mt-3 text-sm font-medium text-red-500 dark:text-red-400" role="alert" aria-live="polite" aria-atomic="true">{{ $errors->first('emergency_contact_relationship') }}</div>
+                      @endif
                 </flux:field>
                 
                 <flux:field>
@@ -269,9 +282,9 @@
                          wire:model="emergency_contact_phone"
                          placeholder="+371 123 45678"
                      />
-                     @error('emergency_contact_phone')
-                         <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                     @enderror
+                      @if($errors->has('emergency_contact_phone'))
+                          <div class="mt-3 text-sm font-medium text-red-500 dark:text-red-400" role="alert" aria-live="polite" aria-atomic="true">{{ $errors->first('emergency_contact_phone') }}</div>
+                      @endif
                 </flux:field>
             </div>
         </flux:fieldset>

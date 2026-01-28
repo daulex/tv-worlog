@@ -30,13 +30,15 @@ class Create extends Component
 
     public $address;
 
+    public $bank_account;
+
     public $starting_date;
 
     public $last_working_date;
 
     public $position;
 
-    public $status = 'Candidate';
+    public $status;
 
     public $client_id;
 
@@ -66,7 +68,8 @@ class Create extends Component
             'email2' => 'nullable|email|unique:people,email2',
             'date_of_birth' => 'required|date|before:today',
             'address' => 'nullable|string|max:1000',
-            'starting_date' => 'nullable|date|before_or_equal:today',
+            'bank_account' => 'nullable|string|max:255',
+            'starting_date' => 'nullable|date',
             'last_working_date' => 'nullable|date|before_or_equal:today',
             'position' => 'nullable|string|max:255',
             'status' => 'required|in:Candidate,Employee,Retired',
@@ -106,6 +109,7 @@ class Create extends Component
             'email2' => $this->email2 ?: null,
             'date_of_birth' => $this->date_of_birth ?: null,
             'address' => $this->address ?: null,
+            'bank_account' => $this->bank_account ?: null,
             'starting_date' => $this->starting_date ?: null,
             'last_working_date' => $this->last_working_date ?: null,
             'position' => $this->position ?: null,

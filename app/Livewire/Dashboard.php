@@ -34,7 +34,8 @@ class Dashboard extends Component
                     $nextBirthday->addYear();
                 }
 
-                $days = floor(now()->diffInDays($nextBirthday, false));
+                // Use startOfDay to ensure accurate day calculation regardless of time
+                $days = now()->startOfDay()->diffInDays($nextBirthday->startOfDay(), false);
 
                 // Only include if within next 365 days
                 if ($days > 365) {
@@ -43,12 +44,22 @@ class Dashboard extends Component
 
                 $age = $nextBirthday->year - $birthday->year;
 
+                // Determine display text for days
+                if ($days === 0) {
+                    $daysText = 'today';
+                } elseif ($days === 1) {
+                    $daysText = 'tomorrow';
+                } else {
+                    $daysText = "in {$days} day".($days === 1 ? '' : 's');
+                }
+
                 return [
                     'id' => $person->id,
                     'name' => $person->full_name,
                     'date_of_birth' => $birthday->format('d.m.Y'),
                     'days' => $days,
                     'age' => $age,
+                    'days_text' => $daysText,
                 ];
             })
             ->filter()

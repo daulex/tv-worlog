@@ -12,5 +12,6 @@
         'clients' => $clients,
         'vacancies' => $vacancies,
         'showDeleteButton' => false,
+        'errors' => $this->getErrorBag(),
     ])
 </flux:container>

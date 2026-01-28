@@ -136,8 +136,12 @@
                                 <p class="text-sm text-gray-600 dark:text-gray-400">{{ $birthday['date_of_birth'] }}</p>
                             </div>
                             <div class="text-right">
-                                <p class="text-sm text-gray-600 dark:text-gray-400">
-                                    in {{ $birthday['days'] }} day{{ $birthday['days'] !== 1 ? 's' : '' }}
+                                <p class="text-sm
+                                    @if($birthday['days_text'] === 'today') text-green-600 dark:text-green-400 font-semibold
+                                    @elseif($birthday['days_text'] === 'tomorrow') text-blue-600 dark:text-blue-400 font-semibold
+                                    @else text-gray-600 dark:text-gray-400
+                                    @endif">
+                                    {{ $birthday['days_text'] }}
                                 </p>
                                 <p class="text-sm font-medium text-gray-900 dark:text-white">
                                     {{ $birthday['age'] }} years old

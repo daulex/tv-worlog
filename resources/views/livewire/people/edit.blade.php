@@ -13,6 +13,7 @@
         'clients' => $clients,
         'vacancies' => $vacancies,
         'showDeleteButton' => true,
+        'errors' => $this->getErrorBag(),
     ])
 
     @if($deleteAttempted && $associatedEquipment->count() > 0)
