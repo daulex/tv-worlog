@@ -119,6 +119,7 @@
     <!-- Upcoming Birthdays -->
     <div class="mt-6">
         <h2 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Upcoming Birthdays</h2>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
         <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6">
             @if($upcomingBirthdays->isEmpty())
                 <p class="text-gray-600 dark:text-gray-400">No upcoming birthdays in next year.</p>
@@ -127,7 +128,11 @@
                     @foreach($upcomingBirthdays as $birthday)
                         <div class="flex items-center justify-between">
                             <div>
-                                <p class="font-semibold text-gray-900 dark:text-white">{{ $birthday['name'] }}</p>
+                                <p class="font-semibold text-gray-900 dark:text-white">
+                                    <a href="{{ route('people.show', $birthday['id']) }}" class="text-gray-900 dark:text-gray-100 hover:underline">
+                                    {{ $birthday['name'] }}
+                                    </a>
+                                </p>
                                 <p class="text-sm text-gray-600 dark:text-gray-400">{{ $birthday['date_of_birth'] }}</p>
                             </div>
                             <div class="text-right">
@@ -143,5 +148,8 @@
                 </div>
             @endif
         </div>
+        </div>
     </div>
+    
+
 </div>

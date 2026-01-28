@@ -44,6 +44,7 @@ class Dashboard extends Component
                 $age = $nextBirthday->year - $birthday->year;
 
                 return [
+                    'id' => $person->id,
                     'name' => $person->full_name,
                     'date_of_birth' => $birthday->format('d.m.Y'),
                     'days' => $days,
