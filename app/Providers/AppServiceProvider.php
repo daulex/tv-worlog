@@ -5,9 +5,11 @@ namespace App\Providers;
 use App\Models\Equipment;
 use App\Models\EventParticipant;
 use App\Models\Person;
+use App\Models\Reimbursement;
 use App\Observers\EquipmentObserver;
 use App\Observers\EventParticipantObserver;
 use App\Observers\PersonObserver;
+use App\Observers\ReimbursementObserver;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
@@ -32,6 +34,7 @@ class AppServiceProvider extends ServiceProvider
         Equipment::observe(EquipmentObserver::class);
         Person::observe(PersonObserver::class);
         EventParticipant::observe(EventParticipantObserver::class);
+        Reimbursement::observe(ReimbursementObserver::class);
 
         // Set up morph map for polymorphic relationships
         Relation::morphMap([

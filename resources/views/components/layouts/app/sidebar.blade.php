@@ -19,6 +19,7 @@
                 <flux:navlist.group :heading="__('Management')" class="grid">
                     <flux:navlist.item icon="users" href="{{ route('people.index') }}" wire:navigate>{{ __('People') }}</flux:navlist.item>
                     <flux:navlist.item icon="briefcase" href="{{ route('clients.index') }}" wire:navigate>{{ __('Clients') }}</flux:navlist.item>
+                    <flux:navlist.item icon="currency-dollar" href="{{ route('reimbursements.index') }}" wire:navigate>{{ __('Reimbursements') }}</flux:navlist.item>
                     <flux:navlist.item icon="folder-open" href="{{ route('vacancies.index') }}" wire:navigate>{{ __('Vacancies') }}</flux:navlist.item>
                     <flux:navlist.item icon="cog" href="{{ route('equipment.index') }}" wire:navigate>{{ __('Equipment') }}</flux:navlist.item>
                     <flux:navlist.item icon="calendar" href="{{ route('events.index') }}" wire:navigate>{{ __('Events') }}</flux:navlist.item>

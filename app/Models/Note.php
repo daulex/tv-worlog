@@ -50,4 +50,9 @@ class Note extends Model
     {
         return $this->belongsTo(Client::class, 'entity_id')->where('note_type', 'client');
     }
+
+    public function reimbursement()
+    {
+        return $this->belongsTo(Reimbursement::class, 'entity_id')->where('note_type', 'reimbursement');
+    }
 }

@@ -42,7 +42,7 @@
             </flux:field>
 
             <flux:field>
-                <flux:label>Purchase Price</flux:label>
+                <flux:label>Purchase Price (exc vat)</flux:label>
                 <flux:input wire:model="purchase_price" type="number" step="0.01" min="0" placeholder="0.00" required />
                 <flux:error name="purchase_price" />
             </flux:field>

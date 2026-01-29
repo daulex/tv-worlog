@@ -41,6 +41,10 @@ Route::middleware(['auth'])->group(function () {
     Route::get('clients/{client}', \App\Livewire\Clients\Show::class)->name('clients.show');
     Route::get('clients/{client}/edit', \App\Livewire\Clients\Edit::class)->name('clients.edit');
 
+    // Reimbursements routes
+    Route::get('reimbursements', \App\Livewire\Reimbursements::class)->name('reimbursements.index');
+    Route::get('reimbursements/{reimbursement}', \App\Livewire\Reimbursements\Show::class)->name('reimbursements.show');
+
     // Vacancy routes
     Route::get('vacancies', \App\Livewire\Vacancies\Index::class)->name('vacancies.index');
     Route::get('vacancies/create', \App\Livewire\Vacancies\Create::class)->name('vacancies.create');

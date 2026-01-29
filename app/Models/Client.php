@@ -32,4 +32,9 @@ class Client extends Model
     {
         return $this->morphMany(Note::class, 'notable');
     }
+
+    public function reimbursements(): HasMany
+    {
+        return $this->hasMany(Reimbursement::class);
+    }
 }
