@@ -393,7 +393,7 @@
                                                     </div>
                                             </div>
                                         @else
-                                            <flux:text class="text-gray-700 dark:text-gray-300">{{ $note->note_text }}</flux:text>
+                                                                                        <div style="white-space: pre-wrap;" class="text-gray-700 dark:text-gray-300 break-words">{{ $note->note_text }}</div>
                                         @endif
                                     </div>
                                 </div>

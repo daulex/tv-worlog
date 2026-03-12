@@ -122,7 +122,7 @@ class Show extends Component
         $this->authorize('manageNotes', $this->person);
 
         $this->validate([
-            'newNote' => 'required|string|max:1000',
+            'newNote' => 'required|string|max:5000',
         ]);
 
         $this->person->notes()->create([
@@ -175,7 +175,7 @@ class Show extends Component
         $this->authorize('manageNotes', $this->person);
 
         $this->validate([
-            'noteEditForm.note_text' => 'required|string|max:1000',
+            'noteEditForm.note_text' => 'required|string|max:5000',
         ]);
 
         $note = Note::find($this->noteEditForm['id']);
@@ -269,8 +269,8 @@ class Show extends Component
     protected function rules(): array
     {
         return [
-            'newNote' => 'required|string|max:1000',
-            'noteEditForm.note_text' => 'required|string|max:1000',
+            'newNote' => 'required|string|max:5000',
+            'noteEditForm.note_text' => 'required|string|max:5000',
         ];
     }
 
