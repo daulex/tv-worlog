@@ -67,7 +67,7 @@ class Edit extends Component
         return [
             'first_name' => 'required|string|max:255',
             'last_name' => 'required|string|max:255',
-            'pers_code' => 'nullable|string|unique:people,pers_code,'.$this->person->id,
+            'pers_code' => 'nullable|string',
             'phone' => 'nullable|string|max:255',
             'phone2' => 'nullable|string|max:255',
             'email' => 'required|email:rfc|unique:people,email,'.$this->person->id,
