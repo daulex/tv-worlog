@@ -1,10 +1,12 @@
-@props(['label', 'value', 'isEditing', 'field', 'isUnassigned'])
+@props(['label', 'value', 'isEditing', 'field', 'isUnassigned', 'url'])
 
 <div class="flex items-center justify-between py-3 border-b border-gray-100 dark:border-gray-800">
     <flux:text class="font-medium text-gray-900 dark:text-gray-100">{{ $label }}</flux:text>
     <div class="text-right">
         @if($value)
-            @if(str_starts_with($value, 'http://') || str_starts_with($value, 'https://'))
+            @if(isset($url) && $url)
+                <flux:link href="{{ $url }}" target="_blank" rel="noopener noreferrer">{{ $value }}</flux:link>
+            @elseif(str_starts_with($value, 'http://') || str_starts_with($value, 'https://'))
                 <flux:link href="{{ $value }}" target="_blank" rel="noopener noreferrer">{{ $value }}</flux:link>
             @else
                 <flux:text>{{ $value }}</flux:text>

@@ -144,4 +144,43 @@ class Person extends Authenticatable
     {
         return strtoupper(substr($this->first_name, 0, 1).substr($this->last_name, 0, 1));
     }
+
+    public function getLinkedInUsernameAttribute(): ?string
+    {
+        if (! $this->linkedin_profile) {
+            return null;
+        }
+
+        $path = parse_url($this->linkedin_profile, PHP_URL_PATH);
+
+        if ($path) {
+            return urldecode(trim($path, '/'));
+        }
+
+        return null;
+    }
+
+    public function getGitHubUsernameAttribute(): ?string
+    {
+        if (! $this->github_profile) {
+            return null;
+        }
+
+        $path = parse_url($this->github_profile, PHP_URL_PATH);
+
+        if ($path) {
+            return trim($path, '/');
+        }
+
+        return null;
+    }
+
+    public function getPortfolioDomainAttribute(): ?string
+    {
+        if (! $this->portfolio_url) {
+            return null;
+        }
+
+        return parse_url($this->portfolio_url, PHP_URL_HOST) ?: $this->portfolio_url;
+    }
 }

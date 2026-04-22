@@ -182,17 +182,20 @@
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                         @include('livewire.partials.field-view', [
                             'label' => __('LinkedIn Profile'),
-                            'value' => $person->linkedin_profile,
+                            'value' => $person->linkedin_username,
+                            'url' => $person->linkedin_profile,
                         ])
-                        
+
                         @include('livewire.partials.field-view', [
                             'label' => __('GitHub Profile'),
-                            'value' => $person->github_profile,
+                            'value' => $person->github_username,
+                            'url' => $person->github_profile,
                         ])
-                        
+
                         @include('livewire.partials.field-view', [
                             'label' => __('Portfolio URL'),
-                            'value' => $person->portfolio_url,
+                            'value' => $person->portfolio_domain,
+                            'url' => $person->portfolio_url,
                         ])
                     </div>
                 </flux:fieldset>
