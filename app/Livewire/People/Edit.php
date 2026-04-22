@@ -42,6 +42,8 @@ class Edit extends Component
 
     public $position;
 
+    public $salary;
+
     public $status;
 
     public $client_id;
@@ -74,8 +76,9 @@ class Edit extends Component
             'address' => 'nullable|string|max:1000',
             'bank_account' => 'nullable|string|max:255',
             'starting_date' => 'nullable|date',
-            'last_working_date' => 'nullable|date|before_or_equal:today',
+            'last_working_date' => 'nullable|date',
             'position' => 'nullable|string|max:255',
+            'salary' => 'nullable|numeric|min:0',
             'status' => 'required|in:Candidate,Employee,Retired',
             'client_id' => 'nullable|exists:clients,id',
             'vacancy_id' => 'nullable|exists:vacancies,id',
@@ -106,6 +109,7 @@ class Edit extends Component
         $this->starting_date = $person->starting_date?->format('Y-m-d');
         $this->last_working_date = $person->last_working_date?->format('Y-m-d');
         $this->position = $person->position;
+        $this->salary = $person->salary;
         $this->status = $person->status;
         $this->client_id = $person->client_id;
         $this->vacancy_id = $person->vacancy_id;
@@ -123,15 +127,6 @@ class Edit extends Component
 
         $this->validate();
 
-        // Custom validation for date range
-        if ($this->starting_date && $this->last_working_date) {
-            if (strtotime($this->last_working_date) < strtotime($this->starting_date)) {
-                $this->addError('last_working_date', 'The last working date must be after or equal to the starting date.');
-
-                return;
-            }
-        }
-
         $this->person->update([
             'first_name' => $this->first_name,
             'last_name' => $this->last_name,
@@ -146,6 +141,7 @@ class Edit extends Component
             'starting_date' => $this->starting_date ?: null,
             'last_working_date' => $this->last_working_date ?: null,
             'position' => $this->position,
+            'salary' => $this->salary ?: null,
             'status' => $this->status,
             'client_id' => $this->client_id ?: null,
             'vacancy_id' => $this->vacancy_id ?: null,

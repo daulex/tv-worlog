@@ -38,6 +38,8 @@ class Create extends Component
 
     public $position;
 
+    public $salary;
+
     public $status;
 
     public $client_id;
@@ -70,8 +72,9 @@ class Create extends Component
             'address' => 'nullable|string|max:1000',
             'bank_account' => 'nullable|string|max:255',
             'starting_date' => 'nullable|date',
-            'last_working_date' => 'nullable|date|before_or_equal:today',
+            'last_working_date' => 'nullable|date',
             'position' => 'nullable|string|max:255',
+            'salary' => 'nullable|numeric|min:0',
             'status' => 'required|in:Candidate,Employee,Retired',
             'client_id' => 'nullable|exists:clients,id',
             'vacancy_id' => 'nullable|exists:vacancies,id',
@@ -90,15 +93,6 @@ class Create extends Component
 
         $this->validate();
 
-        // Custom validation for date range
-        if ($this->starting_date && $this->last_working_date) {
-            if (strtotime($this->last_working_date) < strtotime($this->starting_date)) {
-                $this->addError('last_working_date', 'The last working date must be after or equal to the starting date.');
-
-                return;
-            }
-        }
-
         Person::create([
             'first_name' => $this->first_name,
             'last_name' => $this->last_name,
@@ -113,6 +107,7 @@ class Create extends Component
             'starting_date' => $this->starting_date ?: null,
             'last_working_date' => $this->last_working_date ?: null,
             'position' => $this->position ?: null,
+            'salary' => $this->salary ?: null,
             'status' => $this->status,
             'client_id' => $this->client_id ?: null,
             'vacancy_id' => $this->vacancy_id ?: null,

@@ -31,7 +31,7 @@ class PersonObserver
         $changes = [];
         $original = $person->getOriginal();
 
-        $fieldsToTrack = ['first_name', 'last_name', 'email', 'email2', 'phone', 'phone2', 'position', 'status', 'client_id', 'vacancy_id'];
+        $fieldsToTrack = ['first_name', 'last_name', 'email', 'email2', 'phone', 'phone2', 'position', 'salary', 'status', 'client_id', 'vacancy_id'];
 
         foreach ($fieldsToTrack as $field) {
             if ($person->wasChanged($field)) {
@@ -46,6 +46,10 @@ class PersonObserver
                     $oldVacancy = $oldValue ? \App\Models\Vacancy::find($oldValue)?->title : 'None';
                     $newVacancy = $newValue ? \App\Models\Vacancy::find($newValue)?->title : 'None';
                     $changes[] = "Vacancy: {$oldVacancy} → {$newVacancy}";
+                } elseif ($field === 'salary') {
+                    $oldSalary = $oldValue ? number_format((float) $oldValue, 2) : 'None';
+                    $newSalary = $newValue ? number_format((float) $newValue, 2) : 'None';
+                    $changes[] = "Salary: {$oldSalary} → {$newSalary}";
                 } else {
                     $changes[] = ucfirst(str_replace('_', ' ', $field)).": {$oldValue} → {$newValue}";
                 }

@@ -31,6 +31,7 @@ class Person extends Authenticatable
         'starting_date',
         'last_working_date',
         'position',
+        'salary',
         'client_id',
         'vacancy_id',
         'linkedin_profile',
@@ -56,6 +57,7 @@ class Person extends Authenticatable
         'email_verified_at' => 'datetime',
         'two_factor_confirmed_at' => 'datetime',
         'password' => 'hashed',
+        'salary' => 'decimal:2',
     ];
 
     public function client(): BelongsTo

@@ -141,7 +141,7 @@
                               <div class="mt-3 text-sm font-medium text-red-500 dark:text-red-400" role="alert" aria-live="polite" aria-atomic="true">{{ $errors->first('position') }}</div>
                           @endif
                     </flux:field>
-                    
+
                     <flux:field>
                         <flux:label>{{ __('Status') }}</flux:label>
                          <flux:select wire:model="status" required>
@@ -201,6 +201,19 @@
                          </flux:select>
                           @if($errors->has('vacancy_id'))
                               <div class="mt-3 text-sm font-medium text-red-500 dark:text-red-400" role="alert" aria-live="polite" aria-atomic="true">{{ $errors->first('vacancy_id') }}</div>
+                          @endif
+                    </flux:field>
+
+                    <flux:field>
+                        <flux:label>{{ __('Salary') }}</flux:label>
+                         <flux:input
+                             type="number"
+                             step="0.01"
+                             wire:model="salary"
+                             placeholder="0.00"
+                         />
+                          @if($errors->has('salary'))
+                              <div class="mt-3 text-sm font-medium text-red-500 dark:text-red-400" role="alert" aria-live="polite" aria-atomic="true">{{ $errors->first('salary') }}</div>
                           @endif
                     </flux:field>
                 </div>

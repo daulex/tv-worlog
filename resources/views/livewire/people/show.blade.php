@@ -91,34 +91,39 @@
                                 'label' => __('Position'),
                                 'value' => $person->position,
                             ])
-                            
+
                             @include('livewire.partials.field-view', [
                                 'label' => __('Status'),
                                 'value' => __($person->status),
                             ])
-                            
+
                             @include('livewire.partials.field-view', [
                                 'label' => __('Starting Date'),
                                 'value' => $person->starting_date?->format('M d, Y'),
                             ])
-                            
+
                             @include('livewire.partials.field-view', [
                                 'label' => __('Last Working Date'),
                                 'value' => $person->last_working_date?->format('M d, Y'),
                             ])
                         </div>
-                        
+
                         <div class="space-y-4">
                             @include('livewire.partials.field-view', [
                                 'label' => __('Client'),
                                 'value' => $person->client?->name,
                                 'isUnassigned' => !$person->client,
                             ])
-                            
+
                             @include('livewire.partials.field-view', [
                                 'label' => __('Vacancy'),
                                 'value' => $person->vacancy?->title,
                                 'isUnassigned' => !$person->vacancy,
+                            ])
+
+                            @include('livewire.partials.field-view', [
+                                'label' => __('Salary'),
+                                'value' => $person->salary ? number_format($person->salary, 2) : null,
                             ])
                         </div>
                     </div>
