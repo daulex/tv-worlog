@@ -52,7 +52,7 @@ class Edit extends Component
         $this->entity_id = $note->entity_id;
         $this->created_at = $note->created_at->format('Y-m-d\TH:i');
 
-        $this->people = Person::orderBy('name')->get();
+        $this->people = Person::orderBy('first_name')->orderBy('last_name')->get();
         $this->clients = Client::orderBy('name')->get();
         $this->vacancies = Vacancy::orderBy('title')->get();
         $this->equipment = Equipment::orderBy('name')->get();

@@ -67,12 +67,12 @@ class Edit extends Component
         return [
             'first_name' => 'required|string|max:255',
             'last_name' => 'required|string|max:255',
-            'pers_code' => 'required|string|unique:people,pers_code,'.$this->person->id,
+            'pers_code' => 'nullable|string|unique:people,pers_code,'.$this->person->id,
             'phone' => 'nullable|string|max:255',
             'phone2' => 'nullable|string|max:255',
             'email' => 'required|email:rfc|unique:people,email,'.$this->person->id,
             'email2' => 'nullable|email:rfc|unique:people,email2,'.$this->person->id,
-            'date_of_birth' => 'required|date|before:today',
+            'date_of_birth' => 'nullable|date',
             'address' => 'nullable|string|max:1000',
             'bank_account' => 'nullable|string|max:255',
             'starting_date' => 'nullable|date',
@@ -130,7 +130,7 @@ class Edit extends Component
         $this->person->update([
             'first_name' => $this->first_name,
             'last_name' => $this->last_name,
-            'pers_code' => $this->pers_code,
+            'pers_code' => $this->pers_code ?: null,
             'phone' => $this->phone ?: null,
             'phone2' => $this->phone2 ?: null,
             'email' => $this->email,

@@ -54,7 +54,7 @@ class Index extends Component
             ->latest('uploaded_at');
 
         $files = $query->paginate($this->perPage);
-        $people = Person::orderBy('name')->get();
+        $people = Person::orderBy('first_name')->orderBy('last_name')->get();
         $categories = ['cv', 'contract', 'certificate', 'other'];
 
         return view('livewire.files.index', [

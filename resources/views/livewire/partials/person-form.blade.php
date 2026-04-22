@@ -28,30 +28,28 @@
                           @endif
                     </flux:field>
 
-                     <flux:field>
-                         <flux:label>{{ __('Personal Code') }}</flux:label>
-                          <flux:input
-                              type="text"
-                              wire:model="pers_code"
-                              placeholder="XXXXXX-XXXXX"
-                              required
-                          />
-                          @if($errors->has('pers_code'))
-                              <div class="mt-3 text-sm font-medium text-red-500 dark:text-red-400" role="alert" aria-live="polite" aria-atomic="true">{{ $errors->first('pers_code') }}</div>
-                          @endif
-                     </flux:field>
+<flux:field>
+                          <flux:label>{{ __('Personal Code') }}</flux:label>
+                           <flux:input
+                               type="text"
+                               wire:model="pers_code"
+                               placeholder="XXXXXX-XXXXX"
+                           />
+                           @if($errors->has('pers_code'))
+                               <div class="mt-3 text-sm font-medium text-red-500 dark:text-red-400" role="alert" aria-live="polite" aria-atomic="true">{{ $errors->first('pers_code') }}</div>
+                           @endif
+                      </flux:field>
 
-                     <flux:field>
-                         <flux:label>{{ __('Date of Birth') }}</flux:label>
-                          <flux:input
-                              type="date"
-                              wire:model="date_of_birth"
-                              required
-                          />
-                          @if($errors->has('date_of_birth'))
-                              <div class="mt-3 text-sm font-medium text-red-500 dark:text-red-400" role="alert" aria-live="polite" aria-atomic="true">{{ $errors->first('date_of_birth') }}</div>
-                          @endif
-                     </flux:field>
+                      <flux:field>
+                          <flux:label>{{ __('Date of Birth') }}</flux:label>
+                           <flux:input
+                               type="date"
+                               wire:model="date_of_birth"
+                           />
+                           @if($errors->has('date_of_birth'))
+                               <div class="mt-3 text-sm font-medium text-red-500 dark:text-red-400" role="alert" aria-live="polite" aria-atomic="true">{{ $errors->first('date_of_birth') }}</div>
+                           @endif
+                      </flux:field>
 
                      <flux:field>
                          <flux:label>{{ __('Bank Account') }}</flux:label>

@@ -32,7 +32,7 @@ class Edit extends Component
         $this->description = $file->description;
         $this->uploaded_at = $file->uploaded_at->format('Y-m-d\TH:i');
 
-        $this->people = Person::orderBy('name')->get();
+        $this->people = Person::orderBy('first_name')->orderBy('last_name')->get();
     }
 
     protected function rules(): array
