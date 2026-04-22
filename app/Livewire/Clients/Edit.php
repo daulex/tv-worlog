@@ -27,7 +27,7 @@ class Edit extends Component
         return [
             'name' => 'required|string|max:255',
             'address' => 'nullable|string',
-            'contact_email' => 'required|email|max:255',
+            'contact_email' => 'nullable|email|max:255',
             'contact_phone' => 'nullable|string|max:255',
         ];
     }
@@ -47,9 +47,9 @@ class Edit extends Component
 
         $this->client->update([
             'name' => $this->name,
-            'address' => $this->address,
-            'contact_email' => $this->contact_email,
-            'contact_phone' => $this->contact_phone,
+            'address' => $this->address ?: null,
+            'contact_email' => $this->contact_email ?: null,
+            'contact_phone' => $this->contact_phone ?: null,
         ]);
 
         session()->flash('message', 'Client updated successfully.');
