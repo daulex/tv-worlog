@@ -62,7 +62,7 @@ class Edit extends Component
             'serial' => $this->serial,
             'purchase_date' => $this->purchase_date,
             'purchase_price' => (float) $this->purchase_price,
-            'current_holder_id' => $this->current_holder_id,
+            'current_holder_id' => $this->current_holder_id ?: null,
         ]);
 
         session()->flash('message', 'Equipment updated successfully.');
