@@ -14,7 +14,7 @@
 
             <flux:field>
                 <flux:label>Email</flux:label>
-                <flux:input wire:model="contact_email" type="email" required />
+                <flux:input wire:model="contact_email" type="email" />
                 <flux:error name="contact_email" />
             </flux:field>
 
