@@ -71,7 +71,7 @@ class Dashboard extends Component
             ->to(explode(',', config('lettermint.birthday_recipients')))
             ->send(new BirthdayReminder($birthdays));
 
-        session()->flash('message', "Birthday reminder sent to {config('lettermint.birthday_recipients')}.");
+        session()->flash('message', 'Birthday reminder sent to '.config('lettermint.birthday_recipients').'.');
     }
 
     public function render()

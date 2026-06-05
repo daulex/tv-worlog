@@ -66,8 +66,7 @@ class SendUpcomingBirthdays extends Command
             ->to(explode(',', config('lettermint.birthday_recipients')))
             ->send(new BirthdayReminder($birthdays));
 
-        session()->flash('message', "Birthday reminder sent to {config('lettermint.birthday_recipients')}.");
-
+        $this->info('Birthday reminder sent to '.config('lettermint.birthday_recipients').'.');
 
     }
 }
