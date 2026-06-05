@@ -1,21 +1,22 @@
 <?php
 
-namespace App\Livewire;
+namespace App\Console\Commands;
 
 use App\Mail\BirthdayReminder;
-use App\Models\Client;
-use App\Models\Equipment;
 use App\Models\Person;
-use App\Models\Vacancy;
 use Carbon\Carbon;
+use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Mail;
-use Livewire\Component;
 
-class Dashboard extends Component
+class SendUpcomingBirthdays extends Command
 {
-    public function getUpcomingBirthdays(): \Illuminate\Support\Collection
+    protected $signature = 'birthdays:send-upcoming';
+
+    protected $description = 'Send birthday reminders for birthdays occurring in 1 or 7 days';
+
+    public function handle(): void
     {
-        return Person::where('status', 'Employee')
+        $birthdays = Person::where('status', 'Employee')
             ->whereNotNull('date_of_birth')
             ->get()
             ->map(function ($person) {
@@ -29,18 +30,16 @@ class Dashboard extends Component
 
                 $days = now()->startOfDay()->diffInDays($nextBirthday->startOfDay(), false);
 
-                if ($days > 365) {
+                if ($days !== 1 && $days !== 7) {
                     return null;
                 }
 
                 $age = $nextBirthday->year - $birthday->year;
 
-                if ($days === 0) {
-                    $daysText = 'today';
-                } elseif ($days === 1) {
+                if ($days === 1) {
                     $daysText = 'tomorrow';
                 } else {
-                    $daysText = "in {$days} day".($days === 1 ? '' : 's');
+                    $daysText = 'in 7 days';
                 }
 
                 return [
@@ -54,15 +53,11 @@ class Dashboard extends Component
             })
             ->filter()
             ->sortBy('days')
-            ->values();
-    }
-
-    public function sendBirthdayEmails(): void
-    {
-        $birthdays = $this->getUpcomingBirthdays()->take(5)->toArray();
+            ->values()
+            ->toArray();
 
         if (empty($birthdays)) {
-            session()->flash('message', 'No upcoming birthdays to send.');
+            $this->info('No upcoming birthdays in 1 or 7 days.');
 
             return;
         }
@@ -75,26 +70,8 @@ class Dashboard extends Component
             Mail::mailer('lettermint')
                 ->to($email)
                 ->send(new BirthdayReminder($birthdays));
+
+            $this->info("Sent birthday reminder to {$email}");
         }
-
-        $recipientList = $recipients->implode(', ');
-
-        session()->flash('message', "Birthday reminder sent to {$recipientList}.");
-    }
-
-    public function render()
-    {
-        $stats = [
-            'candidates' => Person::where('status', 'Candidate')->count(),
-            'employees' => Person::where('status', 'Employee')->count(),
-            'retired' => Person::where('status', 'Retired')->count(),
-            'clients' => Client::count(),
-            'vacancies' => Vacancy::count(),
-            'active_equipment' => Equipment::whereNull('retired_at')->count(),
-        ];
-
-        $upcomingBirthdays = $this->getUpcomingBirthdays();
-
-        return view('livewire.dashboard', compact('stats', 'upcomingBirthdays'))->layout('components.layouts.app');
     }
 }

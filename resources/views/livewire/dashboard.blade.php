@@ -118,7 +118,13 @@
 
     <!-- Upcoming Birthdays -->
     <div class="mt-6">
-        <h2 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Upcoming Birthdays</h2>
+        <div class="flex items-center justify-between mb-4">
+            <h2 class="text-lg font-semibold text-gray-900 dark:text-white">Upcoming Birthdays</h2>
+            <flux:button wire:click="sendBirthdayEmails" wire:loading.attr="disabled" variant="primary" size="sm">
+                <span wire:loading.remove>Send Nearest 5 Birthdays</span>
+                <span wire:loading>Sending...</span>
+            </flux:button>
+        </div>
         <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
         <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6">
             @if($upcomingBirthdays->isEmpty())
