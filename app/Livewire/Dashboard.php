@@ -67,19 +67,11 @@ class Dashboard extends Component
             return;
         }
 
-        $recipients = collect(explode(',', config('lettermint.birthday_recipients')))
-            ->map(fn ($email) => trim($email))
-            ->filter();
+        Mail::mailer('lettermint')
+            ->to(explode(',', config('lettermint.birthday_recipients')))
+            ->send(new BirthdayReminder($birthdays));
 
-        foreach ($recipients as $email) {
-            Mail::mailer('lettermint')
-                ->to($email)
-                ->send(new BirthdayReminder($birthdays));
-        }
-
-        $recipientList = $recipients->implode(', ');
-
-        session()->flash('message', "Birthday reminder sent to {$recipientList}.");
+        session()->flash('message', "Birthday reminder sent to {config('lettermint.birthday_recipients')}.");
     }
 
     public function render()

@@ -62,16 +62,12 @@ class SendUpcomingBirthdays extends Command
             return;
         }
 
-        $recipients = collect(explode(',', config('lettermint.birthday_recipients')))
-            ->map(fn ($email) => trim($email))
-            ->filter();
+        Mail::mailer('lettermint')
+            ->to(explode(',', config('lettermint.birthday_recipients')))
+            ->send(new BirthdayReminder($birthdays));
 
-        foreach ($recipients as $email) {
-            Mail::mailer('lettermint')
-                ->to($email)
-                ->send(new BirthdayReminder($birthdays));
+        session()->flash('message', "Birthday reminder sent to {config('lettermint.birthday_recipients')}.");
 
-            $this->info("Sent birthday reminder to {$email}");
-        }
+
     }
 }
