@@ -22,8 +22,9 @@ class Dashboard extends Component
             'active_equipment' => Equipment::whereNull('retired_at')->count(),
         ];
 
-        // Get all upcoming birthdays (next 365 days)
-        $upcomingBirthdays = Person::whereNotNull('date_of_birth')
+        // Get all upcoming birthdays (next 365 days) for active employees
+        $upcomingBirthdays = Person::where('status', 'Employee')
+            ->whereNotNull('date_of_birth')
             ->get()
             ->map(function ($person) {
                 $birthday = Carbon::parse($person->date_of_birth);

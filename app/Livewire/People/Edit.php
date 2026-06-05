@@ -87,7 +87,7 @@ class Edit extends Component
             'portfolio_url' => 'nullable|url|max:500',
             'emergency_contact_name' => 'nullable|string|max:255',
             'emergency_contact_relationship' => 'nullable|string|max:255',
-            'emergency_contact_phone' => ['nullable', 'string', 'max:255', new \App\Rules\LatvianPhoneNumber],
+            'emergency_contact_phone' => 'nullable|string|max:255',
         ];
     }
 
