@@ -7,7 +7,6 @@ use App\Models\Client;
 use App\Models\Equipment;
 use App\Models\Person;
 use App\Models\Vacancy;
-use Carbon\Carbon;
 use Illuminate\Support\Facades\Mail;
 use Livewire\Component;
 
@@ -15,46 +14,7 @@ class Dashboard extends Component
 {
     public function getUpcomingBirthdays(): \Illuminate\Support\Collection
     {
-        return Person::where('status', 'Employee')
-            ->whereNotNull('date_of_birth')
-            ->get()
-            ->map(function ($person) {
-                $birthday = Carbon::parse($person->date_of_birth);
-                $currentYear = now()->year;
-                $nextBirthday = $birthday->copy()->year($currentYear);
-
-                if ($nextBirthday->isPast()) {
-                    $nextBirthday->addYear();
-                }
-
-                $days = now()->startOfDay()->diffInDays($nextBirthday->startOfDay(), false);
-
-                if ($days > 365) {
-                    return null;
-                }
-
-                $age = $nextBirthday->year - $birthday->year;
-
-                if ($days === 0) {
-                    $daysText = 'today';
-                } elseif ($days === 1) {
-                    $daysText = 'tomorrow';
-                } else {
-                    $daysText = "in {$days} day".($days === 1 ? '' : 's');
-                }
-
-                return [
-                    'id' => $person->id,
-                    'name' => $person->full_name,
-                    'date_of_birth' => $birthday->format('d.m.Y'),
-                    'days' => $days,
-                    'age' => $age,
-                    'days_text' => $daysText,
-                ];
-            })
-            ->filter()
-            ->sortBy('days')
-            ->values();
+        return Person::upcomingBirthdays();
     }
 
     public function sendBirthdayEmails(): void

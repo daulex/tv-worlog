@@ -183,4 +183,48 @@ class Person extends Authenticatable
 
         return parse_url($this->portfolio_url, PHP_URL_HOST) ?: $this->portfolio_url;
     }
+
+    public static function upcomingBirthdays(): \Illuminate\Support\Collection
+    {
+        return static::where('status', 'Employee')
+            ->whereNotNull('date_of_birth')
+            ->get()
+            ->map(function ($person) {
+                $birthday = $person->date_of_birth;
+                $currentYear = now()->year;
+                $nextBirthday = $birthday->copy()->year($currentYear);
+
+                if ($nextBirthday->startOfDay()->lt(now()->startOfDay())) {
+                    $nextBirthday->addYear();
+                }
+
+                $days = (int) now()->startOfDay()->diffInDays($nextBirthday->startOfDay(), false);
+
+                if ($days > 365) {
+                    return null;
+                }
+
+                $age = $nextBirthday->year - $birthday->year;
+
+                if ($days === 0) {
+                    $daysText = 'today';
+                } elseif ($days === 1) {
+                    $daysText = 'tomorrow';
+                } else {
+                    $daysText = "in {$days} day".($days === 1 ? '' : 's');
+                }
+
+                return [
+                    'id' => $person->id,
+                    'name' => $person->full_name,
+                    'date_of_birth' => $birthday->format('d.m.Y'),
+                    'days' => $days,
+                    'age' => $age,
+                    'days_text' => $daysText,
+                ];
+            })
+            ->filter()
+            ->sortBy('days')
+            ->values();
+    }
 }
